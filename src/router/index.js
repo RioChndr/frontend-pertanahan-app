@@ -14,7 +14,7 @@ router.beforeEach((to, from, next) => {
   if (to.name !== "login" && to.name !== "signup" && !token)
     next({ name: "login" });
   else if ((token && to.name === "login") || (token && to.name === "signup")) {
-    next({ name: "dashboard" });
+    next({ name: "request" });
   } else {
     next();
   }
