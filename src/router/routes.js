@@ -26,7 +26,7 @@ const routes = [
   {
     path: "/",
     component: DashboardLayout,
-    redirect: "/dashboard",
+    redirect: "/request",
     children: [
       {
         path: "dashboard",
@@ -64,10 +64,10 @@ const routes = [
         component: TableList
       },
       {
-        path: "upload-document",
-        name: "upload-document",
+        path: "request",
+        name: "request",
         component: DocumentLayout,
-        redirect: "upload-document/list",
+        redirect: "request/list",
         children: [
           { path: "list", name: "list", component: DocumenList },
           { path: "create", name: "create", component: DocumentCreate },

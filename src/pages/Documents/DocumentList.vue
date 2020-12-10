@@ -13,7 +13,7 @@
       <router-link :to="{ name: 'create' }">Buat Permohonan</router-link>
     </div>
 
-    <div class="row">
+    <div class="row" v-if="documents.length">
       <router-link
         class="col-md-3 btn btn-success d-flex align-items-center justify-content-center"
         :to="{ name: 'create' }"
