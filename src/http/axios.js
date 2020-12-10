@@ -1,6 +1,9 @@
 import axios from "axios";
 import router from "../router/index";
-const baseUrl = "http://localhost:4000/api/";
+const development = "http://localhost:4000/api/";
+const production = "https://damp-reef-43427.herokuapp.com/";
+const baseUrl =
+  process.env.NODE_ENV === "production" ? production : development;
 
 const instance = axios.create({
   baseURL: baseUrl
