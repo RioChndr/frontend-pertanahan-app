@@ -135,10 +135,13 @@ export default {
             docTitle = docTitle.map(
               v => v.charAt(0).toUpperCase() + v.substr(1).toLowerCase()
             );
-            this.$toast.success(`${docTitle} berhasil diunggal`);
+
             return this.$store.dispatch("apiGetDetailDocument", {
               doc_id: this.$route.params.id
             });
+          })
+          .then(() => {
+            this.$toast.success(`${docTitle} berhasil diunggal`);
           })
           .catch(err => {
             console.error("error", err);
