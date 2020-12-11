@@ -72,7 +72,7 @@ export default {
           this.$toast.success("Pendaftaran Berhasil, silahkan melakukan Login");
         })
         .catch(err => {
-          this.$toast.error("Pendaftaran Tidak Berhasil");
+          this.$toast.error("Pendaftaran Tidak Berhasil, coba email yang lain");
         })
         .finally(() => {
           this.loading.signup = false;

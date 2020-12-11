@@ -15,6 +15,12 @@
       </button>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ml-auto">
+          <li class="nav-item d-flex align-item-center">
+            <!-- <span> -->
+            <!-- <i class="ti-panel"></i> -->
+            <p class="m-0">Selamat Datang, {{ user.full_name }}</p>
+            <!-- </span> -->
+          </li>
           <!-- <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="ti-panel"></i>
@@ -56,7 +62,8 @@ export default {
   },
   data() {
     return {
-      activeNotifications: false
+      activeNotifications: false,
+      user: JSON.parse(localStorage.getItem(process.env.VUE_APP_USER_INFO))
     };
   },
   methods: {

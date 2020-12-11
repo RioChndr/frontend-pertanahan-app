@@ -27,7 +27,17 @@
         <i class="fa fa-spinner fa-spin fa-fw" v-if="loading.signin"></i>
       </button>
       <hr />
-      <!-- <div id="google-signin-button"></div> -->
+
+      <GoogleLogin
+        :params="params"
+        :onSuccess="OnGoogleAuthSuccess"
+        :onFailure="OnGoogleAuthFail"
+        class="btn-google-login"
+      >
+        <i class="fa fa-google"></i>
+        Login with Google
+        <i class="fa fa-spinner fa-spin fa-fw" v-if="loading.google"></i>
+      </GoogleLogin>
 
       <div class="text-center mt-4">
         Tidak punya akun?
@@ -38,9 +48,15 @@
 </template>
 
 <script>
-import { apiPostLogin } from "../../http/api";
+import {
+  apiPostLogin,
+  apiPostSignup,
+  apiPostVerifyAuthGoogle
+} from "../../http/api";
+import GoogleLogin from "vue-google-login";
 
 export default {
+  components: { GoogleLogin },
   data() {
     return {
       form: {
@@ -48,22 +64,13 @@ export default {
         password: null
       },
       loading: {
-        signin: false
+        signin: false,
+        google: false
       },
-      clientId: process.env.VUE_APP_OAUTH_CLIENT_ID
+      params: {
+        client_id: process.env.VUE_APP_OAUTH_CLIENT_ID
+      }
     };
-  },
-  mounted() {
-    // window.gapi.load("auth2", function() {});
-    window.gapi.signin2.render("google-signin-button", {
-      scope: "profile email",
-      width: 400,
-      height: 50,
-      longtitle: true,
-      theme: "dark",
-      onsuccess: this.OnGoogleAuthSuccess,
-      onfailure: this.OnGoogleAuthFail
-    });
   },
   methods: {
     loginFunction() {
@@ -86,15 +93,33 @@ export default {
           this.loading.signin = false;
         });
     },
-    OnGoogleAuthSuccess() {
-      const auth = window.gapi.auth2.getAuthInstance();
-      console.log(auth);
-      // Receive the idToken and make your magic with the backend
+    OnGoogleAuthSuccess(googleUser) {
+      this.loading.google = true;
+      const authInfo = googleUser.getAuthResponse();
+      const profile = googleUser.getBasicProfile();
+      apiPostVerifyAuthGoogle(authInfo.id_token)
+        .then(result => {
+          const { token, ...withoutToken } = result.data;
+          if (token) {
+            this.$toast.success("Login Berhasil");
+            localStorage.setItem(process.env.VUE_APP_TOKEN_STORAGE, token);
+            localStorage.setItem(
+              process.env.VUE_APP_USER_INFO,
+              JSON.stringify(withoutToken)
+            );
+            window.location.reload();
+          }
+        })
+        .catch(err => {
+          this.$toast.error("Terjadi Kesalahan Login dengan Google");
+        })
+        .finally(() => {
+          this.loading.google = false;
+        });
     },
     OnGoogleAuthFail(error) {
       console.error(error);
-    },
-    googleSignIn() {}
+    }
   }
 };
 </script>
@@ -149,7 +174,7 @@ $xl: 1300px;
   }
 }
 
-.google-signin-button {
+.btn-google-login {
   color: #222;
   height: 50px;
   font-size: 16px;
@@ -157,6 +182,7 @@ $xl: 1300px;
   padding: 10px 20px 25px 20px;
   width: 100%;
   border: 1px solid #c3c3c3;
+  background-color: #fff;
   box-shadow: 1px 2px 1px rgba(0, 0, 0, 0.1);
 }
 </style>

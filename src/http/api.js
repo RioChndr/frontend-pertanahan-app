@@ -35,3 +35,9 @@ export function apiGetServices() {
 export function apiGetDetailDocument(docId) {
   return axios.get(`documents/${docId}`);
 }
+
+export function apiPostVerifyAuthGoogle(id_token) {
+  return axios.post(`auth/verify`, {
+    id_token
+  });
+}

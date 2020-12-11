@@ -20,14 +20,10 @@ import router from "./router/index";
 import PaperDashboard from "./plugins/paperDashboard";
 import "vue-notifyjs/themes/default.css";
 
-// Google Login
-import GoogleSignInButton from "vue-google-signin-button-directive";
-
 Vue.use(PaperDashboard);
 
 /* eslint-disable no-new */
 new Vue({
-  GoogleSignInButton,
   router,
   render: h => h(App)
 }).$mount("#app");

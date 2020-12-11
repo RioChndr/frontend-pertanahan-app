@@ -24,8 +24,6 @@
   <title><%= VUE_APP_APP_NAME %></title>
   <!-- Bootstrap core CSS     -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-  <meta name="google-signin-client_id" content="<%= VUE_APP_OAUTH_CLIENT_ID %>">
-
 
   <!--  Fonts and icons     -->
   <link type="text/css" href="https://fonts.googleapis.com/css?family=Muli:400,300" rel="stylesheet">
@@ -35,13 +33,6 @@
 
 <body>
   <div class="wrapper" id="app"></div>
-  <!-- <script src="https://apis.google.com/js/platform.js"></script> -->
-  <script src="https://apis.google.com/js/platform.js?onload=init"></script>
-  <script type="text/javascript">
-    function init() {
-      window.gapi.load('auth2', function () { })
-    }
-  </script>
   <!-- built files will be auto injected -->
 </body>
 
