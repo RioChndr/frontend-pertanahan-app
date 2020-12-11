@@ -1,10 +1,10 @@
 <template>
   <div class="container-fluid">
     <div class="d-flex align-items-center justify-content-between">
-      <router-link class="d-flex align-items-center" :to="{ name: 'list' }">
+      <!-- <router-link class="d-flex align-items-center" :to="{ name: 'list' }">
         <span class="ti-arrow-left mr-2"></span>
         Kembali
-      </router-link>
+      </router-link> -->
       <span>Buat Permohonan</span>
     </div>
     <div class="container-body">
@@ -27,6 +27,19 @@
         >
           <div class="form-group">
             <fg-input
+              label="Nomor KTP Penerima Kuasa / Pemohon *"
+              v-model="form.authorized_card_identity"
+              placeholder="Nomor KTP Penerima Kuasa"
+              :is-number="true"
+            ></fg-input>
+          </div>
+        </div>
+
+        <div
+          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
+        >
+          <div class="form-group">
+            <fg-input
               label="Nama Penerima Kuasa / Pemohon *"
               v-model="form.authorized_name"
               placeholder="Nama Lengkap Anda"
@@ -38,39 +51,20 @@
         <div
           class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
         >
-          <div class="form-group">
-            <label for="authorizer_card_path" class="control-label">
-              File Penerima Kuasa ( KTP ) *
-            </label>
-            <div class="form-control border">
-              <button
-                class="btn-block d-flex align-items-center justify-content-center border-0"
-                @click="openModalUpload('authorized_card_path')"
-              >
-                Unggah Dokumen
-                <i
-                  class="fa fa-spinner fa-spin fa-fw"
-                  v-if="document.authorized_card_path.is_loading"
-                ></i>
-                <span v-else class="ti-upload ml-2"></span>
-              </button>
-              <input
-                v-show="false"
-                type="file"
-                class="col-md-11"
-                @input="
-                  handleFileUpload(
-                    'authorized_card_path',
-                    'ktp_file_penerima_kuasa'
-                  )
-                "
-                ref="authorized_card_path"
-              />
-            </div>
-            <span class="mt-2">
-              {{ document.authorized_card_path.file_name || "Not selected" }}
-            </span>
-          </div>
+          <document-input-file
+            properties="authorized_card_path"
+            uploaded-file-name="ktp_file_penerima_kuasa"
+            file-url-name="authorized_card_url"
+            :authorizer-identity="form.authorizer_card_identity"
+            :authorized-identity="form.authorized_card_identity"
+            @get-uploaded-url="uploadedUrl"
+          >
+            <template #label>
+              <label for="authorized_card_path" class="control-label">
+                File Penerima Kuasa ( KTP ) *
+              </label>
+            </template>
+          </document-input-file>
         </div>
 
         <div
@@ -90,6 +84,40 @@
           class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
         >
           <div class="form-group">
+            <div class="custom-control custom-checkbox">
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id="customCheck1"
+                v-model="isEmpowered"
+                value="true"
+              />
+              <label class="custom-control-label" for="customCheck1">
+                Apakah Permohonan dikuasakan ?
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
+          v-if="isEmpowered"
+        >
+          <div class="form-group">
+            <fg-input
+              label="Nomor KTP Pemberi Kuasa"
+              v-model="form.authorizer_card_identity"
+              placeholder="Nomor KTP Pemberi Kuasa (Jika Dikuasakan)"
+              :is-number="true"
+            ></fg-input>
+          </div>
+        </div>
+
+        <div
+          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
+          v-if="isEmpowered"
+        >
+          <div class="form-group">
             <fg-input
               label="Pemberi Kuasa"
               v-model="form.authorizer_name"
@@ -101,38 +129,22 @@
 
         <div
           class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
+          v-if="isEmpowered"
         >
-          <div class="form-group">
-            <label for="authorizer_card_path" class="control-label">
-              File Pemberi Kuasa ( KTP )
-            </label>
-            <div class="form-control border">
-              <button
-                class="btn-block d-flex align-items-center justify-content-center border-0"
-                @click="openModalUpload('authorizer_card_path')"
-              >
-                Unggah Dokumen
-                <i
-                  class="fa fa-spinner fa-spin fa-fw"
-                  v-if="document.authorizer_card_path.is_loading"
-                ></i>
-                <span v-else class="ti-upload ml-2"></span>
-              </button>
-              <input
-                v-show="false"
-                type="file"
-                class="col-md-11"
-                @input="
-                  handleFileUpload(
-                    'authorizer_card_path',
-                    'ktp_file_pemberi_kuasa'
-                  )
-                "
-                ref="authorizer_card_path"
-              />
-            </div>
-            {{ document.authorizer_card_path.file_name || "Not Selected" }}
-          </div>
+          <document-input-file
+            properties="authorizer_card_path"
+            uploaded-file-name="ktp_file_pemberi_kuasa"
+            file-url-name="authorizer_card_url"
+            :authorizer-identity="form.authorizer_card_identity"
+            :authorized-identity="form.authorized_card_identity"
+            @get-uploaded-url="uploadedUrl"
+          >
+            <template #label>
+              <label for="authorizer_card_path" class="control-label">
+                File Pemberi Kuasa ( KTP )
+              </label>
+            </template>
+          </document-input-file>
         </div>
 
         <div
@@ -153,16 +165,24 @@
 <script>
 import { apiPostDocument } from "../../http/api";
 import { createSharedLink, uploadFile } from "../../http/dropbox";
+import DocumentInputFile from "./components/DocumentInputFile";
 export default {
+  components: {
+    DocumentInputFile
+  },
   data() {
     return {
       form: {
         email: null,
         authorized_name: null,
         authorized_card_path: null,
+        authorized_card_url: null,
         authorized_phone_number: null,
+        authorized_card_identity: null,
         authorizer_name: null,
-        authorizer_card_path: null
+        authorizer_card_path: null,
+        authorizer_card_url: null,
+        authorizer_card_identity: null
       },
 
       document: {
@@ -176,53 +196,26 @@ export default {
         }
       },
 
+      isEmpowered: false,
+
       loading: false
     };
   },
   methods: {
-    handleFileUpload(ref, file_name) {
-      const files = this.$refs[ref].files;
-
-      if (files.length) {
-        this.document[ref].is_loading = true;
-        const selectedFile = files[0];
-        const fileType = selectedFile.name.split(".")[1];
-        const userId = JSON.parse(
-          localStorage.getItem(process.env.VUE_APP_USER_INFO)
-        ).id;
-        const fileName = userId + "/" + file_name + "." + fileType;
-        uploadFile({ fileName: fileName, fileDocument: selectedFile })
-          .then(result => {
-            const { path_display, name } = result.result;
-            this.document[ref].file_name = name;
-            return createSharedLink({ filePath: path_display });
-          })
-          .then(result => {
-            const { url } = result.result;
-            this.form[ref] = url;
-          })
-          .catch(err => {
-            this.$toast.error("File tidak berhasil diunggah");
-          })
-          .finally(() => {
-            this.document[ref].is_loading = false;
-          });
-      }
-    },
-    openModalUpload(ref) {
-      this.$refs[ref].click();
+    uploadedUrl(ref, url) {
+      this.form[ref] = url;
     },
     postDocument() {
       this.loading = true;
       apiPostDocument(this.form)
         .then(result => {
-          console.log(result);
           this.$toast.success("Permohan berhasil diajukan");
         })
         .catch(err => {
           this.$toast.error("Permohonan Gagal Diajukan");
         })
         .finally(() => {
+          this.$router.replace({ name: "request" });
           this.loading = false;
         });
     }

@@ -14,13 +14,6 @@
     </div>
 
     <div class="row" v-if="documents.length">
-      <router-link
-        class="col-md-3 btn btn-success d-flex align-items-center justify-content-center"
-        :to="{ name: 'create' }"
-      >
-        <span class="ti-view-list-alt mr-2"></span>
-        Ajukan Permohonan
-      </router-link>
       <document-item-vue
         v-for="d in documents"
         :key="d.id"

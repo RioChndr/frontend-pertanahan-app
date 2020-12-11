@@ -1,5 +1,5 @@
 <template>
-  <div class="col-md-3">
+  <div class="col-md-3 mb-2">
     <div class="card-no-shadow">
       <div class="card-flex-top">
         <div class="card-flex-left">
@@ -41,6 +41,8 @@ export default {
   padding: 1rem;
   display: flex;
   flex-direction: column;
+  min-height: 10rem;
+  position: relative;
 
   & p {
     margin: 0;
@@ -51,7 +53,6 @@ export default {
 
     .card-flex-left {
       flex: 1;
-      // border-right: 1px solid #c3c3c3;
     }
 
     .card-flex-right {
@@ -64,6 +65,9 @@ export default {
   .card-flex-bottom {
     display: flex;
     align-items: center;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 1rem;
   }
 }
 </style>

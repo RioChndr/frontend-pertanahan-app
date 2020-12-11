@@ -43,7 +43,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: "Pertanahan App"
+      default: process.env.VUE_APP_APP_NAME
     },
     backgroundColor: {
       type: String,

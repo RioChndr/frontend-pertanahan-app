@@ -66,6 +66,9 @@ export default {
         full_name: this.form.full_name
       })
         .then(result => {
+          this.form.full_name = null;
+          this.form.email = null;
+          this.form.password = null;
           this.$toast.success("Pendaftaran Berhasil, silahkan melakukan Login");
         })
         .catch(err => {

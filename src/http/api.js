@@ -31,3 +31,7 @@ export function apiGetListDocument() {
 export function apiGetServices() {
   return axios.get(`services`);
 }
+
+export function apiGetDetailDocument(docId) {
+  return axios.get(`documents/${docId}`);
+}

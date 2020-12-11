@@ -11,12 +11,21 @@
       </span>
     </slot>
     <input
+      v-if="!isNumber"
       :value="value"
       @input="$emit('input', $event.target.value)"
       v-bind="$attrs"
       class="form-control border"
       aria-describedby="addon-right addon-left"
-      :ref="referensi"
+    />
+    <input
+      v-else
+      :value="value"
+      @input="$emit('input', $event.target.value)"
+      v-bind="$attrs"
+      class="form-control border"
+      aria-describedby="addon-right addon-left"
+      @keypress="validateNumber"
     />
     <slot></slot>
     <slot name="addonRight">
@@ -35,9 +44,9 @@ export default {
     value: [String, Number],
     addonRightIcon: String,
     addonLeftIcon: String,
-    referensi: {
-      type: String,
-      default: null
+    isNumber: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -49,6 +58,21 @@ export default {
         this.addonRightIcon !== undefined ||
         this.addonLeftIcon !== undefined
       );
+    }
+  },
+  methods: {
+    validateNumber: function(evt) {
+      evt = evt ? evt : window.event;
+      var charCode = evt.which ? evt.which : evt.keyCode;
+      if (
+        charCode > 31 &&
+        (charCode < 48 || charCode > 57) &&
+        charCode !== 46
+      ) {
+        evt.preventDefault();
+      } else {
+        return true;
+      }
     }
   }
 };

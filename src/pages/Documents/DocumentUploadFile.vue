@@ -11,9 +11,65 @@
     <hr />
 
     <div class="row">
-      <div
-        class="col-lg-6 offset-lg-3 col-md-6 offset-md-3 col-sm-10 offset-sm-1 border p-4"
-      >
+      <div class="col-lg 6 col-md-6 col-sm-12 border mx-2 px-4">
+        <div class="form-group">
+          <label for="services" class="control-label">
+            Penerima Kuasa / Pemohon
+          </label>
+          <h4 class="m-0 font-weight-bold">
+            {{ detailDocument.authorized_name }}
+          </h4>
+        </div>
+
+        <div class="form-group">
+          <label for="services" class="control-label">
+            Nomor KTP Penerima Kuasa / Pemohon
+          </label>
+          <h4 class="m-0 font-weight-bold">
+            {{ detailDocument.authorized_card_identity || "-" }}
+          </h4>
+        </div>
+
+        <div class="form-group">
+          <label for="services" class="control-label">
+            Email
+          </label>
+          <h4 class="m-0 font-weight-bold">
+            {{ detailDocument.email }}
+          </h4>
+        </div>
+
+        <div class="form-group">
+          <label for="services" class="control-label">
+            Nomor Telephone
+          </label>
+          <h4 class="m-0 font-weight-bold">
+            {{ detailDocument.authorized_phone_number }}
+          </h4>
+        </div>
+
+        <hr />
+
+        <div class="form-group">
+          <label for="services" class="control-label">
+            Pemberi Kuasa
+          </label>
+          <h4 class="m-0 font-weight-bold">
+            {{ detailDocument.authorizer_card_identity || "-" }}
+          </h4>
+        </div>
+
+        <div class="form-group">
+          <label for="services" class="control-label">
+            Nomor KTP Pemberi Kuasa
+          </label>
+          <h4 class="m-0 font-weight-bold">
+            {{ detailDocument.authorizer_card_identity || "-" }}
+          </h4>
+        </div>
+      </div>
+
+      <div class="col-lg-6 col-md-6 col-sm-10 border mx-2 px-4">
         <!-- Jenis Layanan -->
         <div class="form-group">
           <label for="services" class="control-label">Jenis Layanan *</label>
@@ -25,408 +81,433 @@
           ></v-select>
         </div>
 
-        <!-- Surat Permohonan -->
-        <div class="form-group">
-          <label for="authorizer_card_path" class="control-label">
-            Surat Permohonan *
-          </label>
-          <div class="form-control border">
-            <button
-              class="btn-block d-flex align-items-center justify-content-center border-0"
-              @click="openModalUpload('application_letter')"
-            >
-              Unggah Dokumen
-              <i
-                class="fa fa-spinner fa-spin fa-fw"
-                v-if="document.application_letter.is_loading"
-              ></i>
-              <span v-else class="ti-upload ml-2"></span>
-            </button>
+        <div v-if="form.service_id">
+          <!-- Surat Permohonan -->
+          <document-input-file-service
+            uploaded-file-name="surat_permohonan"
+            properties="application_letter"
+            file-url-name="application_letter_url"
+            :service-id="form.service_id"
+            :sub-folder="$route.params.id"
+            :identity-card="identityCard"
+          >
+            <template #label>
+              <label for="authorized_card_path" class="control-label">
+                Surat Permohonan *
+              </label>
+            </template>
+          </document-input-file-service>
+
+          <div class="form-group">
+            <label for="authorizer_card_path" class="control-label">
+              Surat Permohonan *
+            </label>
+            <div class="form-control border">
+              <button
+                class="btn-block d-flex align-items-center justify-content-center border-0"
+                @click="openModalUpload('application_letter')"
+              >
+                Unggah Dokumen
+                <i
+                  class="fa fa-spinner fa-spin fa-fw"
+                  v-if="document.application_letter.is_loading"
+                ></i>
+                <span v-else class="ti-upload ml-2"></span>
+              </button>
+              <input
+                v-show="false"
+                type="file"
+                class="col-md-11"
+                @input="
+                  handleFileUpload('application_letter', 'surat_permohonan')
+                "
+                ref="application_letter"
+              />
+            </div>
+            <span class="mt-2">
+              {{ document.application_letter.file_name || "Not selected" }}
+            </span>
+          </div>
+
+          <!-- Bukti Alas Hak -->
+          <div class="form-group">
+            <label for="authorizer_card_path" class="control-label">
+              Bukti Alas Hak *
+            </label>
+            <div class="form-control border">
+              <button
+                class="btn-block d-flex align-items-center justify-content-center border-0"
+                @click="openModalUpload('proof_of_rights')"
+              >
+                Unggah Dokumen
+                <i
+                  class="fa fa-spinner fa-spin fa-fw"
+                  v-if="document.proof_of_rights.is_loading"
+                ></i>
+                <span v-else class="ti-upload ml-2"></span>
+              </button>
+              <input
+                v-show="false"
+                type="file"
+                class="col-md-11"
+                @input="handleFileUpload('proof_of_rights', 'bukti_alas_hak')"
+                ref="proof_of_rights"
+              />
+            </div>
+            <span class="mt-2">
+              {{ document.proof_of_rights.file_name || "Not selected" }}
+            </span>
+          </div>
+
+          <!-- Pajak Bumi dan Bangunan -->
+          <div class="form-group">
+            <label for="authorizer_card_path" class="control-label">
+              Pajak Bumi dan Bangunan *
+            </label>
+            <div class="form-control border">
+              <button
+                class="btn-block d-flex align-items-center justify-content-center border-0"
+                @click="openModalUpload('property_tax')"
+              >
+                Unggah Dokumen
+                <i
+                  class="fa fa-spinner fa-spin fa-fw"
+                  v-if="document.property_tax.is_loading"
+                ></i>
+                <span v-else class="ti-upload ml-2"></span>
+              </button>
+              <input
+                v-show="false"
+                type="file"
+                class="col-md-11"
+                @input="
+                  handleFileUpload('property_tax', 'pajak_bumi_dan_bangunan')
+                "
+                ref="property_tax"
+              />
+            </div>
+            <span class="mt-2">
+              {{ document.property_tax.file_name || "Not selected" }}
+            </span>
+          </div>
+
+          <!-- Bukti Verifikasi BPHTB -->
+          <div class="form-group">
+            <label for="authorizer_card_path" class="control-label">
+              Bukti Verifikasi BPHTB
+              <small>( Jika jenis layanan mewajibkan)</small>
+            </label>
+            <div class="form-control border">
+              <button
+                class="btn-block d-flex align-items-center justify-content-center border-0"
+                @click="openModalUpload('verification_bphtb')"
+              >
+                Unggah Dokumen
+                <i
+                  class="fa fa-spinner fa-spin fa-fw"
+                  v-if="document.verification_bphtb.is_loading"
+                ></i>
+                <span v-else class="ti-upload ml-2"></span>
+              </button>
+              <input
+                v-show="false"
+                type="file"
+                class="col-md-11"
+                @input="
+                  handleFileUpload(
+                    'verification_bphtb',
+                    'bukti_verifikasi_bphtb'
+                  )
+                "
+                ref="verification_bphtb"
+              />
+            </div>
+            <span class="mt-2">
+              {{ document.verification_bphtb.file_name || "Not selected" }}
+            </span>
+          </div>
+
+          <!-- File Akta -->
+          <div class="form-group">
+            <label for="authorizer_card_path" class="control-label">
+              File Akta
+              <small>
+                (Jika Permohonan Peralihan, File ini Wajib Di Upload Semua
+                Halaman)
+              </small>
+            </label>
+            <div class="form-control border">
+              <button
+                class="btn-block d-flex align-items-center justify-content-center border-0"
+                @click="openModalUpload('file_akta')"
+              >
+                Unggah Dokumen
+                <i
+                  class="fa fa-spinner fa-spin fa-fw"
+                  v-if="document.file_akta.is_loading"
+                ></i>
+                <span v-else class="ti-upload ml-2"></span>
+              </button>
+              <input
+                v-show="false"
+                type="file"
+                class="col-md-11"
+                @input="handleFileUpload('file_akta', 'file_akta')"
+                ref="file_akta"
+              />
+            </div>
+            <span class="mt-2">
+              {{ document.file_akta.file_name || "Not selected" }}
+            </span>
+          </div>
+
+          <!-- Sertifikat Hak Atas Tanah -->
+          <div class="form-group">
+            <label for="sertifikat_tanah" class="control-label">
+              Sertifikat Hak Atas Tanah *
+              <small>
+                (HM, HGB, HW, HMSRS, HP, HPL) / Kecamatan /Kelurahan, yang
+                dimohon)
+              </small>
+            </label>
             <input
-              v-show="false"
-              type="file"
-              class="col-md-11"
-              @input="
-                handleFileUpload('application_letter', 'surat_permohonan')
-              "
-              ref="application_letter"
+              v-model="form.sertifikat_hak_atas_tanah"
+              type="text"
+              class="form-control border"
+              placeholder="(HM, HGB, HW, HMSRS, HP, HPL) / Kecamatan /Kelurahan, yang dimohon )"
             />
           </div>
-          <span class="mt-2">
-            {{ document.application_letter.file_name || "Not selected" }}
-          </span>
-        </div>
 
-        <!-- Bukti Alas Hak -->
-        <div class="form-group">
-          <label for="authorizer_card_path" class="control-label">
-            Bukti Alas Hak *
-          </label>
-          <div class="form-control border">
-            <button
-              class="btn-block d-flex align-items-center justify-content-center border-0"
-              @click="openModalUpload('proof_of_rights')"
-            >
-              Unggah Dokumen
-              <i
-                class="fa fa-spinner fa-spin fa-fw"
-                v-if="document.proof_of_rights.is_loading"
-              ></i>
-              <span v-else class="ti-upload ml-2"></span>
-            </button>
-            <input
-              v-show="false"
-              type="file"
-              class="col-md-11"
-              @input="handleFileUpload('proof_of_rights', 'bukti_alas_hak')"
-              ref="proof_of_rights"
-            />
+          <!-- File Sertipikat Hak Atas Tanah * -->
+          <div class="form-group">
+            <label for="authorizer_card_path" class="control-label">
+              File Sertipikat Hak Atas Tanah *
+              <small>
+                Berwarna Seperti Sertipikat Aslinya Semua Halaman
+              </small>
+            </label>
+            <div class="form-control border">
+              <button
+                class="btn-block d-flex align-items-center justify-content-center border-0"
+                @click="openModalUpload('file_sertifikat_hak_atas_tanah')"
+              >
+                Unggah Dokumen
+                <i
+                  class="fa fa-spinner fa-spin fa-fw"
+                  v-if="document.file_sertifikat_hak_atas_tanah.is_loading"
+                ></i>
+                <span v-else class="ti-upload ml-2"></span>
+              </button>
+              <input
+                v-show="false"
+                type="file"
+                class="col-md-11"
+                @input="
+                  handleFileUpload(
+                    'file_sertifikat_hak_atas_tanah',
+                    'file_sertifikat_hak_atas_tanah'
+                  )
+                "
+                ref="file_sertifikat_hak_atas_tanah"
+              />
+            </div>
+            <span class="mt-2">
+              {{
+                document.file_sertifikat_hak_atas_tanah.file_name ||
+                  "Not selected"
+              }}
+            </span>
           </div>
-          <span class="mt-2">
-            {{ document.proof_of_rights.file_name || "Not selected" }}
-          </span>
-        </div>
 
-        <!-- Pajak Bumi dan Bangunan -->
-        <div class="form-group">
-          <label for="authorizer_card_path" class="control-label">
-            Pajak Bumi dan Bangunan *
-          </label>
-          <div class="form-control border">
-            <button
-              class="btn-block d-flex align-items-center justify-content-center border-0"
-              @click="openModalUpload('property_tax')"
-            >
-              Unggah Dokumen
-              <i
-                class="fa fa-spinner fa-spin fa-fw"
-                v-if="document.property_tax.is_loading"
-              ></i>
-              <span v-else class="ti-upload ml-2"></span>
-            </button>
-            <input
-              v-show="false"
-              type="file"
-              class="col-md-11"
-              @input="
-                handleFileUpload('property_tax', 'pajak_bumi_dan_bangunan')
-              "
-              ref="property_tax"
-            />
+          <!-- Kelengkapan Berkas Lainnya 1 -->
+          <div class="form-group">
+            <label for="authorizer_card_path" class="control-label">
+              Kelengkapan Berkas Lainnya 1
+            </label>
+            <div class="form-control border">
+              <button
+                class="btn-block d-flex align-items-center justify-content-center border-0"
+                @click="openModalUpload('kelengkapan_berkas_lainnya_1')"
+              >
+                Unggah Dokumen
+                <i
+                  class="fa fa-spinner fa-spin fa-fw"
+                  v-if="document.kelengkapan_berkas_lainnya_1.is_loading"
+                ></i>
+                <span v-else class="ti-upload ml-2"></span>
+              </button>
+              <input
+                v-show="false"
+                type="file"
+                class="col-md-11"
+                @input="
+                  handleFileUpload(
+                    'kelengkapan_berkas_lainnya_1',
+                    'kelengkapan_berkas_lainnya_1'
+                  )
+                "
+                ref="kelengkapan_berkas_lainnya_1"
+              />
+            </div>
+            <span class="mt-2">
+              {{
+                document.kelengkapan_berkas_lainnya_1.file_name ||
+                  "Not selected"
+              }}
+            </span>
           </div>
-          <span class="mt-2">
-            {{ document.property_tax.file_name || "Not selected" }}
-          </span>
-        </div>
 
-        <!-- Bukti Verifikasi BPHTB -->
-        <div class="form-group">
-          <label for="authorizer_card_path" class="control-label">
-            Bukti Verifikasi BPHTB
-            <small>( Jika jenis layanan mewajibkan)</small>
-          </label>
-          <div class="form-control border">
-            <button
-              class="btn-block d-flex align-items-center justify-content-center border-0"
-              @click="openModalUpload('verification_bphtb')"
-            >
-              Unggah Dokumen
-              <i
-                class="fa fa-spinner fa-spin fa-fw"
-                v-if="document.verification_bphtb.is_loading"
-              ></i>
-              <span v-else class="ti-upload ml-2"></span>
-            </button>
-            <input
-              v-show="false"
-              type="file"
-              class="col-md-11"
-              @input="
-                handleFileUpload('verification_bphtb', 'bukti_verifikasi_bphtb')
-              "
-              ref="verification_bphtb"
-            />
+          <!-- Kelengkapan Berkas Lainnya 2 -->
+          <div class="form-group">
+            <label for="authorizer_card_path" class="control-label">
+              Kelengkapan Berkas Lainnya 2
+            </label>
+            <div class="form-control border">
+              <button
+                class="btn-block d-flex align-items-center justify-content-center border-0"
+                @click="openModalUpload('kelengkapan_berkas_lainnya_2')"
+              >
+                Unggah Dokumen
+                <i
+                  class="fa fa-spinner fa-spin fa-fw"
+                  v-if="document.kelengkapan_berkas_lainnya_2.is_loading"
+                ></i>
+                <span v-else class="ti-upload ml-2"></span>
+              </button>
+              <input
+                v-show="false"
+                type="file"
+                class="col-md-11"
+                @input="
+                  handleFileUpload(
+                    'kelengkapan_berkas_lainnya_2',
+                    'kelengkapan_berkas_lainnya_2'
+                  )
+                "
+                ref="kelengkapan_berkas_lainnya_2"
+              />
+            </div>
+            <span class="mt-2">
+              {{
+                document.kelengkapan_berkas_lainnya_2.file_name ||
+                  "Not selected"
+              }}
+            </span>
           </div>
-          <span class="mt-2">
-            {{ document.verification_bphtb.file_name || "Not selected" }}
-          </span>
-        </div>
 
-        <!-- File Akta -->
-        <div class="form-group">
-          <label for="authorizer_card_path" class="control-label">
-            File Akta
-            <small>
-              (Jika Permohonan Peralihan, File ini Wajib Di Upload Semua
-              Halaman)
-            </small>
-          </label>
-          <div class="form-control border">
-            <button
-              class="btn-block d-flex align-items-center justify-content-center border-0"
-              @click="openModalUpload('file_akta')"
-            >
-              Unggah Dokumen
-              <i
-                class="fa fa-spinner fa-spin fa-fw"
-                v-if="document.file_akta.is_loading"
-              ></i>
-              <span v-else class="ti-upload ml-2"></span>
-            </button>
-            <input
-              v-show="false"
-              type="file"
-              class="col-md-11"
-              @input="handleFileUpload('file_akta', 'file_akta')"
-              ref="file_akta"
-            />
+          <!-- Kelengkapan Berkas Lainnya 3 -->
+          <div class="form-group">
+            <label for="authorizer_card_path" class="control-label">
+              Kelengkapan Berkas Lainnya 3
+            </label>
+            <div class="form-control border">
+              <button
+                class="btn-block d-flex align-items-center justify-content-center border-0"
+                @click="openModalUpload('kelengkapan_berkas_lainnya_3')"
+              >
+                Unggah Dokumen
+                <i
+                  class="fa fa-spinner fa-spin fa-fw"
+                  v-if="document.kelengkapan_berkas_lainnya_3.is_loading"
+                ></i>
+                <span v-else class="ti-upload ml-2"></span>
+              </button>
+              <input
+                v-show="false"
+                type="file"
+                class="col-md-11"
+                @input="
+                  handleFileUpload(
+                    'kelengkapan_berkas_lainnya_3',
+                    'kelengkapan_berkas_lainnya_3'
+                  )
+                "
+                ref="kelengkapan_berkas_lainnya_3"
+              />
+            </div>
+            <span class="mt-2">
+              {{
+                document.kelengkapan_berkas_lainnya_3.file_name ||
+                  "Not selected"
+              }}
+            </span>
           </div>
-          <span class="mt-2">
-            {{ document.file_akta.file_name || "Not selected" }}
-          </span>
-        </div>
 
-        <!-- Sertifikat Hak Atas Tanah -->
-        <div class="form-group">
-          <label for="sertifikat_tanah" class="control-label">
-            Sertifikat Hak Atas Tanah *
-            <small>
-              (HM, HGB, HW, HMSRS, HP, HPL) / Kecamatan /Kelurahan, yang
-              dimohon)
-            </small>
-          </label>
-          <input
-            v-model="form.sertifikat_hak_atas_tanah"
-            type="text"
-            class="form-control border"
-            placeholder="(HM, HGB, HW, HMSRS, HP, HPL) / Kecamatan /Kelurahan, yang dimohon )"
-          />
-        </div>
-
-        <!-- File Sertipikat Hak Atas Tanah * -->
-        <div class="form-group">
-          <label for="authorizer_card_path" class="control-label">
-            File Sertipikat Hak Atas Tanah *
-            <small>
-              Berwarna Seperti Sertipikat Aslinya Semua Halaman
-            </small>
-          </label>
-          <div class="form-control border">
-            <button
-              class="btn-block d-flex align-items-center justify-content-center border-0"
-              @click="openModalUpload('file_sertifikat_hak_atas_tanah')"
-            >
-              Unggah Dokumen
-              <i
-                class="fa fa-spinner fa-spin fa-fw"
-                v-if="document.file_sertifikat_hak_atas_tanah.is_loading"
-              ></i>
-              <span v-else class="ti-upload ml-2"></span>
-            </button>
-            <input
-              v-show="false"
-              type="file"
-              class="col-md-11"
-              @input="
-                handleFileUpload(
-                  'file_sertifikat_hak_atas_tanah',
-                  'file_sertifikat_hak_atas_tanah'
-                )
-              "
-              ref="file_sertifikat_hak_atas_tanah"
-            />
+          <!-- Kelengkapan Berkas Lainnya 4 -->
+          <div class="form-group">
+            <label for="authorizer_card_path" class="control-label">
+              Kelengkapan Berkas Lainnya 4
+            </label>
+            <div class="form-control border">
+              <button
+                class="btn-block d-flex align-items-center justify-content-center border-0"
+                @click="openModalUpload('kelengkapan_berkas_lainnya_4')"
+              >
+                Unggah Dokumen
+                <i
+                  class="fa fa-spinner fa-spin fa-fw"
+                  v-if="document.kelengkapan_berkas_lainnya_4.is_loading"
+                ></i>
+                <span v-else class="ti-upload ml-2"></span>
+              </button>
+              <input
+                v-show="false"
+                type="file"
+                class="col-md-11"
+                @input="
+                  handleFileUpload(
+                    'kelengkapan_berkas_lainnya_4',
+                    'kelengkapan_berkas_lainnya_4'
+                  )
+                "
+                ref="kelengkapan_berkas_lainnya_4"
+              />
+            </div>
+            <span class="mt-2">
+              {{
+                document.kelengkapan_berkas_lainnya_4.file_name ||
+                  "Not selected"
+              }}
+            </span>
           </div>
-          <span class="mt-2">
-            {{
-              document.file_sertifikat_hak_atas_tanah.file_name ||
-                "Not selected"
-            }}
-          </span>
-        </div>
 
-        <!-- Kelengkapan Berkas Lainnya 1 -->
-        <div class="form-group">
-          <label for="authorizer_card_path" class="control-label">
-            Kelengkapan Berkas Lainnya 1
-          </label>
-          <div class="form-control border">
-            <button
-              class="btn-block d-flex align-items-center justify-content-center border-0"
-              @click="openModalUpload('kelengkapan_berkas_lainnya_1')"
-            >
-              Unggah Dokumen
-              <i
-                class="fa fa-spinner fa-spin fa-fw"
-                v-if="document.kelengkapan_berkas_lainnya_1.is_loading"
-              ></i>
-              <span v-else class="ti-upload ml-2"></span>
-            </button>
-            <input
-              v-show="false"
-              type="file"
-              class="col-md-11"
-              @input="
-                handleFileUpload(
-                  'kelengkapan_berkas_lainnya_1',
-                  'kelengkapan_berkas_lainnya_1'
-                )
-              "
-              ref="kelengkapan_berkas_lainnya_1"
-            />
+          <!-- Kelengkapan Berkas Lainnya 5 -->
+          <div class="form-group">
+            <label for="authorizer_card_path" class="control-label">
+              Kelengkapan Berkas Lainnya 5
+            </label>
+            <div class="form-control border">
+              <button
+                class="btn-block d-flex align-items-center justify-content-center border-0"
+                @click="openModalUpload('kelengkapan_berkas_lainnya_5')"
+              >
+                Unggah Dokumen
+                <i
+                  class="fa fa-spinner fa-spin fa-fw"
+                  v-if="document.kelengkapan_berkas_lainnya_5.is_loading"
+                ></i>
+                <span v-else class="ti-upload ml-2"></span>
+              </button>
+              <input
+                v-show="false"
+                type="file"
+                class="col-md-11"
+                @input="
+                  handleFileUpload(
+                    'kelengkapan_berkas_lainnya_5',
+                    'kelengkapan_berkas_lainnya_5'
+                  )
+                "
+                ref="kelengkapan_berkas_lainnya_5"
+              />
+            </div>
+            <span class="mt-2">
+              {{
+                document.kelengkapan_berkas_lainnya_5.file_name ||
+                  "Not selected"
+              }}
+            </span>
           </div>
-          <span class="mt-2">
-            {{
-              document.kelengkapan_berkas_lainnya_1.file_name || "Not selected"
-            }}
-          </span>
-        </div>
-
-        <!-- Kelengkapan Berkas Lainnya 2 -->
-        <div class="form-group">
-          <label for="authorizer_card_path" class="control-label">
-            Kelengkapan Berkas Lainnya 2
-          </label>
-          <div class="form-control border">
-            <button
-              class="btn-block d-flex align-items-center justify-content-center border-0"
-              @click="openModalUpload('kelengkapan_berkas_lainnya_2')"
-            >
-              Unggah Dokumen
-              <i
-                class="fa fa-spinner fa-spin fa-fw"
-                v-if="document.kelengkapan_berkas_lainnya_2.is_loading"
-              ></i>
-              <span v-else class="ti-upload ml-2"></span>
-            </button>
-            <input
-              v-show="false"
-              type="file"
-              class="col-md-11"
-              @input="
-                handleFileUpload(
-                  'kelengkapan_berkas_lainnya_2',
-                  'kelengkapan_berkas_lainnya_2'
-                )
-              "
-              ref="kelengkapan_berkas_lainnya_2"
-            />
-          </div>
-          <span class="mt-2">
-            {{
-              document.kelengkapan_berkas_lainnya_2.file_name || "Not selected"
-            }}
-          </span>
-        </div>
-
-        <!-- Kelengkapan Berkas Lainnya 3 -->
-        <div class="form-group">
-          <label for="authorizer_card_path" class="control-label">
-            Kelengkapan Berkas Lainnya 3
-          </label>
-          <div class="form-control border">
-            <button
-              class="btn-block d-flex align-items-center justify-content-center border-0"
-              @click="openModalUpload('kelengkapan_berkas_lainnya_3')"
-            >
-              Unggah Dokumen
-              <i
-                class="fa fa-spinner fa-spin fa-fw"
-                v-if="document.kelengkapan_berkas_lainnya_3.is_loading"
-              ></i>
-              <span v-else class="ti-upload ml-2"></span>
-            </button>
-            <input
-              v-show="false"
-              type="file"
-              class="col-md-11"
-              @input="
-                handleFileUpload(
-                  'kelengkapan_berkas_lainnya_3',
-                  'kelengkapan_berkas_lainnya_3'
-                )
-              "
-              ref="kelengkapan_berkas_lainnya_3"
-            />
-          </div>
-          <span class="mt-2">
-            {{
-              document.kelengkapan_berkas_lainnya_3.file_name || "Not selected"
-            }}
-          </span>
-        </div>
-
-        <!-- Kelengkapan Berkas Lainnya 4 -->
-        <div class="form-group">
-          <label for="authorizer_card_path" class="control-label">
-            Kelengkapan Berkas Lainnya 4
-          </label>
-          <div class="form-control border">
-            <button
-              class="btn-block d-flex align-items-center justify-content-center border-0"
-              @click="openModalUpload('kelengkapan_berkas_lainnya_4')"
-            >
-              Unggah Dokumen
-              <i
-                class="fa fa-spinner fa-spin fa-fw"
-                v-if="document.kelengkapan_berkas_lainnya_4.is_loading"
-              ></i>
-              <span v-else class="ti-upload ml-2"></span>
-            </button>
-            <input
-              v-show="false"
-              type="file"
-              class="col-md-11"
-              @input="
-                handleFileUpload(
-                  'kelengkapan_berkas_lainnya_4',
-                  'kelengkapan_berkas_lainnya_4'
-                )
-              "
-              ref="kelengkapan_berkas_lainnya_4"
-            />
-          </div>
-          <span class="mt-2">
-            {{
-              document.kelengkapan_berkas_lainnya_4.file_name || "Not selected"
-            }}
-          </span>
-        </div>
-
-        <!-- Kelengkapan Berkas Lainnya 5 -->
-        <div class="form-group">
-          <label for="authorizer_card_path" class="control-label">
-            Kelengkapan Berkas Lainnya 5
-          </label>
-          <div class="form-control border">
-            <button
-              class="btn-block d-flex align-items-center justify-content-center border-0"
-              @click="openModalUpload('kelengkapan_berkas_lainnya_5')"
-            >
-              Unggah Dokumen
-              <i
-                class="fa fa-spinner fa-spin fa-fw"
-                v-if="document.kelengkapan_berkas_lainnya_5.is_loading"
-              ></i>
-              <span v-else class="ti-upload ml-2"></span>
-            </button>
-            <input
-              v-show="false"
-              type="file"
-              class="col-md-11"
-              @input="
-                handleFileUpload(
-                  'kelengkapan_berkas_lainnya_5',
-                  'kelengkapan_berkas_lainnya_5'
-                )
-              "
-              ref="kelengkapan_berkas_lainnya_5"
-            />
-          </div>
-          <span class="mt-2">
-            {{
-              document.kelengkapan_berkas_lainnya_5.file_name || "Not selected"
-            }}
-          </span>
         </div>
       </div>
     </div>
@@ -434,12 +515,23 @@
 </template>
 
 <script>
-import moduleName, { apiGetServices, apiPostFile } from "../../http/api";
+import moduleName, {
+  apiGetDetailDocument,
+  apiGetServices,
+  apiPostFile
+} from "../../http/api";
 import { createSharedLink, uploadFile } from "../../http/dropbox";
+import DocumentInputFileService from "./components/DocumentInputFileService";
+
 export default {
+  components: {
+    DocumentInputFileService
+  },
   data() {
     return {
+      identityCard: null,
       services: [],
+      detailDocument: {},
       form: {
         service_id: null,
         application_letter: null,
@@ -537,14 +629,19 @@ export default {
       }
     };
   },
-  mounted() {
-    apiGetServices()
-      .then(result => {
-        this.services = result.data.message.services;
-      })
-      .catch(err => {
-        console.error("error services", err);
-      });
+  async mounted() {
+    const services = await apiGetServices();
+    if (services.status === 200) {
+      this.services = services.data.message.services;
+    }
+
+    const requestDocument = await apiGetDetailDocument(this.$route.params.id);
+    if (requestDocument.data.success) {
+      const detail = requestDocument.data.document;
+      this.detailDocument = detail;
+      this.identityCard =
+        detail.authorizer_card_identity || detail.authorized_card_identity;
+    }
   },
   methods: {
     openModalUpload(ref) {
@@ -601,7 +698,7 @@ export default {
 
 <style lang="scss" scoped>
 label {
-  color: #000;
+  color: #89857f;
 }
 
 .form-group {

@@ -5,6 +5,11 @@
         <!-- <sidebar-link to="/dashboard" name="Dashboard" icon="ti-panel" /> -->
         <!-- <sidebar-link to="/stats" name="User Profile" icon="ti-user" /> -->
         <sidebar-link to="/request" name="Permohonan" icon="ti-view-list-alt" />
+        <sidebar-link
+          to="/request/create"
+          name="Ajukan Permohonan"
+          icon="ti-plus"
+        />
         <!-- <sidebar-link
           to="/table-list"
           name="Table List"
