@@ -7,7 +7,7 @@
         <sidebar-link to="/request" name="Permohonan" icon="ti-view-list-alt" />
         <sidebar-link
           to="/request/create"
-          name="Ajukan Permohonan"
+          name="Buat Permohonan"
           icon="ti-plus"
         />
         <!-- <sidebar-link

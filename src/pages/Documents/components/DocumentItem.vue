@@ -8,7 +8,7 @@
         </div>
         <div class="card-flex-right">
           <p>Dokumen</p>
-          <h4 class="m-0">0</h4>
+          <h4 class="m-0">{{ detail.files.length }}</h4>
         </div>
       </div>
       <router-link

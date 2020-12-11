@@ -24,4 +24,10 @@
 <script>
 export default {};
 </script>
-<style></style>
+<style lang="scss" scoped>
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+</style>

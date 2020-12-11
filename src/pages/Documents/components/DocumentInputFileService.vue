@@ -8,14 +8,14 @@
         </small>
       </label>
       <input
-        v-model="form.sertifikat_hak_atas_tanah"
+        v-model="form.detail"
         type="text"
         class="form-control border"
         placeholder="(HM, HGB, HW, HMSRS, HP, HPL) / Kecamatan /Kelurahan, yang dimohon )"
       />
     </div>
     <slot name="label">Label</slot>
-    <div class="form-control border" v-show="!form.file_name">
+    <div class="form-control border" v-show="displayButton">
       <button
         class="btn-block d-flex align-items-center justify-content-center border-0"
         @click="openModalUpload"
@@ -32,22 +32,17 @@
         :ref="properties"
       />
     </div>
-    <slot v-bind:file="form.file_name">
-      <p class="mt-1 d-block">
-        {{ form.file_name }}
-        <button
-          class="btn btn-sm btn-danger"
-          v-if="form.file_name"
-          @click.prevent="removeFile"
-        >
-          <i
-            class="fa fa-spinner fa-spin fa-fw fa-2x"
-            v-if="loading.delete"
-          ></i>
-          <i class="fa fa-trash fa-2x" v-else></i>
-        </button>
-      </p>
-    </slot>
+    <p class="mt-1 d-block" v-if="!displayButton">
+      {{ form.file_name }}
+      <button
+        class="btn btn-sm btn-danger"
+        v-if="form.file_name"
+        @click.prevent="removeFile"
+      >
+        <i class="fa fa-spinner fa-spin fa-fw fa-2x" v-if="loading.delete"></i>
+        <i class="fa fa-trash fa-2x" v-else></i>
+      </button>
+    </p>
   </div>
 </template>
 
@@ -57,10 +52,6 @@ import { apiPostFile } from "../../../http/api";
 export default {
   name: "document-input-file-service",
   props: {
-    fileUrlName: {
-      type: String,
-      default: null
-    },
     properties: {
       type: String,
       default: null
@@ -94,7 +85,8 @@ export default {
         file_url: null,
         file_type: null,
         description: null
-      }
+      },
+      displayButton: true
     };
   },
   methods: {
@@ -103,6 +95,11 @@ export default {
     },
     handleFileUpload() {
       const files = this.$refs[this.properties].files;
+
+      if (!this.form.description) {
+        this.$toast.error("Harap isi jenis Sertifikat Hak Atas Tanah");
+        return;
+      }
 
       if (files.length) {
         this.loading.submit = true;
@@ -131,7 +128,6 @@ export default {
             return apiPostFile(this.form);
           })
           .then(result => {
-            console.log(result);
             let docTitle = this.uploadedFileName.split("_");
             docTitle = docTitle.map(
               v => v.charAt(0).toUpperCase() + v.substr(1).toLowerCase()
@@ -143,6 +139,7 @@ export default {
             this.$toast.error("file Gagal di unggah");
           })
           .finally(() => {
+            this.displayButton = false;
             this.loading.submit = false;
           });
       }
@@ -151,10 +148,6 @@ export default {
       this.loading.delete = true;
       deleteFile({ filePath: this.filePath })
         .then(result => {
-          console.log(result);
-          this.$emit("get-uploaded-url", this.fileUrlName, null);
-          this.$emit("get-uploaded-url", this.properties, null);
-
           this.fileName = null;
           this.fileUrl = null;
           this.filePath = null;
