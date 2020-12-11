@@ -25,7 +25,8 @@
 export default {};
 </script>
 <style lang="scss" scoped>
-.footer {
+footer {
+  // margin-top: 10rem;
   position: absolute;
   bottom: 0;
   width: 100%;

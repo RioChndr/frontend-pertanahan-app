@@ -22,8 +22,12 @@ import "vue-notifyjs/themes/default.css";
 
 Vue.use(PaperDashboard);
 
+// state
+import store from "./store";
+
 /* eslint-disable no-new */
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount("#app");

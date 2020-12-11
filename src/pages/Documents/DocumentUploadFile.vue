@@ -11,6 +11,12 @@
     <hr />
 
     <div class="row">
+      <v-loading
+        :active.sync="loadingOverlay"
+        :can-cancel="false"
+        :is-full-page="true"
+      ></v-loading>
+
       <div class="col-lg 6 col-md-6 col-sm-12 border mx-2 px-4">
         <div class="form-group">
           <label for="services" class="control-label">
@@ -81,13 +87,23 @@
               v-for="file in detailDocument.files"
               :key="file.id"
             >
-              <div class="card p-2 border">
-                {{ file.service.service_name }}
-                <hr class="mb-1 mt-1" />
-                <span class="py-2">{{ file.file_name }}</span>
-                <span class="badge badge-primary py-1">
-                  {{ file.updated_at | dateHuman }}
-                </span>
+              <div class="card border">
+                <div class="card-body">
+                  <p>{{ file.service.service_name }}</p>
+                  <p>{{ file.file_type | fileType }}</p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                  <a
+                    @click="downloadFile(file.file_path)"
+                    target="_blank"
+                    class="d-flex align-items-center"
+                    style="cursor: pointer"
+                  >
+                    <span class="ti-download mr-2"></span>
+                    <span>Download</span>
+                  </a>
+                  <span>{{ file.updated_at | dateHuman }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -288,13 +304,9 @@
 
 <script>
 import moment from "moment";
-import moduleName, {
-  apiGetDetailDocument,
-  apiGetServices,
-  apiPostFile
-} from "../../http/api";
-import { createSharedLink, uploadFile } from "../../http/dropbox";
+import { createSharedLink, downloadFile, uploadFile } from "../../http/dropbox";
 import DocumentInputFileService from "./components/DocumentInputFileService";
+import { mapState } from "vuex";
 
 export default {
   components: {
@@ -305,13 +317,17 @@ export default {
       let date = new Date(val);
 
       return moment(date).from();
+    },
+    fileType(val) {
+      return val
+        .split("_")
+        .map(v => v.charAt(0).toUpperCase() + v.substr(1).toLowerCase())
+        .join(" ");
     }
   },
   data() {
     return {
       identityCard: null,
-      services: [],
-      detailDocument: {},
       form: {
         service_id: null,
         application_letter: null,
@@ -406,73 +422,43 @@ export default {
           file_type: null,
           file_url: null
         }
-      }
+      },
+      loadingOverlay: false
     };
   },
-  async mounted() {
-    const services = await apiGetServices();
-    if (services.status === 200) {
-      this.services = services.data.message.services;
-    }
-
-    const requestDocument = await apiGetDetailDocument(this.$route.params.id);
-    if (requestDocument.data.success) {
-      const detail = requestDocument.data.document;
-      console.log(detail);
-      this.detailDocument = detail;
-      this.identityCard =
-        detail.authorizer_card_identity || detail.authorized_card_identity;
-    }
+  created() {
+    this.loadingOverlay = true;
+    this.$store
+      .dispatch("apiGetServices")
+      .then(result => {
+        return this.$store.dispatch("apiGetDetailDocument", {
+          doc_id: this.$route.params.id
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      })
+      .finally(() => {
+        this.loadingOverlay = false;
+      });
   },
   methods: {
-    openModalUpload(ref) {
-      this.$refs[ref].click();
-    },
-    handleFileUpload(ref, file_name) {
-      const files = this.$refs[ref].files;
-
-      if (file_name === "file_sertifikat_hak_atas_tanah") {
-        if (!this.form.file_sertifikat_hak_atas_tanah) {
-          this.$toast.error("Harap Cantumkan Jenis Sertifikat Tanah");
-          return;
-        }
-      }
-      if (files.length) {
-        this.document[ref].is_loading = true;
-        const selectedFile = files[0];
-        const fileType = selectedFile.name.split(".")[1];
-        const userId = JSON.parse(
-          localStorage.getItem(process.env.VUE_APP_USER_INFO)
-        ).id;
-        const fileName = userId + "/" + file_name + "." + fileType;
-        uploadFile({ fileName: fileName, fileDocument: selectedFile })
-          .then(result => {
-            const { path_display, name } = result.result;
-            this.document[ref].file_name = name;
-            this.document[ref].file_path = path_display;
-            this.document[ref].file_type = file_name;
-            return createSharedLink({ filePath: path_display });
-          })
-          .then(result => {
-            const { url } = result.result;
-            this.form[ref] = url;
-            this.document[ref].file_url = url;
-            this.document[ref].service_id = this.form.service_id;
-            this.document[ref].document_id = this.$route.params.id;
-            const { is_loading, ...formData } = this.document[ref];
-            return apiPostFile(formData);
-          })
-          .then(result => {
-            console.log(result);
-          })
-          .catch(err => {
-            this.$toast.error("Dokumen Gagal di unggah");
-          })
-          .finally(() => {
-            this.document[ref].is_loading = false;
-          });
-      }
+    downloadFile(path) {
+      downloadFile({ filePath: path })
+        .then(result => {
+          let link = document.createElement("a");
+          link.href = result.result.link;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
+  },
+  computed: {
+    ...mapState(["detailDocument", "services"])
   }
 };
 </script>

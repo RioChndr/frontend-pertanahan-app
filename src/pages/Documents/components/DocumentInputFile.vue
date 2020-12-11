@@ -18,7 +18,7 @@
         :ref="properties"
       />
     </div>
-    <slot v-bind:file="fileName">
+    <slot v-bind:file="fileName" v-if="displayName">
       <p class="mt-1 d-block">
         {{ fileName }}
         <button
@@ -75,7 +75,8 @@ export default {
       loading: {
         delete: false,
         submit: false
-      }
+      },
+      displayName: false
     };
   },
   methods: {
@@ -125,6 +126,7 @@ export default {
             this.$toast.error("File tidak berhasil diunggah");
           })
           .finally(() => {
+            this.displayName = true;
             this.loading.submit = false;
           });
       }

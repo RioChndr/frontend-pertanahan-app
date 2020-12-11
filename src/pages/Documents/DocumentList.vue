@@ -37,10 +37,10 @@ export default {
   },
   async mounted() {
     const responseDocument = await apiGetListDocument();
-    console.log(responseDocument);
     if (responseDocument.status === 200) {
       this.documents = responseDocument.data.message.documents;
     }
-  }
+  },
+  computed: {}
 };
 </script>

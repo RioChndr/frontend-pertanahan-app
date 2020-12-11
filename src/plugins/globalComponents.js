@@ -6,6 +6,9 @@ import { FormGroupInput, Card, DropDown, Button } from "../components/index";
 // Vue Select
 import vSelect from "vue-select";
 
+import LoadingOverlay from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
+
 const GlobalComponents = {
   install(Vue) {
     Vue.component("fg-input", FormGroupInput);
@@ -13,6 +16,7 @@ const GlobalComponents = {
     Vue.component("card", Card);
     Vue.component("p-button", Button);
     Vue.component("v-select", vSelect);
+    Vue.component("v-loading", LoadingOverlay);
   }
 };
 

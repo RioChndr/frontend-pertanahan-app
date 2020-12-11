@@ -1,10 +1,10 @@
 <template>
   <div class="content">
     <div class="container-fluid">
-        <transition name="fade" mode="out-in">
-          <!-- your content here -->
-          <router-view></router-view>
-        </transition>
+      <transition name="fade" mode="out-in">
+        <!-- your content here -->
+        <router-view></router-view>
+      </transition>
     </div>
   </div>
 </template>
@@ -23,5 +23,9 @@ export default {};
 
  {
   opacity: 0;
+}
+
+.content {
+  margin-bottom: 3rem;
 }
 </style>

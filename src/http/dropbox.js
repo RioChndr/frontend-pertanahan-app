@@ -15,7 +15,8 @@ export function uploadFile({ fileName: fileName, fileDocument: file }) {
 }
 
 export function downloadFile({ filePath: filePath }) {
-  return dbx.filesDownload({ path: filePath });
+  // return dbx.filesDownload({ path: filePath });
+  return dbx.filesGetTemporaryLink({ path: filePath });
 }
 
 export function deleteFile({ filePath: filePath }) {

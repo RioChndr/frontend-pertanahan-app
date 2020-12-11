@@ -96,7 +96,10 @@ export default {
     handleFileUpload() {
       const files = this.$refs[this.properties].files;
 
-      if (!this.form.description) {
+      if (
+        !this.form.description &&
+        this.uploadedFileName === "file_sertifikat_hak_atas_tanah"
+      ) {
         this.$toast.error("Harap isi jenis Sertifikat Hak Atas Tanah");
         return;
       }
@@ -133,6 +136,9 @@ export default {
               v => v.charAt(0).toUpperCase() + v.substr(1).toLowerCase()
             );
             this.$toast.success(`${docTitle} berhasil diunggal`);
+            return this.$store.dispatch("apiGetDetailDocument", {
+              doc_id: this.$route.params.id
+            });
           })
           .catch(err => {
             console.error("error", err);

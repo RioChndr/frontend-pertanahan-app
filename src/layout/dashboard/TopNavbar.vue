@@ -18,7 +18,7 @@
           <li class="nav-item d-flex align-item-center">
             <!-- <span> -->
             <!-- <i class="ti-panel"></i> -->
-            <p class="m-0">Selamat Datang, {{ user.full_name }}</p>
+            <p class="m-0">Selamat Datang, {{ userInfo.full_name }}</p>
             <!-- </span> -->
           </li>
           <!-- <li class="nav-item">
@@ -53,8 +53,10 @@
   </nav>
 </template>
 <script>
+import { mapState } from "vuex";
 export default {
   computed: {
+    ...mapState(["userInfo"]),
     routeName() {
       const { name } = this.$route;
       return this.capitalizeFirstLetter(name);
@@ -62,8 +64,7 @@ export default {
   },
   data() {
     return {
-      activeNotifications: false,
-      user: JSON.parse(localStorage.getItem(process.env.VUE_APP_USER_INFO))
+      activeNotifications: false
     };
   },
   methods: {
