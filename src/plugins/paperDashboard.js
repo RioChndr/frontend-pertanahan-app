@@ -5,10 +5,18 @@ import GlobalDirectives from "./globalDirectives";
 import "es6-promise/auto";
 
 // vue toastification
-import Toast, { POSITION } from "vue-toastification";
+import Toast, { POSITION, TYPE } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 const options = {
-  position: POSITION.BOTTOM_RIGHT
+  position: POSITION.BOTTOM_RIGHT,
+  toastDefaults: {
+    [TYPE.ERROR]: {
+      timeout: 3000
+    },
+    [TYPE.SUCCESS]: {
+      timeout: 2000
+    }
+  }
 };
 
 //css assets

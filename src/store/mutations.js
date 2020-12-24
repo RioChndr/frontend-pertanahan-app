@@ -5,6 +5,7 @@ export default {
     state.detailDocument = payload;
   },
   setServices(state, payload) {
+    state.services = [];
     state.services.push(...payload);
   }
 };

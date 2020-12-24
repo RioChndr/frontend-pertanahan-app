@@ -48,7 +48,11 @@
 
 <script>
 import { createSharedLink, deleteFile, uploadFile } from "@/http/dropbox";
-import { apiPostFile } from "../../../http/api";
+import {
+  apiPostFile,
+  apiRemoveFile,
+  apiRemoveService
+} from "../../../http/api";
 export default {
   name: "document-input-file-service",
   props: {
@@ -130,11 +134,12 @@ export default {
             this.form.document_id = this.subFolder;
             return apiPostFile(this.form);
           })
-          .then(() =>
+          .then(result => {
+            console.log(result);
             this.$store.dispatch("apiGetDetailDocument", {
               doc_id: this.$route.params.id
-            })
-          )
+            });
+          })
           .then(() => this.$toast.success(`File berhasil diunggal`))
           .catch(err => {
             console.error("error", err);
@@ -148,16 +153,21 @@ export default {
     },
     removeFile() {
       this.loading.delete = true;
-      deleteFile({ filePath: this.filePath })
+
+      deleteFile({ filePath: this.form.file_path })
         .then(result => {
-          this.fileName = null;
-          this.fileUrl = null;
-          this.filePath = null;
+          this.form.file_name = null;
+          this.form.file_url = null;
+          this.form.file_path = null;
+          this.form.file_type = null;
+          this.$toast.success("File Berhasil terhapus");
+          return apiRemoveFile();
         })
         .catch(err => {
           this.$toast.error("File Tidak Terhapus");
         })
         .finally(() => {
+          this.displayButton = true;
           this.loading.delete = false;
         });
     }

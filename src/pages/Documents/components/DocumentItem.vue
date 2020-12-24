@@ -3,12 +3,34 @@
     <div class="card-no-shadow">
       <div class="card-flex-top">
         <div class="card-flex-left">
-          <p class="m-0">Pemohon</p>
-          <h4 class="m-0">{{ detail.authorized_name }}</h4>
-        </div>
-        <div class="card-flex-right">
-          <p>Dokumen</p>
-          <h4 class="m-0">{{ detail.files.length }}</h4>
+          <span
+            class="badge badge-info float-right mt-1"
+            v-if="!detail.is_submitted"
+          >
+            Belum Diajukan
+          </span>
+
+          <span
+            class="badge badge-primary float-right mt-1"
+            v-else-if="detail.is_submitted && detail.is_waiting"
+          >
+            Menunggu Persetujuan
+          </span>
+
+          <span
+            class="badge badge-primary float-right mt-1"
+            v-else-if="detail.is_done"
+          >
+            Diajukan
+          </span>
+
+          <span class="d-flex align-items-center">
+            <h4 class="m-0">{{ detail.service.service_name }}</h4>
+            <p class="m-0 ml-2">
+              <small> ( {{ detail.files.length }} Dokumen ) </small>
+            </p>
+          </span>
+          <p class="m-0">{{ detail.authorized_name }}</p>
         </div>
       </div>
       <router-link
@@ -41,7 +63,7 @@ export default {
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  min-height: 10rem;
+  min-height: 8rem;
   position: relative;
 
   & p {

@@ -1,7 +1,12 @@
 <template>
-  <div class="auth-page">
+  <div
+    class="auth-page"
+    :style="{
+      backgroundImage: 'url(' + require('@/assets/img/2.png') + ')'
+    }"
+  >
     <div class="auth-container">
-      <div class="auth-container-image"></div>
+      <!-- <div class="auth-container-image"></div> -->
       <div class="auth-container-form">
         <router-view></router-view>
       </div>
@@ -21,11 +26,15 @@ export default {};
   display: flex;
   justify-content: center;
   align-items: center;
+  // padding: 0 2.5rem;
 
-  background-color: #f4f3ef;
+  // background-color: #f4f3ef;
+  background-repeat: no-repeat;
+  background-size: 100vw 100vh;
+  background-position: center;
 
   .auth-container {
-    width: 50vw;
+    width: 25vw;
     height: 60vh;
 
     display: flex;
@@ -38,6 +47,8 @@ export default {};
       background-color: #35495e;
       border-top-left-radius: 4px;
       border-bottom-left-radius: 4px;
+      // background-repeat: no-repeat;
+      // background-size: cover;
     }
 
     .auth-container-form {

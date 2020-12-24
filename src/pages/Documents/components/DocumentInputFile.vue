@@ -5,10 +5,13 @@
       <button
         class="btn-block d-flex align-items-center justify-content-center border-0"
         @click="openModalUpload"
+        :disabled="loading.submit"
       >
-        Unggah Dokumen
-        <i class="fa fa-spinner fa-spin fa-fw" v-if="loading.submit"></i>
-        <span v-else class="ti-upload ml-2"></span>
+        <i class="fa fa-spinner fa-spin fa-fw my-1" v-if="loading.submit"></i>
+        <span v-else>
+          Unggah Dokumen
+          <span class="ti-upload ml-2"></span>
+        </span>
       </button>
       <input
         v-show="false"
@@ -65,6 +68,10 @@ export default {
     authorizedIdentity: {
       type: String,
       default: null
+    },
+    documentId: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -87,20 +94,29 @@ export default {
       const files = this.$refs[this.properties].files;
 
       if (files.length) {
+        const selectedFile = files[0];
+        const MAX_SIZE = 1 * 1024 * 1024;
+        if (selectedFile.size > MAX_SIZE) {
+          this.$toast.error("Ukuran file yang diupload maksimal 1 MB");
+          return;
+        }
+
+        if (selectedFile.type !== "application/pdf") {
+          this.$toast.error("File yang diupload harus berupa PDF");
+          return;
+        }
+
         this.loading.submit = true;
 
-        const selectedFile = files[0];
         const fileType = selectedFile.name.split(".")[1];
         const userId = JSON.parse(
           localStorage.getItem(process.env.VUE_APP_USER_INFO)
         ).id;
 
-        const subFolder = this.authorizerIdentity || this.authorizedIdentity;
-
         const fileName =
           userId +
           "/" +
-          subFolder +
+          this.documentId +
           "/" +
           this.uploadedFileName +
           "_" +
@@ -135,7 +151,6 @@ export default {
       this.loading.delete = true;
       deleteFile({ filePath: this.filePath })
         .then(result => {
-          console.log(result);
           this.$emit("get-uploaded-url", this.fileUrlName, null);
           this.$emit("get-uploaded-url", this.properties, null);
 

@@ -1,5 +1,6 @@
 import axios from "./axios";
 
+//#region Auth
 export function apiPostLogin({ email: email, password: password }) {
   return axios.post(`auth/login`, { email: email, password: password });
 }
@@ -16,28 +17,69 @@ export function apiPostSignup({
   });
 }
 
+export function apiPostVerifyAuthGoogle(id_token) {
+  return axios.post(`auth/verify`, {
+    id_token
+  });
+}
+//#endregion
+
+//#region Document
 export function apiPostDocument(formData) {
   return axios.post(`documents`, formData);
-}
-
-export function apiPostFile(formData) {
-  return axios.post(`files`, formData);
 }
 
 export function apiGetListDocument() {
   return axios.get(`documents`);
 }
 
-export function apiGetServices() {
-  return axios.get(`services`);
-}
-
 export function apiGetDetailDocument(docId) {
   return axios.get(`documents/${docId}`);
 }
 
-export function apiPostVerifyAuthGoogle(id_token) {
-  return axios.post(`auth/verify`, {
-    id_token
-  });
+export function apiPutDocument(docId, formData = {}) {
+  return axios.put(`documents/${docId}`, formData);
 }
+
+export function apiFindDocument(keyword = null) {
+  return axios.get(`documents/find?keyword=${keyword}`);
+}
+//#endregion
+
+//#region Service
+export function apiGetServices() {
+  return axios.get(`services`);
+}
+
+export function apiGetService(serviceId) {
+  return axios.get(`services/${serviceId}`);
+}
+
+export function apiPostService(formData = {}) {
+  return axios.post(`services`, formData);
+}
+
+export function apiPatchService(serviceId = null, formData = {}) {
+  return axios.patch(`services/${serviceId}`, formData);
+}
+
+export function apiRemoveService(serviceId) {
+  return axios.delete(`services/${serviceId}`);
+}
+//#endregion
+
+//#region Files
+export function apiPostFile(formData) {
+  return axios.post(`files`, formData);
+}
+
+export function apiRemoveFile(fileId) {
+  return axios.delete(`files/${fileId}`);
+}
+//#endregion
+
+//#region Users
+export function apiGetListUsers(page = 0, pageSize = 5) {
+  return axios.get(`users?page=${page}&pageSize=${pageSize}`);
+}
+//#endregion

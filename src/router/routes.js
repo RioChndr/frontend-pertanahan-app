@@ -22,11 +22,22 @@ const DocumentCreate = () => import("@/pages/Documents/DocumentCreate.vue");
 const DocumenList = () => import("@/pages/Documents/DocumentList.vue");
 const DocumentUploadFile = () => import("@/pages/Documents/DocumentUploadFile");
 
+// Setting Pages
+const SettingLayout = () => import("@/pages/Setting/SettingLayout.vue");
+const SettingUsers = () => import("@/pages/Setting/SettingUsers.vue");
+const SettingServices = () => import("@/pages/Setting/SettingServices.vue");
+const SettingServicesCreate = () =>
+  import("@/pages/Setting/SettingServicesCreate.vue");
+
+// let roleId = null;
+const userInfo = JSON.parse(
+  localStorage.getItem(process.env.VUE_APP_USER_INFO)
+);
+
 const routes = [
   {
     path: "/",
     component: DashboardLayout,
-    redirect: "/request",
     children: [
       {
         path: "dashboard",
@@ -75,6 +86,28 @@ const routes = [
             path: "upload-file/:id",
             name: "upload-file",
             component: DocumentUploadFile
+          }
+        ]
+      },
+      {
+        path: "/setting",
+        component: SettingLayout,
+        children: [
+          { path: "users", name: "users", component: SettingUsers },
+          {
+            path: "services",
+            name: "services",
+            component: SettingServices
+          },
+          {
+            path: "services/create",
+            name: "services.create",
+            component: SettingServicesCreate
+          },
+          {
+            path: "services/edit/:id",
+            name: "services.edit",
+            component: SettingServicesCreate
           }
         ]
       }

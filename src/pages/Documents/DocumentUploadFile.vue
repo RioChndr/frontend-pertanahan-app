@@ -54,6 +54,15 @@
           </h4>
         </div>
 
+        <div class="form-group">
+          <label for="services" class="control-label">
+            Jenis Layanan
+          </label>
+          <h4 class="m-0 font-weight-bold">
+            {{ detailDocument.service.service_name }}
+          </h4>
+        </div>
+
         <div id="section-authorizer" v-if="detailDocument.authorizer_name">
           <hr />
 
@@ -75,6 +84,16 @@
             </h4>
           </div>
         </div>
+        <div class="form-group" v-if="!detailDocument.is_submitted">
+          <button
+            class="btn btn-info"
+            :disabled="fileLength === 0"
+            @click.prevent="submitRequest"
+          >
+            Ajukan Permohonan
+          </button>
+        </div>
+
         <hr />
 
         <div class="form-group">
@@ -89,7 +108,6 @@
             >
               <div class="card border">
                 <div class="card-body">
-                  <p>{{ file.service.service_name }}</p>
                   <p>{{ file.file_type | fileType }}</p>
                 </div>
                 <div class="card-footer d-flex justify-content-between">
@@ -111,192 +129,179 @@
       </div>
 
       <div class="col-lg-6 col-md-6 col-sm-10 border mx-2 px-4">
-        <!-- Jenis Layanan -->
-        <div class="form-group">
-          <label for="services" class="control-label">Jenis Layanan *</label>
-          <v-select
-            :options="services"
-            label="service_name"
-            :reduce="service => service.id"
-            v-model="form.service_id"
-          ></v-select>
-        </div>
+        <!-- Surat Permohonan -->
+        <document-input-file-service
+          uploaded-file-name="surat_permohonan"
+          properties="application_letter"
+          file-url-name="application_letter_url"
+          :service-id="form.service_id"
+          :sub-folder="$route.params.id"
+          :identity-card="identityCard"
+        >
+          <template #label>
+            <label for="authorized_card_path" class="control-label">
+              Surat Permohonan *
+            </label>
+          </template>
+        </document-input-file-service>
 
-        <div v-if="form.service_id">
-          <!-- Surat Permohonan -->
-          <document-input-file-service
-            uploaded-file-name="surat_permohonan"
-            properties="application_letter"
-            file-url-name="application_letter_url"
-            :service-id="form.service_id"
-            :sub-folder="$route.params.id"
-            :identity-card="identityCard"
-          >
-            <template #label>
-              <label for="authorized_card_path" class="control-label">
-                Surat Permohonan *
-              </label>
-            </template>
-          </document-input-file-service>
+        <!-- Bukti Alas Hak -->
+        <document-input-file-service
+          uploaded-file-name="bukti_alas_hak"
+          properties="proof_of_rights"
+          :service-id="form.service_id"
+          :sub-folder="$route.params.id"
+          :identity-card="identityCard"
+        >
+          <template #label>
+            <label for="bukti_alas_hak" class="control-label">
+              Bukti Alas Hak *
+            </label>
+          </template>
+        </document-input-file-service>
 
-          <!-- Bukti Alas Hak -->
-          <document-input-file-service
-            uploaded-file-name="bukti_alas_hak"
-            properties="proof_of_rights"
-            :service-id="form.service_id"
-            :sub-folder="$route.params.id"
-            :identity-card="identityCard"
-          >
-            <template #label>
-              <label for="bukti_alas_hak" class="control-label">
-                Bukti Alas Hak *
-              </label>
-            </template>
-          </document-input-file-service>
+        <!-- Pajak Bumi dan Bangunan -->
+        <document-input-file-service
+          uploaded-file-name="pajak_bumi_dan_bangunan"
+          properties="property_tax"
+          :service-id="form.service_id"
+          :sub-folder="$route.params.id"
+          :identity-card="identityCard"
+        >
+          <template #label>
+            <label for="pajak_bumi_dan_bangunan" class="control-label">
+              Pajak Bumi dan Bangunan *
+            </label>
+          </template>
+        </document-input-file-service>
 
-          <!-- Pajak Bumi dan Bangunan -->
-          <document-input-file-service
-            uploaded-file-name="pajak_bumi_dan_bangunan"
-            properties="property_tax"
-            :service-id="form.service_id"
-            :sub-folder="$route.params.id"
-            :identity-card="identityCard"
-          >
-            <template #label>
-              <label for="pajak_bumi_dan_bangunan" class="control-label">
-                Pajak Bumi dan Bangunan *
-              </label>
-            </template>
-          </document-input-file-service>
+        <!-- Bukti Verifikasi BPHTB -->
+        <document-input-file-service
+          uploaded-file-name="bukti_verifikasi_bphtb"
+          properties="verification_bphtb"
+          :service-id="form.service_id"
+          :sub-folder="$route.params.id"
+          :identity-card="identityCard"
+        >
+          <template #label>
+            <label for="bukti_verifikasi_bphtb" class="control-label">
+              Bukti Verifikasi BPHTB
+              <small>( Jika jenis layanan mewajibkan)</small>
+            </label>
+          </template>
+        </document-input-file-service>
 
-          <!-- Bukti Verifikasi BPHTB -->
-          <document-input-file-service
-            uploaded-file-name="bukti_verifikasi_bphtb"
-            properties="verification_bphtb"
-            :service-id="form.service_id"
-            :sub-folder="$route.params.id"
-            :identity-card="identityCard"
-          >
-            <template #label>
-              <label for="bukti_verifikasi_bphtb" class="control-label">
-                Bukti Verifikasi BPHTB
-                <small>( Jika jenis layanan mewajibkan)</small>
-              </label>
-            </template>
-          </document-input-file-service>
+        <!-- File Akta -->
+        <document-input-file-service
+          uploaded-file-name="file_akta"
+          properties="file_akta"
+          :service-id="form.service_id"
+          :sub-folder="$route.params.id"
+          :identity-card="identityCard"
+        >
+          <template #label>
+            <label for="file_akta" class="control-label">
+              File Akta
+              <small>
+                (Jika Permohonan Peralihan, File ini Wajib Di Upload Semua
+                Halaman)
+              </small>
+            </label>
+          </template>
+        </document-input-file-service>
 
-          <!-- File Akta -->
-          <document-input-file-service
-            uploaded-file-name="file_akta"
-            properties="file_akta"
-            :service-id="form.service_id"
-            :sub-folder="$route.params.id"
-            :identity-card="identityCard"
-          >
-            <template #label>
-              <label for="file_akta" class="control-label">
-                File Akta
-                <small>
-                  (Jika Permohonan Peralihan, File ini Wajib Di Upload Semua
-                  Halaman)
-                </small>
-              </label>
-            </template>
-          </document-input-file-service>
+        <!-- Sertifikat Hak Atas Tanah -->
+        <document-input-file-service
+          uploaded-file-name="file_sertifikat_hak_atas_tanah"
+          properties="file_sertifikat_hak_atas_tanah"
+          :service-id="form.service_id"
+          :sub-folder="$route.params.id"
+          :identity-card="identityCard"
+        >
+          <template #label>
+            <label for="file_sertifikat_hak_atas_tanah" class="control-label">
+              File Sertipikat Hak Atas Tanah *
+              <small>
+                Berwarna Seperti Sertipikat Aslinya Semua Halaman
+              </small>
+            </label>
+          </template>
+        </document-input-file-service>
 
-          <!-- Sertifikat Hak Atas Tanah -->
-          <document-input-file-service
-            uploaded-file-name="file_sertifikat_hak_atas_tanah"
-            properties="file_sertifikat_hak_atas_tanah"
-            :service-id="form.service_id"
-            :sub-folder="$route.params.id"
-            :identity-card="identityCard"
-          >
-            <template #label>
-              <label for="file_sertifikat_hak_atas_tanah" class="control-label">
-                File Sertipikat Hak Atas Tanah *
-                <small>
-                  Berwarna Seperti Sertipikat Aslinya Semua Halaman
-                </small>
-              </label>
-            </template>
-          </document-input-file-service>
+        <!-- Kelengkapan Berkas Lainnya 1 -->
+        <document-input-file-service
+          uploaded-file-name="kelengkapan_berkas_lainnya_1"
+          properties="kelengkapan_berkas_lainnya_1"
+          :service-id="form.service_id"
+          :sub-folder="$route.params.id"
+          :identity-card="identityCard"
+        >
+          <template #label>
+            <label for="kelengkapan_berkas_lainnya_1" class="control-label">
+              Kelengkapan Berkas Lainnya 1
+            </label>
+          </template>
+        </document-input-file-service>
 
-          <!-- Kelengkapan Berkas Lainnya 1 -->
-          <document-input-file-service
-            uploaded-file-name="kelengkapan_berkas_lainnya_1"
-            properties="kelengkapan_berkas_lainnya_1"
-            :service-id="form.service_id"
-            :sub-folder="$route.params.id"
-            :identity-card="identityCard"
-          >
-            <template #label>
-              <label for="kelengkapan_berkas_lainnya_1" class="control-label">
-                Kelengkapan Berkas Lainnya 1
-              </label>
-            </template>
-          </document-input-file-service>
+        <!-- Kelengkapan Berkas Lainnya 2 -->
+        <document-input-file-service
+          uploaded-file-name="kelengkapan_berkas_lainnya_2"
+          properties="kelengkapan_berkas_lainnya_2"
+          :service-id="form.service_id"
+          :sub-folder="$route.params.id"
+          :identity-card="identityCard"
+        >
+          <template #label>
+            <label for="kelengkapan_berkas_lainnya_2" class="control-label">
+              Kelengkapan Berkas Lainnya 2
+            </label>
+          </template>
+        </document-input-file-service>
 
-          <!-- Kelengkapan Berkas Lainnya 2 -->
-          <document-input-file-service
-            uploaded-file-name="kelengkapan_berkas_lainnya_2"
-            properties="kelengkapan_berkas_lainnya_2"
-            :service-id="form.service_id"
-            :sub-folder="$route.params.id"
-            :identity-card="identityCard"
-          >
-            <template #label>
-              <label for="kelengkapan_berkas_lainnya_2" class="control-label">
-                Kelengkapan Berkas Lainnya 2
-              </label>
-            </template>
-          </document-input-file-service>
+        <!-- Kelengkapan Berkas Lainnya 3 -->
+        <document-input-file-service
+          uploaded-file-name="kelengkapan_berkas_lainnya_3"
+          properties="kelengkapan_berkas_lainnya_3"
+          :service-id="form.service_id"
+          :sub-folder="$route.params.id"
+          :identity-card="identityCard"
+        >
+          <template #label>
+            <label for="kelengkapan_berkas_lainnya_3" class="control-label">
+              Kelengkapan Berkas Lainnya 3
+            </label>
+          </template>
+        </document-input-file-service>
 
-          <!-- Kelengkapan Berkas Lainnya 3 -->
-          <document-input-file-service
-            uploaded-file-name="kelengkapan_berkas_lainnya_3"
-            properties="kelengkapan_berkas_lainnya_3"
-            :service-id="form.service_id"
-            :sub-folder="$route.params.id"
-            :identity-card="identityCard"
-          >
-            <template #label>
-              <label for="kelengkapan_berkas_lainnya_3" class="control-label">
-                Kelengkapan Berkas Lainnya 3
-              </label>
-            </template>
-          </document-input-file-service>
+        <!-- Kelengkapan Berkas Lainnya 4 -->
+        <document-input-file-service
+          uploaded-file-name="kelengkapan_berkas_lainnya_4"
+          properties="kelengkapan_berkas_lainnya_4"
+          :service-id="form.service_id"
+          :sub-folder="$route.params.id"
+          :identity-card="identityCard"
+        >
+          <template #label>
+            <label for="kelengkapan_berkas_lainnya_4" class="control-label">
+              Kelengkapan Berkas Lainnya 4
+            </label>
+          </template>
+        </document-input-file-service>
 
-          <!-- Kelengkapan Berkas Lainnya 4 -->
-          <document-input-file-service
-            uploaded-file-name="kelengkapan_berkas_lainnya_4"
-            properties="kelengkapan_berkas_lainnya_4"
-            :service-id="form.service_id"
-            :sub-folder="$route.params.id"
-            :identity-card="identityCard"
-          >
-            <template #label>
-              <label for="kelengkapan_berkas_lainnya_4" class="control-label">
-                Kelengkapan Berkas Lainnya 4
-              </label>
-            </template>
-          </document-input-file-service>
-
-          <!-- Kelengkapan Berkas Lainnya 5 -->
-          <document-input-file-service
-            uploaded-file-name="kelengkapan_berkas_lainnya_5"
-            properties="kelengkapan_berkas_lainnya_5"
-            :service-id="form.service_id"
-            :sub-folder="$route.params.id"
-            :identity-card="identityCard"
-          >
-            <template #label>
-              <label for="kelengkapan_berkas_lainnya_5" class="control-label">
-                Kelengkapan Berkas Lainnya 5
-              </label>
-            </template>
-          </document-input-file-service>
-        </div>
+        <!-- Kelengkapan Berkas Lainnya 5 -->
+        <document-input-file-service
+          uploaded-file-name="kelengkapan_berkas_lainnya_5"
+          properties="kelengkapan_berkas_lainnya_5"
+          :service-id="form.service_id"
+          :sub-folder="$route.params.id"
+          :identity-card="identityCard"
+        >
+          <template #label>
+            <label for="kelengkapan_berkas_lainnya_5" class="control-label">
+              Kelengkapan Berkas Lainnya 5
+            </label>
+          </template>
+        </document-input-file-service>
       </div>
     </div>
   </div>
@@ -429,14 +434,8 @@ export default {
   created() {
     this.loadingOverlay = true;
     this.$store
-      .dispatch("apiGetServices")
-      .then(result => {
-        return this.$store.dispatch("apiGetDetailDocument", {
-          doc_id: this.$route.params.id
-        });
-      })
-      .catch(err => {
-        console.error(err);
+      .dispatch("apiGetDetailDocument", {
+        doc_id: this.$route.params.id
       })
       .finally(() => {
         this.loadingOverlay = false;
@@ -455,10 +454,35 @@ export default {
         .catch(err => {
           console.error(err);
         });
+    },
+    submitRequest() {
+      this.loadingOverlay = true;
+      this.$store
+        .dispatch("actionPutDocument", {
+          doc_id: this.$route.params.id,
+          form: {
+            is_submitted: true,
+            is_waiting: true
+          }
+        })
+        .then(() => {
+          this.$toast.success("Permohonan Berhasil diajukan");
+        })
+        .catch(err => console.error(err, "Error"))
+        .finally(() => {
+          this.loadingOverlay = false;
+        });
     }
   },
   computed: {
-    ...mapState(["detailDocument", "services"])
+    ...mapState(["detailDocument"]),
+    fileLength() {
+      return (
+        this.detailDocument &&
+        this.detailDocument.files &&
+        this.detailDocument.files.length
+      );
+    }
   }
 };
 </script>

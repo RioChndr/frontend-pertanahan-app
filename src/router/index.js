@@ -10,11 +10,21 @@ const router = new VueRouter({
 });
 
 const token = localStorage.getItem(process.env.VUE_APP_TOKEN_STORAGE);
+let userInfo =
+  JSON.parse(localStorage.getItem(process.env.VUE_APP_USER_INFO)) || null;
+let roleId = userInfo && userInfo.role && userInfo.role.id;
+
 router.beforeEach((to, from, next) => {
   if (to.name !== "login" && to.name !== "signup" && !token)
     next({ name: "login" });
   else if ((token && to.name === "login") || (token && to.name === "signup")) {
-    next({ name: "request" });
+    if (roleId === 5) {
+      next({ name: "dashboard" });
+    } else {
+      next({ name: "request" });
+    }
+  } else if (to.path === "/" && roleId === 5) {
+    next({ name: "dashboard" });
   } else {
     next();
   }

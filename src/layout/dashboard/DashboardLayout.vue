@@ -2,23 +2,39 @@
   <div class="wrapper">
     <side-bar>
       <template slot="links">
-        <!-- <sidebar-link to="/dashboard" name="Dashboard" icon="ti-panel" /> -->
-        <!-- <sidebar-link to="/stats" name="User Profile" icon="ti-user" /> -->
-        <sidebar-link to="/request" name="Permohonan" icon="ti-view-list-alt" />
         <sidebar-link
+          v-if="userInfo.role.id === 3"
+          to="/request"
+          name="Permohonan"
+          icon="ti-view-list-alt"
+        />
+        <sidebar-link
+          v-if="userInfo.role.id === 3"
           to="/request/create"
           name="Buat Permohonan"
           icon="ti-plus"
         />
-        <!-- <sidebar-link
-          to="/table-list"
-          name="Table List"
-          icon="ti-view-list-alt"
-        /> -->
-        <!-- <sidebar-link to="/typography" name="Typography" icon="ti-text" /> -->
-        <!-- <sidebar-link to="/icons" name="Icons" icon="ti-pencil-alt2" /> -->
-        <!-- <sidebar-link to="/maps" name="Map" icon="ti-map" /> -->
-        <!-- <sidebar-link to="/notifications" name="Notifications" icon="ti-bell" /> -->
+
+        <sidebar-link
+          v-if="userInfo.role.id === 5"
+          to="/dashboard"
+          name="Dashboard"
+          icon="ti-home"
+        />
+
+        <sidebar-link
+          v-if="userInfo.role.id === 5"
+          to="/setting/users"
+          name="Pengguna"
+          icon="ti-user"
+        />
+
+        <sidebar-link
+          v-if="userInfo.role.id === 5"
+          to="/setting/services"
+          name="Pelayanan"
+          icon="ti-rss-alt"
+        />
 
         <li class="nav-item" @click="logout" style="cursor: pointer">
           <div class="nav-link d-flex ">
@@ -88,6 +104,11 @@ export default {
     logout() {
       localStorage.clear();
       window.location.reload();
+    }
+  },
+  computed: {
+    userInfo() {
+      return this.$store.state.userInfo;
     }
   }
 };

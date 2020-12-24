@@ -58,10 +58,11 @@
             :authorizer-identity="form.authorizer_card_identity"
             :authorized-identity="form.authorized_card_identity"
             @get-uploaded-url="uploadedUrl"
+            :document-id="form.unique_id"
           >
             <template #label>
               <label for="authorized_card_path" class="control-label">
-                File Penerima Kuasa ( KTP ) *
+                File Penerima Kuasa / Pemohon ( KTP ) *
               </label>
             </template>
           </document-input-file>
@@ -77,6 +78,20 @@
               placeholder="Nomor telepon yang bisa kami hubungi"
               type="text"
             ></fg-input>
+          </div>
+        </div>
+
+        <div
+          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-lg-3 offset-sm-2"
+        >
+          <div class="form-group">
+            <label for="services" class="control-label">Jenis Layanan *</label>
+            <v-select
+              :options="services"
+              label="service_name"
+              :reduce="service => service.id"
+              v-model="form.service_id"
+            ></v-select>
           </div>
         </div>
 
@@ -138,6 +153,7 @@
             :authorizer-identity="form.authorizer_card_identity"
             :authorized-identity="form.authorized_card_identity"
             @get-uploaded-url="uploadedUrl"
+            :document-id="form.unique_id"
           >
             <template #label>
               <label for="authorizer_card_path" class="control-label">
@@ -151,7 +167,11 @@
           class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
         >
           <div class="form-group">
-            <button class="btn btn-block" @click.prevent="postDocument">
+            <button
+              class="btn btn-block"
+              @click.prevent="postDocument"
+              :disabled="loading"
+            >
               Simpan
               <i class="fa fa-spinner fa-spin fa-fw" v-if="loading"></i>
             </button>
@@ -163,8 +183,9 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import { apiPostDocument } from "../../http/api";
-import { createSharedLink, uploadFile } from "../../http/dropbox";
+import { createSharedLink, deleteFile, uploadFile } from "../../http/dropbox";
 import DocumentInputFile from "./components/DocumentInputFile";
 export default {
   components: {
@@ -182,7 +203,9 @@ export default {
         authorizer_name: null,
         authorizer_card_path: null,
         authorizer_card_url: null,
-        authorizer_card_identity: null
+        authorizer_card_identity: null,
+        unique_id: null,
+        service_id: null
       },
 
       document: {
@@ -206,6 +229,16 @@ export default {
       this.form[ref] = url;
     },
     postDocument() {
+      if (!this.form.email) {
+        this.$toast.error("Email Wajib Terisi");
+        return;
+      }
+
+      if (!this.form.authorized_phone_number) {
+        this.$toast.error("Nomor Telepon Wajib Terisi");
+        return;
+      }
+
       this.loading = true;
       apiPostDocument(this.form)
         .then(result => {
@@ -213,12 +246,30 @@ export default {
         })
         .catch(err => {
           this.$toast.error("Permohonan Gagal Diajukan");
+          if (this.form.authorized_card_path) {
+            deleteFile({ filePath: this.form.authorized_card_path });
+          }
+
+          if (this.form.authorizer_card_path) {
+            deleteFile({ filePath: this.form.authorizer_card_path });
+          }
         })
         .finally(() => {
           this.$router.replace({ name: "request" });
           this.loading = false;
         });
     }
+  },
+  created() {
+    const dateNow = Date.now();
+    const mathRandom = Math.floor(Math.random() * 99999999);
+    const uniqueId = dateNow + mathRandom;
+    this.form.unique_id = uniqueId;
+
+    this.$store.dispatch("apiGetServices");
+  },
+  computed: {
+    ...mapState(["services"])
   }
 };
 </script>

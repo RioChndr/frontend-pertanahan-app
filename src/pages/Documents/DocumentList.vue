@@ -14,6 +14,12 @@
     </div>
 
     <div class="row" v-if="documents.length">
+      <div class="col">
+        <h3 class="m-0">List Permohonan Pengajuan</h3>
+        <hr />
+      </div>
+    </div>
+    <div class="row" v-if="documents.length">
       <document-item-vue
         v-for="d in documents"
         :key="d.id"

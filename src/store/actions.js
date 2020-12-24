@@ -1,5 +1,9 @@
 import "es6-promise/auto";
-import { apiGetDetailDocument, apiGetServices } from "../http/api";
+import {
+  apiGetDetailDocument,
+  apiGetServices,
+  apiPutDocument
+} from "../http/api";
 
 export default {
   apiGetDetailDocument({ commit }, payload) {
@@ -27,5 +31,20 @@ export default {
           reject(err);
         });
     });
+  },
+
+  //#region Document
+  actionPutDocument({ commit, dispatch }, payload) {
+    return new Promise((resolve, reject) => {
+      apiPutDocument(payload.doc_id, payload.form)
+        .then(result => {
+          dispatch("apiGetDetailDocument", payload);
+          resolve(result);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
+  //#endregionr
 };

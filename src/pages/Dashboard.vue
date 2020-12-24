@@ -2,100 +2,174 @@
   <div>
     <!--Stats cards-->
     <div class="row">
-      <div
-        class="col-md-6 col-xl-3"
-        v-for="stats in statsCards"
-        :key="stats.title"
-      >
-        <stats-card>
-          <div
-            class="icon-big text-center"
-            :class="`icon-${stats.type}`"
-            slot="header"
-          >
-            <i :class="stats.icon"></i>
-          </div>
-          <div class="numbers" slot="content">
-            <p>{{ stats.title }}</p>
-            {{ stats.value }}
-          </div>
-          <div class="stats" slot="footer">
-            <i :class="stats.footerIcon"></i> {{ stats.footerText }}
-          </div>
-        </stats-card>
+      <div class="col-md-6 col-lg-6 col-sm-12 offset-md-3 offset-lg-3">
+        <p for="keyword" class="text-center">Masukan Kata Kunci</p>
+        <input
+          type="text"
+          class="form-control border form-control-lg"
+          name="keyword"
+          placeholder="Email / No. Unik / Nama Pemohon / Nama Pemberi Kuasa"
+          v-model="keyword"
+          @keyup="findKeyword"
+        />
       </div>
     </div>
 
-    <!--Charts-->
     <div class="row">
-      <!-- <div class="col-12">
-        <chart-card
-          title="Users behavior"
-          sub-title="24 Hours performance"
-          :chart-data="usersChart.data"
-          :chart-options="usersChart.options"
-        >
-          <span slot="footer">
-            <i class="ti-reload"></i> Updated 3 minutes ago
-          </span>
-          <div slot="legend">
-            <i class="fa fa-circle text-info"></i> Open
-            <i class="fa fa-circle text-danger"></i> Click
-            <i class="fa fa-circle text-warning"></i> Click Second Time
-          </div>
-        </chart-card>
-      </div> -->
-
-      <!-- <div class="col-md-6 col-12">
-        <chart-card
-          title="Email Statistics"
-          sub-title="Last campaign performance"
-          :chart-data="preferencesChart.data"
-          chart-type="Pie"
-        >
-          <span slot="footer">
-            <i class="ti-timer"></i> Campaign set 2 days ago</span
-          >
-          <div slot="legend">
-            <i class="fa fa-circle text-info"></i> Open
-            <i class="fa fa-circle text-danger"></i> Bounce
-            <i class="fa fa-circle text-warning"></i> Unsubscribe
-          </div>
-        </chart-card>
+      <div class="col-md-6 col-lg-6 col-sm-12 offset-md-3 offset-lg-3">
+        <div class="d-flex justify-content-center" v-if="loadingOverlay">
+          <FacebookLoader :color="'#35495e'"></FacebookLoader>
+        </div>
       </div>
-
-      <div class="col-md-6 col-12">
-        <chart-card
-          title="2015 Sales"
-          sub-title="All products including Taxes"
-          :chart-data="activityChart.data"
-          :chart-options="activityChart.options"
-        >
-          <span slot="footer">
-            <i class="ti-check"></i> Data information certified
-          </span>
-          <div slot="legend">
-            <i class="fa fa-circle text-info"></i> Tesla Model S
-            <i class="fa fa-circle text-warning"></i> BMW 5 Series
-          </div>
-        </chart-card>
-      </div> -->
     </div>
+
+    <div
+      class="row pointer"
+      v-for="item in resultList"
+      :key="item.id"
+      @click="openDetailRequest(item)"
+    >
+      <div class="col-md-8 col-lg-8 col-sm-12 offset-md-2 offset-lg-2">
+        <div class="card p-2 my-2 border">
+          <div
+            class="d-flex justify-content-between align-items-center px-2 py-2"
+          >
+            <div class="information">
+              <div class="d-flex mb-1">
+                <span class="badge badge-success px-2 py-2">
+                  {{ item.unique_id }}
+                </span>
+                <span class="badge badge-secondary mx-2 px-2 py-2">
+                  {{ item.service.service_name }}
+                </span>
+              </div>
+              <div class="d-flex align-items-center">
+                <h4 class="m-0 mr-2">
+                  {{ item.authorized_name }}
+                </h4>
+                <span>( {{ item.email }} )</span>
+              </div>
+            </div>
+            <dropdown :trigger="'click'" :is-icon="false">
+              <template slot="btn">
+                <span class="ti-more pointer"></span>
+              </template>
+              <template slot="body">
+                <ul class="dropdown-child">
+                  <li @click="openDetailRequest(item)">
+                    <span class="ti-eye mr-2"></span>
+                    Detail
+                  </li>
+                </ul>
+              </template>
+            </dropdown>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <modal-vue
+      v-show="modal.displayModalDetail"
+      @close="modal.displayModalDetail = false"
+    >
+      <template #header>
+        <div class="d-flex justify-content-between align-items-center">
+          <h4 class="m-0">{{ modal.detailItem.authorized_name }}</h4>
+        </div>
+      </template>
+      <template #body>
+        <div class="mx-4">
+          <label-horizontal-vue>
+            <template #left-column>
+              Nama Pemohon / Kuasa
+            </template>
+            <template #right-column>
+              {{ modal.detailItem.authorized_name }}
+            </template>
+          </label-horizontal-vue>
+
+          <label-horizontal-vue>
+            <template #left-column>
+              Email
+            </template>
+            <template #right-column>
+              {{ modal.detailItem.email }}
+            </template>
+          </label-horizontal-vue>
+
+          <label-horizontal-vue>
+            <template #left-column>
+              Telephone Pemohon / Kuasa
+            </template>
+            <template #right-column>
+              {{ modal.detailItem.authorized_phone_number }}
+            </template>
+          </label-horizontal-vue>
+
+          <label-horizontal-vue v-if="modal.detailItem.authorizer_name">
+            <template #left-column>
+              Nama Pemberi Kuasa
+            </template>
+            <template #right-column>
+              {{ modal.detailItem.authorizer_name }}
+            </template>
+          </label-horizontal-vue>
+
+          <label-horizontal-vue>
+            <template #left-column>
+              Jenis Pelayanan
+            </template>
+            <template #right-column>
+              {{ modal.detailItem.service.service_name }}
+            </template>
+          </label-horizontal-vue>
+        </div>
+
+        <table class="table mx-2">
+          <tbody>
+            <tr>
+              <td>KTP</td>
+              <td>
+                <a :href="modal.detailItem.authorized_card_url" download>
+                  Download
+                </a>
+              </td>
+            </tr>
+            <tr v-for="file in modal.detailItem.files" :key="file.id">
+              <td>{{ file.file_type }}</td>
+              <td><a :href="file.file_url">Download</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </template>
+    </modal-vue>
   </div>
 </template>
 <script>
+import { FacebookLoader } from "vue-spinners-css";
 import { StatsCard, ChartCard } from "@/components/index";
 import Chartist from "chartist";
+import { apiFindDocument, apiGetDetailDocument } from "../http/api";
+import Dropdown from "bp-vuejs-dropdown";
+import ModalVue from "../components/Modal.vue";
+import LabelHorizontalVue from "../components/LabelHorizontal.vue";
+
 export default {
   components: {
     StatsCard,
-    ChartCard
+    ChartCard,
+    FacebookLoader,
+    Dropdown,
+    ModalVue,
+    LabelHorizontalVue
   },
   /**
    * Chart data used to render stats, charts. Should be replaced with server data
    */
   data() {
     return {
+      keyword: null,
+      loadingOverlay: false,
       statsCards: [
         {
           type: "warning",
@@ -105,102 +179,83 @@ export default {
           footerText: "Unggah Dokumen",
           footerIcon: "ti-upload"
         }
-        // {
-        //   type: "success",
-        //   icon: "ti-wallet",
-        //   title: "Revenue",
-        //   value: "$1,345",
-        //   footerText: "Last day",
-        //   footerIcon: "ti-calendar"
-        // },
-        // {
-        //   type: "danger",
-        //   icon: "ti-pulse",
-        //   title: "Errors",
-        //   value: "23",
-        //   footerText: "In the last hour",
-        //   footerIcon: "ti-timer"
-        // },
-        // {
-        //   type: "info",
-        //   icon: "ti-twitter-alt",
-        //   title: "Followers",
-        //   value: "+45",
-        //   footerText: "Updated now",
-        //   footerIcon: "ti-reload"
-        // }
       ],
-      usersChart: {
-        data: {
-          labels: [
-            "9:00AM",
-            "12:00AM",
-            "3:00PM",
-            "6:00PM",
-            "9:00PM",
-            "12:00PM",
-            "3:00AM",
-            "6:00AM"
-          ],
-          series: [
-            [287, 385, 490, 562, 594, 626, 698, 895, 952],
-            [67, 152, 193, 240, 387, 435, 535, 642, 744],
-            [23, 113, 67, 108, 190, 239, 307, 410, 410]
-          ]
-        },
-        options: {
-          low: 0,
-          high: 1000,
-          showArea: true,
-          height: "245px",
-          axisX: {
-            showGrid: false
-          },
-          lineSmooth: Chartist.Interpolation.simple({
-            divisor: 3
-          }),
-          showLine: true,
-          showPoint: false
-        }
-      },
-      activityChart: {
-        data: {
-          labels: [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "Mai",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec"
-          ],
-          series: [
-            [542, 543, 520, 680, 653, 753, 326, 434, 568, 610, 756, 895],
-            [230, 293, 380, 480, 503, 553, 600, 664, 698, 710, 736, 795]
-          ]
-        },
-        options: {
-          seriesBarDistance: 10,
-          axisX: {
-            showGrid: false
-          },
-          height: "245px"
-        }
-      },
-      preferencesChart: {
-        data: {
-          labels: ["62%", "32%", "6%"],
-          series: [62, 32, 6]
-        },
-        options: {}
+      resultList: [],
+      modal: {
+        displayModalDetail: false,
+        detailItem: {}
       }
     };
+  },
+  methods: {
+    findKeyword(e) {
+      if (e.target.value) {
+        this.loadingOverlay = true;
+        setTimeout(() => {
+          apiFindDocument(e.target.value)
+            .then(result => {
+              this.resultList = result.data.documents;
+            })
+            .catch(err => {
+              console.error(err, "error");
+            })
+            .finally(() => {
+              this.loadingOverlay = false;
+            });
+        }, 1500);
+      } else {
+        this.resultList = [];
+      }
+    },
+    openDetailRequest(item) {
+      const { id } = item;
+
+      apiGetDetailDocument(id)
+        .then(result => {
+          console.log(result);
+          this.modal.displayModalDetail = true;
+          this.modal.detailItem = { ...result.data.document };
+        })
+        .catch(err => {
+          this.$toast.error("Terjadi Kesalahan pada Server");
+        });
+    }
   }
 };
 </script>
-<style></style>
+<style>
+.bp-dropdown__body {
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 4px;
+}
+
+.card {
+  z-index: 0 !important;
+}
+</style>
+<style lang="scss" scoped>
+.pointer {
+  cursor: pointer;
+}
+
+.dropdown-child {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    padding: 0.65rem 3rem 0.65rem 1rem;
+    // margin: 0 1.5rem;
+
+    &:hover {
+      background-color: rgba($color: #000000, $alpha: 0.1);
+      cursor: pointer;
+    }
+  }
+
+  hr {
+    margin: 0;
+  }
+}
+</style>
