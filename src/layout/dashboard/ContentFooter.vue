@@ -24,11 +24,18 @@
 <script>
 export default {};
 </script>
-<style lang="scss" scoped>
-footer {
-  // margin-top: 10rem;
-  position: absolute;
-  bottom: 0;
+<style scoped>
+@media screen and (min-width: 1200px) {
+  .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: #fff;
+  }
+}
+
+.footer {
   width: 100%;
+  background: #fff;
 }
 </style>

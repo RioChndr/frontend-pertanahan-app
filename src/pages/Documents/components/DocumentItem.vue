@@ -24,13 +24,18 @@
             Diajukan
           </span>
 
-          <span class="d-flex align-items-center">
-            <h4 class="m-0">{{ detail.service.service_name }}</h4>
-            <p class="m-0 ml-2">
+          <div class="row">
+            <h4 class="m-0 mr-2">{{ detail.service.service_name }}</h4>
+            <p class="m-0">
               <small> ( {{ detail.files.length }} Dokumen ) </small>
             </p>
+          </div>
+          <span class="m-0 d-flex align-items-center my-2">
+            {{ detail.authorized_name }}
+            <span class="badge badge-success px-2 py-1 mx-2">
+              {{ detail.unique_id }}
+            </span>
           </span>
-          <p class="m-0">{{ detail.authorized_name }}</p>
         </div>
       </div>
       <router-link
@@ -63,7 +68,7 @@ export default {
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  min-height: 8rem;
+  min-height: 10rem;
   position: relative;
 
   & p {

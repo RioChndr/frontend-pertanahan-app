@@ -66,14 +66,30 @@ export default {
   align-items: center;
 }
 
-.modal-custom {
-  background: #ffffff;
-  box-shadow: 2px 2px 20px 1px;
-  overflow-x: auto;
-  display: flex;
-  flex-direction: column;
-  z-index: 10500;
-  min-width: 50rem;
+@media screen and (min-width: 300px) and (max-width: 600px) {
+  .modal-custom {
+    background: #ffffff;
+    box-shadow: 2px 2px 20px 1px;
+    overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+    z-index: 50500;
+    max-width: 100vw;
+    max-height: 50vh;
+  }
+}
+
+@media screen and (min-width: 800px) {
+  .modal-custom {
+    background: #ffffff;
+    box-shadow: 2px 2px 20px 1px;
+    overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+    z-index: 50500;
+    width: 50rem;
+    max-height: 60vh;
+  }
 }
 
 .modal-header,

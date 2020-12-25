@@ -11,13 +11,37 @@
     <hr />
 
     <div class="row">
+      <div class="col">
+        <div class="alert alert-success" role="alert">
+          Apabila File PDF Anda terlalu besar, perkecil ukurannya pada
+          <a
+            href="https://smallpdf.com/compress-pdf"
+            target="_blank"
+            class="font-weight-bold"
+          >
+            Link Ini
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
       <v-loading
         :active.sync="loadingOverlay"
         :can-cancel="false"
         :is-full-page="true"
       ></v-loading>
 
-      <div class="col-lg 6 col-md-6 col-sm-12 border mx-2 px-4">
+      <div class="col-lg 6 col-md-6 col-sm-12 mx-2 px-4">
+        <div class="form-group">
+          <label for="services" class="control-label">
+            No. Berkas / Kode Unik
+          </label>
+          <h4 class="m-0 font-weight-bold">
+            {{ detailDocument.unique_id }}
+          </h4>
+        </div>
+
         <div class="form-group">
           <label for="services" class="control-label">
             Penerima Kuasa / Pemohon

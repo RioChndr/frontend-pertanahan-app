@@ -7,9 +7,9 @@
   >
     <div class="auth-container">
       <!-- <div class="auth-container-image"></div> -->
-      <div class="auth-container-form">
-        <router-view></router-view>
-      </div>
+      <!-- <div class="auth-container-form"> -->
+      <router-view></router-view>
+      <!-- </div> -->
     </div>
   </div>
 </template>
@@ -26,38 +26,47 @@ export default {};
   display: flex;
   justify-content: center;
   align-items: center;
-  // padding: 0 2.5rem;
-
-  // background-color: #f4f3ef;
   background-repeat: no-repeat;
   background-size: 100vw 100vh;
   background-position: center;
 
   .auth-container {
-    width: 25vw;
-    height: 60vh;
+    @media screen and (min-height: 400px) and (max-height: 679px) {
+      height: 90vh;
+    }
+
+    @media screen and (min-height: 680px) and (max-height: 800px) {
+      height: 80vh;
+    }
+
+    @media screen and (min-width: 320px) and (max-width: 680px) {
+      width: 90vw;
+    }
+
+    @media screen and (min-width: 681px) and (max-width: 1200px) {
+      width: 60vw;
+    }
+
+    @media screen and (min-width: 1280px) and (max-width: 1360px) {
+      width: 30vw;
+    }
+
+    @media screen and (min-width: 1360px) and (max-width: 1900px) {
+      width: 30vw;
+    }
+
+    @media screen and (min-width: 1900px) and (max-width: 1980px) {
+      width: 25vw;
+    }
 
     display: flex;
 
     box-shadow: 1px 2px 8px 1px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
 
-    .auth-container-image {
-      flex: 1;
-      background-color: #35495e;
-      border-top-left-radius: 4px;
-      border-bottom-left-radius: 4px;
-      // background-repeat: no-repeat;
-      // background-size: cover;
-    }
-
-    .auth-container-form {
-      flex: 1;
-      padding: 1rem;
-      border-top-right-radius: 4px;
-      border-bottom-right-radius: 4px;
-      background-color: #fff;
-    }
+    padding: 1rem;
+    background-color: #fff;
+    justify-content: center;
   }
 }
 </style>

@@ -69,7 +69,7 @@
     </div>
 
     <modal-vue
-      v-show="modal.displayModalDetail"
+      v-if="modal.displayModalDetail"
       @close="modal.displayModalDetail = false"
     >
       <template #header>
@@ -130,14 +130,16 @@
             <tr>
               <td>KTP</td>
               <td>
-                <a :href="modal.detailItem.authorized_card_url" download>
-                  Download
-                </a>
+                <DownloadButtonVue
+                  :file="{ file_path: modal.detailItem.authorized_card_path }"
+                />
               </td>
             </tr>
             <tr v-for="file in modal.detailItem.files" :key="file.id">
               <td>{{ file.file_type }}</td>
-              <td><a :href="file.file_url">Download</a></td>
+              <td>
+                <DownloadButtonVue :file="file" />
+              </td>
             </tr>
           </tbody>
         </table>
@@ -153,6 +155,8 @@ import { apiFindDocument, apiGetDetailDocument } from "../http/api";
 import Dropdown from "bp-vuejs-dropdown";
 import ModalVue from "../components/Modal.vue";
 import LabelHorizontalVue from "../components/LabelHorizontal.vue";
+import { downloadFileHelpers } from "../helpers/utils";
+import DownloadButtonVue from "../components/DownloadButton.vue";
 
 export default {
   components: {
@@ -161,7 +165,8 @@ export default {
     FacebookLoader,
     Dropdown,
     ModalVue,
-    LabelHorizontalVue
+    LabelHorizontalVue,
+    DownloadButtonVue
   },
   /**
    * Chart data used to render stats, charts. Should be replaced with server data
@@ -212,13 +217,18 @@ export default {
 
       apiGetDetailDocument(id)
         .then(result => {
-          console.log(result);
           this.modal.displayModalDetail = true;
-          this.modal.detailItem = { ...result.data.document };
+          const document = result.data.document;
+          this.modal.detailItem = { ...document };
         })
         .catch(err => {
           this.$toast.error("Terjadi Kesalahan pada Server");
         });
+    },
+    downloadFile({ file_path }) {
+      downloadFileHelpers(file_path)
+        .then(result => {})
+        .catch(err => {});
     }
   }
 };

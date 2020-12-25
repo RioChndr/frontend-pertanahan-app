@@ -1,6 +1,8 @@
 <template>
   <div>
-    <h3>Pertanahan App</h3>
+    <h3 class="text-center font-weight-bold" style="color: #222">
+      {{ appTitle }}
+    </h3>
     <hr />
 
     <div class="auth-form-login">
@@ -54,7 +56,8 @@ export default {
       },
       loading: {
         signup: false
-      }
+      },
+      appTitle: process.env.VUE_APP_APP_NAME
     };
   },
   methods: {
