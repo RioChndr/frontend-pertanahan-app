@@ -8,7 +8,7 @@
         </small>
       </label>
       <input
-        v-model="form.detail"
+        v-model="form.description"
         type="text"
         class="form-control border"
         placeholder="Format M100/Sekajati ( Hak Milik No 100 kelurahan sekejati )"
@@ -111,61 +111,59 @@ export default {
         return;
       }
 
-      // console.log(files);
+      if (files.length) {
+        this.loading.submit = true;
 
-      // if (files.length) {
-      //   this.loading.submit = true;
+        const selectedFile = files[0];
+        const fileType = selectedFile.name.split(".")[1];
+        if (!checkFileType(fileType)) {
+          this.$toast.error(
+            "Jenis file tidak didukung, silahkan upload file PDF"
+          );
+          return;
+        }
 
-      const selectedFile = files[0];
-      const fileType = selectedFile.name.split(".")[1];
-      if (!checkFileType(fileType)) {
-        this.$toast.error(
-          "Jenis file tidak didukung, silahkan upload file PDF"
-        );
-        return;
+        if (!checkFileSize(selectedFile.size)) {
+          this.$toast.error("Ukuran file tidak boleh lebih dari 5 MB");
+          return;
+        }
+        const userId = JSON.parse(
+          localStorage.getItem(process.env.VUE_APP_USER_INFO)
+        ).id;
+
+        const fileName = `${userId}/pelayanan/${this.subFolder}/${this.serviceId}/${this.uploadedFileName}_${this.prefixDate}.${fileType}`;
+
+        uploadFile({ fileName: fileName, fileDocument: selectedFile })
+          .then(result => {
+            const { path_display, name } = result.result;
+            this.form.file_name = name;
+            this.form.file_path = path_display;
+            this.form.file_type = this.uploadedFileName;
+            return createSharedLink({ filePath: path_display });
+          })
+          .then(result => {
+            const { url } = result.result;
+            this.form.file_url = url;
+            this.form.service_id = this.serviceId;
+            this.form.document_id = this.subFolder;
+            return apiPostFile(this.form);
+          })
+          .then(result => {
+            console.log(result);
+            this.$store.dispatch("apiGetDetailDocument", {
+              doc_id: this.$route.params.id
+            });
+          })
+          .then(() => this.$toast.success(`File berhasil diunggah`))
+          .catch(err => {
+            console.error("error", err);
+            this.$toast.error("file Gagal di unggah");
+          })
+          .finally(() => {
+            this.displayButton = false;
+            this.loading.submit = false;
+          });
       }
-
-      if (!checkFileSize(selectedFile.size)) {
-        this.$toast.error("Ukuran file tidak boleh lebih dari 5 MB");
-        return;
-      }
-      //   const userId = JSON.parse(
-      //     localStorage.getItem(process.env.VUE_APP_USER_INFO)
-      //   ).id;
-
-      //   const fileName = `${userId}/pelayanan/${this.subFolder}/${this.serviceId}/${this.uploadedFileName}_${this.prefixDate}.${fileType}`;
-
-      //   uploadFile({ fileName: fileName, fileDocument: selectedFile })
-      //     .then(result => {
-      //       const { path_display, name } = result.result;
-      //       this.form.file_name = name;
-      //       this.form.file_path = path_display;
-      //       this.form.file_type = this.uploadedFileName;
-      //       return createSharedLink({ filePath: path_display });
-      //     })
-      //     .then(result => {
-      //       const { url } = result.result;
-      //       this.form.file_url = url;
-      //       this.form.service_id = this.serviceId;
-      //       this.form.document_id = this.subFolder;
-      //       return apiPostFile(this.form);
-      //     })
-      //     .then(result => {
-      //       console.log(result);
-      //       this.$store.dispatch("apiGetDetailDocument", {
-      //         doc_id: this.$route.params.id
-      //       });
-      //     })
-      //     .then(() => this.$toast.success(`File berhasil diunggal`))
-      //     .catch(err => {
-      //       console.error("error", err);
-      //       this.$toast.error("file Gagal di unggah");
-      //     })
-      //     .finally(() => {
-      //       this.displayButton = false;
-      //       this.loading.submit = false;
-      //     });
-      // }
     },
     removeFile() {
       this.loading.delete = true;

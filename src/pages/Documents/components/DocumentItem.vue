@@ -12,16 +12,23 @@
 
           <span
             class="badge badge-primary float-right mt-1"
-            v-else-if="detail.is_submitted && detail.is_waiting"
+            v-if="detail.is_waiting && detail.is_submitted"
           >
             Menunggu Persetujuan
           </span>
 
           <span
-            class="badge badge-primary float-right mt-1"
-            v-else-if="detail.is_done"
+            class="badge badge-success float-right mt-1"
+            v-if="detail.is_done && !detail.is_waiting"
           >
-            Diajukan
+            Diterima
+          </span>
+
+          <span
+            class="badge badge-danger float-right mt-1"
+            v-if="!detail.is_waiting && !detail.is_done"
+          >
+            Ditolak
           </span>
 
           <div class="row">

@@ -78,79 +78,123 @@
         </div>
       </template>
       <template #body>
-        <div class="mx-4">
-          <label-horizontal-vue>
-            <template #left-column>
-              Penerima Kuasa / Pemohon
-            </template>
-            <template #right-column>
-              {{ modal.detailItem.authorized_name }}
-            </template>
-          </label-horizontal-vue>
+        <v-loading
+          :active.sync="modal.loading"
+          :can-cancel="false"
+          :is-full-page="false"
+        ></v-loading>
+        <div class="row mx-2">
+          <div class="col-8">
+            <label-horizontal-vue>
+              <template #left-column>
+                Penerima Kuasa / Pemohon
+              </template>
+              <template #right-column>
+                {{ modal.detailItem.authorized_name }}
+              </template>
+            </label-horizontal-vue>
 
-          <label-horizontal-vue>
-            <template #left-column>
-              Email
-            </template>
-            <template #right-column>
-              {{ modal.detailItem.email }}
-            </template>
-          </label-horizontal-vue>
+            <label-horizontal-vue>
+              <template #left-column>
+                Email
+              </template>
+              <template #right-column>
+                {{ modal.detailItem.email }}
+              </template>
+            </label-horizontal-vue>
 
-          <label-horizontal-vue>
-            <template #left-column>
-              Telephone Pemohon / Kuasa
-            </template>
-            <template #right-column>
-              {{ modal.detailItem.authorized_phone_number }}
-            </template>
-          </label-horizontal-vue>
+            <label-horizontal-vue>
+              <template #left-column>
+                Telephone Pemohon / Kuasa
+              </template>
+              <template #right-column>
+                {{ modal.detailItem.authorized_phone_number }}
+              </template>
+            </label-horizontal-vue>
 
-          <label-horizontal-vue v-if="modal.detailItem.authorizer_name">
-            <template #left-column>
-              Nama Pemberi Kuasa
-            </template>
-            <template #right-column>
-              {{ modal.detailItem.authorizer_name }}
-            </template>
-          </label-horizontal-vue>
+            <label-horizontal-vue v-if="modal.detailItem.authorizer_name">
+              <template #left-column>
+                Nama Pemberi Kuasa
+              </template>
+              <template #right-column>
+                {{ modal.detailItem.authorizer_name }}
+              </template>
+            </label-horizontal-vue>
 
-          <label-horizontal-vue>
-            <template #left-column>
-              Jenis Pelayanan
-            </template>
-            <template #right-column>
-              {{ modal.detailItem.service.service_name }}
-            </template>
-          </label-horizontal-vue>
+            <label-horizontal-vue>
+              <template #left-column>
+                Jenis Pelayanan
+              </template>
+              <template #right-column>
+                {{ modal.detailItem.service.service_name }}
+              </template>
+            </label-horizontal-vue>
+          </div>
+          <div class="col-4">
+            <div class="row">
+              <div class="col-12">
+                <textarea
+                  name="description"
+                  id="description"
+                  cols="30"
+                  rows="5"
+                  class="form-control border"
+                  placeholder="Keterangan"
+                  v-model="modal.descriptionBox"
+                ></textarea>
+              </div>
+              <div class="col-12 d-flex align-items-center my-2">
+                <button
+                  class="btn btn-danger flex-fill mx-2"
+                  @click="discardRequest"
+                >
+                  Tolak
+                </button>
+                <button
+                  class="btn btn-primary flex-fill mx-2"
+                  @click="acceptRequest"
+                >
+                  Terima
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <table class="table">
-          <tbody>
-            <tr>
-              <td>KTP Penerima Kuasa / Pemohon</td>
-              <td>
-                <DownloadButtonVue
-                  :file="{ file_path: modal.detailItem.authorized_card_path }"
-                />
-              </td>
-            </tr>
-            <tr v-if="modal.detailItem.authorizer_card_path">
-              <td>KTP Pemberi Kuasa</td>
-              <td>
-                <DownloadButtonVue
-                  :file="{ file_path: modal.detailItem.authorizer_card_path }"
-                />
-              </td>
-            </tr>
-            <tr v-for="file in modal.detailItem.files" :key="file.id">
-              <td>{{ file.file_type }}</td>
-              <td>
-                <DownloadButtonVue :file="file" />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="row mx-2">
+          <div class="col">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td>KTP Penerima Kuasa / Pemohon</td>
+                  <td>
+                    <DownloadButtonVue
+                      :file="{
+                        file_path: modal.detailItem.authorized_card_path
+                      }"
+                    />
+                  </td>
+                </tr>
+                <tr v-if="modal.detailItem.authorizer_card_path">
+                  <td>KTP Pemberi Kuasa</td>
+                  <td>
+                    <DownloadButtonVue
+                      :file="{
+                        file_path: modal.detailItem.authorizer_card_path
+                      }"
+                    />
+                  </td>
+                </tr>
+                <tr v-for="file in modal.detailItem.files" :key="file.id">
+                  <td>{{ file.file_type }}</td>
+                  <td>
+                    <DownloadButtonVue :file="file" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </template>
     </modal-vue>
   </div>
@@ -159,7 +203,11 @@
 import { FacebookLoader } from "vue-spinners-css";
 import { StatsCard, ChartCard } from "@/components/index";
 import Chartist from "chartist";
-import { apiFindDocument, apiGetDetailDocument } from "../http/api";
+import {
+  apiFindDocument,
+  apiGetDetailDocument,
+  apiPutDocument
+} from "../http/api";
 import Dropdown from "bp-vuejs-dropdown";
 import ModalVue from "../components/Modal.vue";
 import LabelHorizontalVue from "../components/LabelHorizontal.vue";
@@ -196,7 +244,9 @@ export default {
       resultList: [],
       modal: {
         displayModalDetail: false,
-        detailItem: {}
+        detailItem: {},
+        descriptionBox: null,
+        loading: false
       }
     };
   },
@@ -231,6 +281,49 @@ export default {
         })
         .catch(err => {
           this.$toast.error("Terjadi Kesalahan pada Server");
+        });
+    },
+    acceptRequest() {
+      this.modal.loading = true;
+
+      apiPutDocument(this.modal.detailItem.id, {
+        description: this.modal.descriptionBox,
+        is_done: true,
+        is_waiting: false
+      })
+        .then(result => {
+          this.modal.descriptionBox = null;
+          this.$toast.success("Permohonan berhasil di terima");
+        })
+        .catch(err => {
+          this.$toast.error("Terjadi Kesalahan pada Server");
+        })
+        .finally(() => {
+          this.modal.loading = false;
+        });
+    },
+    discardRequest() {
+      if (!this.modal.descriptionBox) {
+        this.$toast.error("Harap isi keterangan Penolakan");
+        return;
+      }
+
+      this.modal.loading = true;
+
+      apiPutDocument(this.modal.detailItem.id, {
+        description: this.modal.descriptionBox,
+        is_done: false,
+        is_waiting: false
+      })
+        .then(result => {
+          this.modal.descriptionBox = null;
+          this.$toast.success("Permohonan berhasil di tolak");
+        })
+        .catch(err => {
+          this.$toast.error("Terjadi Kesalahan pada Server");
+        })
+        .finally(() => {
+          this.modal.loading = false;
         });
     }
   }

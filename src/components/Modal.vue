@@ -87,7 +87,7 @@ export default {
     display: flex;
     flex-direction: column;
     z-index: 50500;
-    width: 50rem;
+    width: 65rem;
     max-height: 60vh;
   }
 }

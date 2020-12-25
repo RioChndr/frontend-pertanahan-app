@@ -25,6 +25,36 @@
       </div>
     </div>
 
+    <div
+      class="row"
+      v-if="!detailDocument.is_done && !detailDocument.is_waiting"
+    >
+      <div class="col">
+        <div class="alert alert-danger" role="alert">
+          <h4 class="alert-heading m-0">Pengajuan Anda Ditolak!</h4>
+          <hr />
+          <p class="mb-0">
+            {{ detailDocument.description }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="row"
+      v-if="detailDocument.is_done && !detailDocument.is_waiting"
+    >
+      <div class="col">
+        <div class="alert alert-success" role="alert">
+          <h4 class="alert-heading m-0">Pengajuan Anda Diterima!</h4>
+          <hr />
+          <p class="mb-0">
+            {{ detailDocument.description }}
+          </p>
+        </div>
+      </div>
+    </div>
+
     <div class="row">
       <v-loading
         :active.sync="loadingOverlay"
@@ -455,7 +485,7 @@ export default {
       loadingOverlay: false
     };
   },
-  created() {
+  mounted() {
     this.loadingOverlay = true;
     this.$store
       .dispatch("apiGetDetailDocument", {
@@ -480,7 +510,24 @@ export default {
         });
     },
     submitRequest() {
-      this.loadingOverlay = true;
+      const requiredDocument = [
+        "surat_permohonan",
+        "bukti_alas_hak",
+        "pajak_bumi_dan_bangunan"
+      ];
+
+      const uploadedFiles = [];
+      this.detailDocument.files.map(v => {
+        uploadedFiles.push(v.file_type);
+      });
+
+      const result = requiredDocument.map(v => uploadedFiles.includes(v));
+
+      if (result.includes(false)) {
+        this.$toast.error("Dokumen yang Anda unggah belum lengkap");
+        return;
+      }
+
       this.$store
         .dispatch("actionPutDocument", {
           doc_id: this.$route.params.id,

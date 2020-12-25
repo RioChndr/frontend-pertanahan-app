@@ -25,6 +25,8 @@ router.beforeEach((to, from, next) => {
     }
   } else if (to.path === "/" && roleId === 5) {
     next({ name: "dashboard" });
+  } else if (to.path === "/" && roleId !== 5) {
+    next({ name: "request" });
   } else {
     next();
   }
