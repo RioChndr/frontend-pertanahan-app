@@ -13,7 +13,8 @@ export default {
     file: {
       type: Object,
       default: {}
-    }
+    },
+    filePath: {}
   },
   data() {
     return {

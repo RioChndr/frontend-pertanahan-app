@@ -8,7 +8,7 @@
           type="text"
           class="form-control border form-control-lg"
           name="keyword"
-          placeholder="Email / No. Unik / Nama Pemohon / Nama Pemberi Kuasa"
+          placeholder="Email / Kode Berkas / No. Unik / Nama Pemohon / Nama Pemberi Kuasa"
           v-model="keyword"
           @keyup="findKeyword"
         />
@@ -81,7 +81,7 @@
         <div class="mx-4">
           <label-horizontal-vue>
             <template #left-column>
-              Nama Pemohon / Kuasa
+              Penerima Kuasa / Pemohon
             </template>
             <template #right-column>
               {{ modal.detailItem.authorized_name }}
@@ -125,13 +125,21 @@
           </label-horizontal-vue>
         </div>
 
-        <table class="table mx-2">
+        <table class="table">
           <tbody>
             <tr>
-              <td>KTP</td>
+              <td>KTP Penerima Kuasa / Pemohon</td>
               <td>
                 <DownloadButtonVue
                   :file="{ file_path: modal.detailItem.authorized_card_path }"
+                />
+              </td>
+            </tr>
+            <tr v-if="modal.detailItem.authorizer_card_path">
+              <td>KTP Pemberi Kuasa</td>
+              <td>
+                <DownloadButtonVue
+                  :file="{ file_path: modal.detailItem.authorizer_card_path }"
                 />
               </td>
             </tr>
@@ -224,11 +232,6 @@ export default {
         .catch(err => {
           this.$toast.error("Terjadi Kesalahan pada Server");
         });
-    },
-    downloadFile({ file_path }) {
-      downloadFileHelpers(file_path)
-        .then(result => {})
-        .catch(err => {});
     }
   }
 };

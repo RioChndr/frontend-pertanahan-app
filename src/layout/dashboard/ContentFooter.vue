@@ -27,15 +27,30 @@ export default {};
 <style scoped>
 @media screen and (min-width: 1200px) {
   .footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #fff;
+    z-index: 0 !important;
+    display: block;
+  }
+
+  .container-fluid {
+    z-index: 0 !important;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .footer {
     position: absolute;
     bottom: 0;
     width: 100%;
     background: #fff;
+    z-index: 0 !important;
+    display: none;
   }
-}
-
-.footer {
-  width: 100%;
-  background: #fff;
+  .container-fluid {
+    z-index: 0 !important;
+  }
 }
 </style>
