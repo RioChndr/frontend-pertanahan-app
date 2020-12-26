@@ -58,7 +58,24 @@ export default {
     return new Promise((resolve, reject) => {
       apiGetAllDoneRequest(payload)
         .then(result => {
-          commit("setListRequest", result.data.documents.results);
+          commit("setListRequestEmpty");
+          if (result.data.status) {
+            commit("setListRequest", result.data.documents.results);
+          }
+          resolve(result);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  },
+
+  apiGetDetailHistory({ commit }, payload) {
+    return new Promise((resolve, reject) => {
+      apiGetDetailDocument(payload.id)
+        .then(result => {
+          console.log(result);
+          commit("setDetailModalHistory", result.data.document);
           resolve(result);
         })
         .catch(err => {

@@ -26,5 +26,18 @@ export default {
   setListRequest(state, payload) {
     state.documents = [];
     state.documents = payload;
+  },
+
+  setListRequestEmpty(state) {
+    state.documents = [];
+  },
+
+  setDisplayModalDetailHistory(state, payload) {
+    state.displayModalDetailHistory = payload;
+  },
+
+  setDetailModalHistory(state, payload) {
+    state.detailModalDDetailHistory = null;
+    state.detailModalDDetailHistory = payload;
   }
 };

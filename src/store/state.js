@@ -12,6 +12,11 @@ export default {
 
   //#region Document
   detailDocument: {},
-  documents: []
+  documents: [],
+  //#endregion
+
+  //#region Misc
+  displayModalDetailHistory: false,
+  detailModalDDetailHistory: null
   //#endregion
 };
