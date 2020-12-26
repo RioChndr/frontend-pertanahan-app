@@ -74,7 +74,6 @@ export default {
     return new Promise((resolve, reject) => {
       apiGetDetailDocument(payload.id)
         .then(result => {
-          console.log(result);
           commit("setDetailModalHistory", result.data.document);
           resolve(result);
         })

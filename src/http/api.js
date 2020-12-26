@@ -48,9 +48,9 @@ export function apiFindDocument(keyword = null) {
 }
 
 export function apiGetAllDoneRequest({
-  page = null,
-  pageSize = null,
-  keyword = null
+  page: page = 0,
+  pageSize: pageSize = 10,
+  keyword: keyword = null
 }) {
   return axios.get(
     `documents/admin/all?keyword=${keyword}&page=${page}&pageSize=${pageSize}`

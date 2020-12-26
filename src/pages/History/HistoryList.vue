@@ -121,9 +121,15 @@
                   <button
                     class="btn btn-danger btn-sm px-4 d-flex align-items-center"
                     @click="archiveRequest"
+                    :disabled="loadingArchived"
                   >
-                    <span class="ti-package mr-2"></span>
-                    Arsipkan Permohonan
+                    <div v-if="loadingArchived">
+                      <i class="fa fa-spinner fa-spin fa-fw"></i>
+                    </div>
+                    <div v-else>
+                      <span class="ti-package mr-2"></span>
+                      Arsipkan Permohonan
+                    </div>
                   </button>
                 </template>
               </label-horizontal-vue>
@@ -220,6 +226,7 @@ export default {
         pageSize: 10
       },
       loading: false,
+      loadingArchived: false,
       modal: {
         display: false
       }
@@ -248,7 +255,32 @@ export default {
       this.$store.commit("setDisplayModalDetailHistory", false);
     },
     archiveRequest() {
-      this.$toast.info("On Progress");
+      const { id } = JSON.parse(
+        localStorage.getItem(process.env.VUE_APP_USER_INFO)
+      );
+      this.loadingArchived = true;
+      this.$store
+        .dispatch("actionPutDocument", {
+          doc_id: this.detail.id,
+          form: {
+            is_archived: true,
+            archived_by: id
+          }
+        })
+        .then(result => {
+          this.$toast.success("Permohonan Berhasil di Arsipkan");
+          return this.$store.dispatch("apiGetAllRequest", {
+            page: this.pagination.page,
+            pageSize: this.pagination.pageSize
+          });
+        })
+        .catch(err => {
+          console.error(err, "error_archived");
+          this.$toast.error("Terjadi Kesalahan Pada Server");
+        })
+        .finally(() => {
+          this.loadingArchived = false;
+        });
     },
     deleteItem(filePath) {
       this.$toast.info("On Progress");
