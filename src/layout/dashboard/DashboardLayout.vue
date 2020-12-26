@@ -36,6 +36,13 @@
           icon="ti-rss-alt"
         />
 
+        <sidebar-link
+          v-if="userInfo.role.id === 5"
+          to="/history"
+          name="Riwayat Permohonan"
+          icon="ti-reload"
+        />
+
         <li class="nav-item" @click="logout" style="cursor: pointer">
           <div class="nav-link d-flex ">
             <span class="ti-shift-left mr-2" style="font-size: 1.5rem"></span>

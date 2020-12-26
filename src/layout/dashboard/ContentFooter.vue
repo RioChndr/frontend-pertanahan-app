@@ -29,10 +29,11 @@ export default {};
   .footer {
     position: fixed;
     bottom: 0;
-    width: 100%;
+    width: calc(100% - 230px);
     background: #fff;
     z-index: 0 !important;
     display: block;
+    padding: 0 1rem;
   }
 
   .container-fluid {

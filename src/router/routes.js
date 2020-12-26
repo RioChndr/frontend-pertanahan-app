@@ -29,10 +29,9 @@ const SettingServices = () => import("@/pages/Setting/SettingServices.vue");
 const SettingServicesCreate = () =>
   import("@/pages/Setting/SettingServicesCreate.vue");
 
-// let roleId = null;
-const userInfo = JSON.parse(
-  localStorage.getItem(process.env.VUE_APP_USER_INFO)
-);
+// History
+const HistoryLayout = () => import("@/pages/History/HistoryLayout.vue");
+const HistoryList = () => import("@/pages/History/HistoryList.vue");
 
 const routes = [
   {
@@ -110,6 +109,11 @@ const routes = [
             component: SettingServicesCreate
           }
         ]
+      },
+      {
+        path: "/history",
+        component: HistoryLayout,
+        children: [{ path: "/", component: HistoryList, name: "index" }]
       }
     ]
   },

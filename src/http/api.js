@@ -6,14 +6,16 @@ export function apiPostLogin({ email: email, password: password }) {
 }
 
 export function apiPostSignup({
-  emai: email,
+  email: email,
   password: password,
-  full_name: full_name
+  full_name: full_name,
+  role_id: role_id = 3
 }) {
   return axios.post(`auth/register`, {
     email,
     password,
-    full_name
+    full_name,
+    role_id
   });
 }
 
@@ -44,6 +46,17 @@ export function apiPutDocument(docId, formData = {}) {
 export function apiFindDocument(keyword = null) {
   return axios.get(`documents/find?keyword=${keyword}`);
 }
+
+export function apiGetAllDoneRequest({
+  page = null,
+  pageSize = null,
+  keyword = null
+}) {
+  return axios.get(
+    `documents/admin/all?keyword=${keyword}&page=${page}&pageSize=${pageSize}`
+  );
+}
+
 //#endregion
 
 //#region Service
@@ -82,4 +95,17 @@ export function apiRemoveFile(fileId) {
 export function apiGetListUsers(page = 0, pageSize = 5) {
   return axios.get(`users?page=${page}&pageSize=${pageSize}`);
 }
+
+export function apiPatchDisableUser(userId = null) {
+  return axios.patch(`users/disable/${userId}`);
+}
+
+export function apiPatchEnableUser(userId = null) {
+  return axios.patch(`users/enable/${userId}`);
+}
+
+export function apiPatchResetPassword(userId = null) {
+  return axios.patch(`users/reset-password/${userId}`);
+}
+
 //#endregion

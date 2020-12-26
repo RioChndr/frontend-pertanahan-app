@@ -10,7 +10,6 @@
           name="keyword"
           placeholder="Email / Kode Berkas / No. Unik / Nama Pemohon / Nama Pemberi Kuasa"
           v-model="keyword"
-          @keyup="findKeyword"
         />
       </div>
     </div>
@@ -20,6 +19,12 @@
         <div class="d-flex justify-content-center" v-if="loadingOverlay">
           <FacebookLoader :color="'#35495e'"></FacebookLoader>
         </div>
+      </div>
+    </div>
+
+    <div class="row my-2" v-if="isResultExists">
+      <div class="col d-flex justify-content-center">
+        <h4>Tidak Terdapat Pengajuan Permohonan</h4>
       </div>
     </div>
 
@@ -247,29 +252,36 @@ export default {
         detailItem: {},
         descriptionBox: null,
         loading: false
-      }
+      },
+      isResultExists: false
     };
   },
-  methods: {
-    findKeyword(e) {
-      if (e.target.value) {
+  watch: {
+    keyword: function(value) {
+      if (value.length >= 3) {
         this.loadingOverlay = true;
-        setTimeout(() => {
-          apiFindDocument(e.target.value)
-            .then(result => {
-              this.resultList = result.data.documents;
-            })
-            .catch(err => {
-              console.error(err, "error");
-            })
-            .finally(() => {
-              this.loadingOverlay = false;
-            });
-        }, 1500);
-      } else {
+        this.isResultExists = false;
+        apiFindDocument(value)
+          .then(result => {
+            this.resultList = result.data.documents;
+            if (result.data.documents.length <= 0) {
+              this.isResultExists = true;
+            }
+          })
+          .catch(err => {
+            console.error(err, "error");
+          })
+          .finally(() => {
+            this.loadingOverlay = false;
+          });
+      } else if (value.length <= 0) {
+        this.loadingOverlay = false;
+        this.isResultExists = false;
         this.resultList = [];
       }
-    },
+    }
+  },
+  methods: {
     openDetailRequest(item) {
       const { id } = item;
 
