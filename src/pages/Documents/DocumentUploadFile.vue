@@ -27,7 +27,11 @@
 
     <div
       class="row"
-      v-if="!detailDocument.is_done && !detailDocument.is_waiting"
+      v-if="
+        document.is_submitted &&
+          !detailDocument.is_done &&
+          !detailDocument.is_waiting
+      "
     >
       <div class="col">
         <div class="alert alert-danger" role="alert">
@@ -65,9 +69,9 @@
       <div class="col-lg 6 col-md-6 col-sm-12 mx-2 px-4">
         <div class="form-group">
           <label for="services" class="control-label">
-            No. Berkas / Kode Unik
+            Kode Berkas
           </label>
-          <h4 class="m-0 font-weight-bold">
+          <h4 class="m-0 font-weight-bold d-flex align-items-center">
             {{ detailDocument.unique_id }}
           </h4>
         </div>
@@ -138,13 +142,20 @@
             </h4>
           </div>
         </div>
-        <div class="form-group" v-if="!detailDocument.is_submitted">
+        <div class="form-group">
           <button
-            class="btn btn-info"
+            class="btn btn-info btn-sm"
             :disabled="fileLength === 0"
             @click.prevent="submitRequest"
+            v-if="!detailDocument.is_submitted"
           >
+            <span class="ti-share mr-2"></span>
             Ajukan Permohonan
+          </button>
+
+          <button class="btn btn-sm mx-4" @click="printRequest">
+            <span class="ti-printer mr-2"></span>
+            Cetak Permohonan
           </button>
         </div>
 
@@ -366,6 +377,8 @@ import moment from "moment";
 import { createSharedLink, downloadFile, uploadFile } from "../../http/dropbox";
 import DocumentInputFileService from "./components/DocumentInputFileService";
 import { mapState } from "vuex";
+import { apiPrintDocument } from "../../http/api";
+import jsPDF from "jspdf";
 
 export default {
   components: {
@@ -543,6 +556,34 @@ export default {
         .finally(() => {
           this.loadingOverlay = false;
         });
+    },
+    printRequest() {
+      const perLine = 8;
+      let pdfFile = this.detailDocument.unique_id;
+      const doc = new jsPDF({
+        orientation: "potrait"
+      });
+      doc.text("Kode Berkas ", 15, perLine * 2);
+      doc.text(":", 75, perLine * 2);
+      doc.text(this.detailDocument.unique_id, 80, perLine * 2);
+
+      doc.text("Pemohon ", 15, perLine * 3);
+      doc.text(":", 75, perLine * 3);
+      doc.text(this.detailDocument.authorized_name, 80, perLine * 3);
+
+      doc.text("Jenis Pelayanan ", 15, perLine * 4);
+      doc.text(":", 75, perLine * 4);
+      doc.text(this.detailDocument.service.service_name, 80, perLine * 4);
+
+      // If document have authorizer
+
+      if (this.detailDocument.authorizer_name) {
+        doc.text("Pemberi Kuasa ", 15, perLine * 5);
+        doc.text(":", 75, perLine * 5);
+        doc.text(this.detailDocument.authorizer_name, 80, perLine * 5);
+      }
+
+      doc.save(pdfFile + ".pdf");
     }
   },
   computed: {

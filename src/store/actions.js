@@ -58,8 +58,8 @@ export default {
     return new Promise((resolve, reject) => {
       apiGetAllDoneRequest(payload)
         .then(result => {
-          commit("setListRequestEmpty");
           if (result.data.status) {
+            commit("setDocumentPagination", result.data.documents.total);
             commit("setListRequest", result.data.documents.results);
           }
           resolve(result);

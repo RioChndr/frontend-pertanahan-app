@@ -19,39 +19,41 @@
 
           <span
             class="badge badge-success float-right mt-1"
-            v-if="detail.is_done && !detail.is_waiting"
+            v-if="detail.is_submitted && !detail.is_waiting && detail.is_done"
           >
             Diterima
           </span>
 
           <span
             class="badge badge-danger float-right mt-1"
-            v-if="!detail.is_waiting && !detail.is_done"
+            v-if="detail.is_submitted && !detail.is_waiting && !detail.is_done"
           >
             Ditolak
           </span>
 
           <div class="row">
-            <h4 class="m-0 mr-2">{{ detail.service.service_name }}</h4>
-            <p class="m-0">
-              <small> ( {{ detail.files.length }} Dokumen ) </small>
-            </p>
+            <div class="col pl-0">
+              <span class="badge badge-success">
+                {{ detail.unique_id }}
+              </span>
+              <h4 class="m-0 mr-2 limit-text">
+                {{ detail.authorized_name }}
+              </h4>
+              <span class="m-0 d-flex align-items-center my-2">
+                {{ detail.service.service_name }}
+              </span>
+            </div>
           </div>
-          <span class="m-0 d-flex align-items-center my-2">
-            {{ detail.authorized_name }}
-            <span class="badge badge-success px-2 py-1 mx-2">
-              {{ detail.unique_id }}
-            </span>
-          </span>
+
+          <router-link
+            :to="{ name: 'upload-file', params: { id: detail.id } }"
+            class="card-flex-bottom mt-2"
+          >
+            Lengkapi Dokumen
+            <span class="ti-angle-double-right ml-2"></span>
+          </router-link>
         </div>
       </div>
-      <router-link
-        :to="{ name: 'upload-file', params: { id: detail.id } }"
-        class="card-flex-bottom mt-2"
-      >
-        Lengkapi Dokumen
-        <span class="ti-angle-double-right ml-2"></span>
-      </router-link>
     </div>
   </div>
 </template>
@@ -102,6 +104,14 @@ export default {
     position: absolute;
     bottom: 0;
     margin-bottom: 1rem;
+  }
+
+  .limit-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* number of lines to show */
+    -webkit-box-orient: vertical;
   }
 }
 </style>

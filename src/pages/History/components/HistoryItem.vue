@@ -25,8 +25,15 @@
       </div>
       <div class="flex-fill d-flex justify-content-end pr-4">
         <h4
+          class="m-0 text-primary"
+          v-if="document.is_waiting && document.is_submitted"
+        >
+          Menunggu Persetujuan
+        </h4>
+
+        <h4
           class="m-0 text-success"
-          v-if="!document.is_waiting && document.is_done"
+          v-else-if="!document.is_waiting && document.is_done"
         >
           Disetujui
         </h4>
@@ -36,10 +43,6 @@
           v-else-if="!document.is_waiting && !document.is_done"
         >
           Ditolak
-        </h4>
-
-        <h4 class="m-0 text-primary" v-else-if="document.is_waiting">
-          Menunggu Persetujuan
         </h4>
       </div>
     </div>

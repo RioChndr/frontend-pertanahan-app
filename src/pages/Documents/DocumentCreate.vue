@@ -264,7 +264,8 @@ export default {
     const dateNow = Date.now();
     const mathRandom = Math.floor(Math.random() * 99999999);
     const uniqueId = dateNow + mathRandom;
-    this.form.unique_id = uniqueId;
+    const arrayNumber = uniqueId.toString().match(/.{1,3}/g);
+    this.form.unique_id = arrayNumber.join("-");
 
     this.$store.dispatch("apiGetServices");
   },
