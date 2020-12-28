@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row mt-2">
       <div class="col-12">
-        <h4>Riwayat Permohonan</h4>
+        <h4 class="m-0">Riwayat Permohonan</h4>
       </div>
     </div>
     <hr />
@@ -17,8 +17,17 @@
       </div>
     </div>
 
-    <div class="row mx-1" v-for="item in documents" :key="item.id">
-      <HistoryItemVue :document="item" />
+    <div
+      v-infinite-scroll="loadData"
+      infinite-scroll-disabled="busy"
+      :infinite-scroll-distance="pagination.pageSize"
+      class="row mx-1"
+    >
+      <HistoryItemVue
+        v-for="item in documents"
+        :key="item.id"
+        :document="item"
+      />
     </div>
 
     <div class="row" v-if="loading">
@@ -88,7 +97,7 @@
                 </template>
               </label-horizontal-vue>
 
-              <label-horizontal-vue>
+              <label-horizontal-vue v-if="!detail.is_waiting">
                 <template #left-column>
                   Status
                 </template>
@@ -116,7 +125,7 @@
                 </template>
               </label-horizontal-vue>
 
-              <label-horizontal-vue>
+              <label-horizontal-vue v-if="!detail.is_waiting">
                 <template #right-column>
                   <button
                     class="btn btn-danger btn-sm px-4 d-flex align-items-center"
@@ -229,14 +238,13 @@ export default {
       loadingArchived: false,
       modal: {
         display: false
-      }
+      },
+      busy: false
     };
-  },
-  created() {
-    this.loadData();
   },
   methods: {
     loadData() {
+      this.busy = true;
       this.loading = true;
       this.$store
         .dispatch("apiGetAllRequest", {
@@ -249,6 +257,12 @@ export default {
         })
         .finally(() => {
           this.loading = false;
+          if (this.documents.length < this.documentLength) {
+            this.pagination.page++;
+            this.busy = false;
+          } else {
+            this.busy = true;
+          }
         });
     },
     closeModal() {
@@ -269,8 +283,9 @@ export default {
         })
         .then(result => {
           this.$toast.success("Permohonan Berhasil di Arsipkan");
+          this.$store.commit("setListRequestEmpty");
           return this.$store.dispatch("apiGetAllRequest", {
-            page: this.pagination.page,
+            page: 0,
             pageSize: this.pagination.pageSize
           });
         })
@@ -290,7 +305,8 @@ export default {
     ...mapState({
       detail: "detailModalDDetailHistory",
       displayModal: "displayModalDetailHistory",
-      documents: "documents"
+      documents: "documents",
+      documentLength: "documentPagination"
     })
   }
 };

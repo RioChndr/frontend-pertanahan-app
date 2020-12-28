@@ -70,7 +70,7 @@ export default {
       default: null
     },
     documentId: {
-      type: Number,
+      type: String,
       default: 0
     }
   },

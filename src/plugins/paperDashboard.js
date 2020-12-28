@@ -19,6 +19,9 @@ const options = {
   }
 };
 
+// Vue Inifinite Scroll
+import infiniteScroll from "vue-infinite-scroll";
+
 //css assets
 import "bootstrap/dist/css/bootstrap.css";
 import "@/assets/sass/paper-dashboard.scss";
@@ -31,5 +34,6 @@ export default {
     Vue.use(SideBar);
     Vue.use(Notify);
     Vue.use(Toast, options);
+    Vue.use(infiniteScroll);
   }
 };

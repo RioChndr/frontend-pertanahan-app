@@ -24,8 +24,7 @@ export default {
   },
 
   setListRequest(state, payload) {
-    state.documents = [];
-    state.documents = payload;
+    state.documents.push(...payload);
   },
 
   setListRequestEmpty(state) {
@@ -39,5 +38,9 @@ export default {
   setDetailModalHistory(state, payload) {
     state.detailModalDDetailHistory = null;
     state.detailModalDDetailHistory = payload;
+  },
+
+  setDocumentPagination(state, payload) {
+    state.documentPagination = payload;
   }
 };

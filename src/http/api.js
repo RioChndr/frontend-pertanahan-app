@@ -39,6 +39,10 @@ export function apiGetDetailDocument(docId) {
   return axios.get(`documents/${docId}`);
 }
 
+export function apiPrintDocument(docId) {
+  return axios.get(`documents/print/${docId}`);
+}
+
 export function apiPutDocument(docId, formData = {}) {
   return axios.put(`documents/${docId}`, formData);
 }
@@ -50,7 +54,7 @@ export function apiFindDocument(keyword = null) {
 export function apiGetAllDoneRequest({
   page: page = 0,
   pageSize: pageSize = 10,
-  keyword: keyword = null
+  keyword: keyword = ""
 }) {
   return axios.get(
     `documents/admin/all?keyword=${keyword}&page=${page}&pageSize=${pageSize}`

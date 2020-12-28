@@ -13,6 +13,7 @@ export default {
   //#region Document
   detailDocument: {},
   documents: [],
+  documentPagination: 0,
   //#endregion
 
   //#region Misc

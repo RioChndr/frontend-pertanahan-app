@@ -3,7 +3,10 @@
     <!--Stats cards-->
     <div class="row">
       <div class="col-md-6 col-lg-6 col-sm-12 offset-md-3 offset-lg-3">
-        <p for="keyword" class="text-center">Masukan Kata Kunci</p>
+        <p for="keyword" class="text-center">
+          Masukan Kata Kunci <small><strong>( Min 3 Karakter )</strong></small>
+        </p>
+        <p>Total Data : {{ resultList.length }}</p>
         <input
           type="text"
           class="form-control border form-control-lg"
