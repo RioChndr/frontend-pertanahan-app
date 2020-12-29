@@ -52,33 +52,6 @@
           </div>
         </li>
       </template>
-      <!-- <mobile-menu>
-        <li class="nav-item">
-          <a class="nav-link">
-            <i class="ti-panel"></i>
-            <p>Stats</p>
-          </a>
-        </li>
-        <drop-down
-          class="nav-item"
-          title="5 Notifications"
-          title-classes="nav-link"
-          icon="ti-bell"
-        >
-          <a class="dropdown-item">Notification 1</a>
-          <a class="dropdown-item">Notification 2</a>
-          <a class="dropdown-item">Notification 3</a>
-          <a class="dropdown-item">Notification 4</a>
-          <a class="dropdown-item">Another notification</a>
-        </drop-down>
-        <li class="nav-item">
-          <a class="nav-link">
-            <i class="ti-settings"></i>
-            <p>Settings</p>
-          </a>
-        </li>
-        <li class="divider"></li>
-      </mobile-menu> -->
     </side-bar>
     <div class="main-panel">
       <top-navbar></top-navbar>
@@ -86,6 +59,14 @@
       <dashboard-content @click.native="toggleSidebar"> </dashboard-content>
 
       <content-footer></content-footer>
+      <a
+        target="_blank"
+        class="chat-app-widget float-right"
+        href="https://wa.me/082218761876?text=Halo%20Admin%20BPN"
+      >
+        <i class="fa fa-whatsapp"></i>
+        Chat dengan Admin
+      </a>
     </div>
   </div>
 </template>
@@ -95,12 +76,16 @@ import TopNavbar from "./TopNavbar.vue";
 import ContentFooter from "./ContentFooter.vue";
 import DashboardContent from "./Content.vue";
 import MobileMenu from "./MobileMenu";
+
 export default {
   components: {
     TopNavbar,
     ContentFooter,
     DashboardContent,
     MobileMenu
+  },
+  data() {
+    return {};
   },
   methods: {
     toggleSidebar() {
@@ -120,3 +105,31 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+a {
+  &.chat-app-widget {
+    @media screen and (max-width: 600px) {
+      position: sticky;
+      bottom: 3vh;
+      margin-right: 5vw;
+    }
+
+    @media screen and (min-width: 1100px) {
+      position: absolute;
+      bottom: 0;
+      margin-bottom: 10vh;
+      right: 0;
+      margin-right: 2vw;
+    }
+
+    z-index: 9999;
+    border-radius: 20px;
+    border: none;
+    background-color: #009688;
+    color: #fff;
+    padding: 0.4rem 1rem;
+    box-shadow: 1px 2px 4px rgba($color: #000000, $alpha: 00.5);
+  }
+}
+</style>

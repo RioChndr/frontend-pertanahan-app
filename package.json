@@ -17,6 +17,7 @@
     "dropbox": "^8.2.0",
     "es6-promise": "^4.2.8",
     "jspdf": "^2.2.0",
+    "mobile-device-detect": "^0.4.3",
     "moment": "^2.29.1",
     "vue": "^2.6.10",
     "vue-clickaway": "^2.1.0",
