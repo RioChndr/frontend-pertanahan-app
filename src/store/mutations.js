@@ -35,11 +35,6 @@ export default {
     state.displayModalDetailHistory = payload;
   },
 
-  setDetailModalHistory(state, payload) {
-    state.detailModalDDetailHistory = null;
-    state.detailModalDDetailHistory = payload;
-  },
-
   setDocumentPagination(state, payload) {
     state.documentPagination = payload;
   }

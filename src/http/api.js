@@ -47,7 +47,7 @@ export function apiPutDocument(docId, formData = {}) {
   return axios.put(`documents/${docId}`, formData);
 }
 
-export function apiFindDocument(keyword = null) {
+export function apiFindDocument(keyword = "") {
   return axios.get(`documents/find?keyword=${keyword}`);
 }
 

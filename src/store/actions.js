@@ -70,18 +70,6 @@ export default {
     });
   },
 
-  apiGetDetailHistory({ commit }, payload) {
-    return new Promise((resolve, reject) => {
-      apiGetDetailDocument(payload.id)
-        .then(result => {
-          commit("setDetailModalHistory", result.data.document);
-          resolve(result);
-        })
-        .catch(err => {
-          reject(err);
-        });
-    });
-  },
   //#endregion
 
   //#region User

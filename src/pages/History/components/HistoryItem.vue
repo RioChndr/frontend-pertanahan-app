@@ -65,7 +65,7 @@ export default {
   methods: {
     displayModal() {
       this.$store
-        .dispatch("apiGetDetailHistory", { id: this.document.id })
+        .dispatch("apiGetDetailDocument", { doc_id: this.document.id })
         .then(result => {
           this.$store.commit("setDisplayModalDetailHistory", true);
         })

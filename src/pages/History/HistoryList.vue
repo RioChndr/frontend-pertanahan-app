@@ -41,6 +41,7 @@
         Tidak Terdapat Riwayat Permohonan
       </div>
     </div>
+
     <modal-vue v-if="displayModal" @close="closeModal">
       <template #header>
         <h4 class="m-0">
@@ -184,12 +185,11 @@
                     <td>{{ file.file_type }}</td>
                     <td class="d-flex align-items-center justify-content-end">
                       <DownloadButtonVue :file="file" />
-                      <button
-                        class="btn btn-sm btn-danger mx-4"
-                        @click="deleteItem(file.file_path)"
-                      >
-                        Delete
-                      </button>
+                      <DeleteButtonVue
+                        :file-path="file.file_path"
+                        :file-id="file.id"
+                        :document-id="detail.id"
+                      />
                     </td>
                   </tr>
                 </tbody>
@@ -209,6 +209,9 @@ import { FacebookLoader } from "vue-spinners-css";
 import ModalVue from "../../components/Modal.vue";
 import LabelHorizontalVue from "../../components/LabelHorizontal.vue";
 import DownloadButtonVue from "../../components/DownloadButton.vue";
+import { apiDeleteDocument, apiRemoveFile } from "../../http/api";
+import { deleteFile } from "../../http/dropbox";
+import DeleteButtonVue from "../../components/DeleteButton.vue";
 
 export default {
   components: {
@@ -216,7 +219,8 @@ export default {
     FacebookLoader,
     ModalVue,
     LabelHorizontalVue,
-    DownloadButtonVue
+    DownloadButtonVue,
+    DeleteButtonVue
   },
   watch: {
     keyword: function(value) {
@@ -241,6 +245,10 @@ export default {
       },
       busy: false
     };
+  },
+  created() {
+    this.pagination.page = 0;
+    this.$store.commit("setListRequestEmpty");
   },
   methods: {
     loadData() {
@@ -297,13 +305,13 @@ export default {
           this.loadingArchived = false;
         });
     },
-    deleteItem(filePath) {
+    deleteItem(filePath, fileId) {
       this.$toast.info("On Progress");
     }
   },
   computed: {
     ...mapState({
-      detail: "detailModalDDetailHistory",
+      detail: "detailDocument",
       displayModal: "displayModalDetailHistory",
       documents: "documents",
       documentLength: "documentPagination"

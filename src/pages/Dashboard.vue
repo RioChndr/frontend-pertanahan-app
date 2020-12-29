@@ -6,12 +6,12 @@
         <p for="keyword" class="text-center">
           Masukan Kata Kunci <small><strong>( Min 3 Karakter )</strong></small>
         </p>
-        <p>Total Data : {{ resultList.length }}</p>
+        <p>Total Permohonan : {{ requestLength }}</p>
         <input
           type="text"
           class="form-control border form-control-lg"
           name="keyword"
-          placeholder="Email / Kode Berkas / No. Unik / Nama Pemohon / Nama Pemberi Kuasa"
+          placeholder="Email / Kode Berkas / Nama Pemohon / Nama Pemberi Kuasa"
           v-model="keyword"
         />
       </div>
@@ -82,7 +82,7 @@
     >
       <template #header>
         <div class="d-flex justify-content-between align-items-center">
-          <h4 class="m-0">{{ modal.detailItem.authorized_name }}</h4>
+          <h4 class="m-0">{{ document.authorized_name }}</h4>
         </div>
       </template>
       <template #body>
@@ -98,7 +98,7 @@
                 Penerima Kuasa / Pemohon
               </template>
               <template #right-column>
-                {{ modal.detailItem.authorized_name }}
+                {{ document.authorized_name }}
               </template>
             </label-horizontal-vue>
 
@@ -107,7 +107,7 @@
                 Email
               </template>
               <template #right-column>
-                {{ modal.detailItem.email }}
+                {{ document.email }}
               </template>
             </label-horizontal-vue>
 
@@ -116,16 +116,16 @@
                 Telephone Pemohon / Kuasa
               </template>
               <template #right-column>
-                {{ modal.detailItem.authorized_phone_number }}
+                {{ document.authorized_phone_number }}
               </template>
             </label-horizontal-vue>
 
-            <label-horizontal-vue v-if="modal.detailItem.authorizer_name">
+            <label-horizontal-vue v-if="document.authorizer_name">
               <template #left-column>
                 Nama Pemberi Kuasa
               </template>
               <template #right-column>
-                {{ modal.detailItem.authorizer_name }}
+                {{ document.authorizer_name }}
               </template>
             </label-horizontal-vue>
 
@@ -134,7 +134,7 @@
                 Jenis Pelayanan
               </template>
               <template #right-column>
-                {{ modal.detailItem.service.service_name }}
+                {{ document.service.service_name }}
               </template>
             </label-horizontal-vue>
           </div>
@@ -178,22 +178,22 @@
                   <td>
                     <DownloadButtonVue
                       :file="{
-                        file_path: modal.detailItem.authorized_card_path
+                        file_path: document.authorized_card_path
                       }"
                     />
                   </td>
                 </tr>
-                <tr v-if="modal.detailItem.authorizer_card_path">
+                <tr v-if="document.authorizer_card_path">
                   <td>KTP Pemberi Kuasa</td>
                   <td>
                     <DownloadButtonVue
                       :file="{
-                        file_path: modal.detailItem.authorizer_card_path
+                        file_path: document.authorizer_card_path
                       }"
                     />
                   </td>
                 </tr>
-                <tr v-for="file in modal.detailItem.files" :key="file.id">
+                <tr v-for="file in document.files" :key="file.id">
                   <td>{{ file.file_type }}</td>
                   <td>
                     <DownloadButtonVue :file="file" />
@@ -221,6 +221,7 @@ import ModalVue from "../components/Modal.vue";
 import LabelHorizontalVue from "../components/LabelHorizontal.vue";
 import { downloadFileHelpers } from "../helpers/utils";
 import DownloadButtonVue from "../components/DownloadButton.vue";
+import { mapState } from "vuex";
 
 export default {
   components: {
@@ -250,9 +251,10 @@ export default {
         }
       ],
       resultList: [],
+      requestLength: 0,
       modal: {
         displayModalDetail: false,
-        detailItem: {},
+        // detailItem: {},
         descriptionBox: null,
         loading: false
       },
@@ -288,11 +290,10 @@ export default {
     openDetailRequest(item) {
       const { id } = item;
 
-      apiGetDetailDocument(id)
+      this.$store
+        .dispatch("apiGetDetailDocument", { doc_id: id })
         .then(result => {
           this.modal.displayModalDetail = true;
-          const document = result.data.document;
-          this.modal.detailItem = { ...document };
         })
         .catch(err => {
           this.$toast.error("Terjadi Kesalahan pada Server");
@@ -301,7 +302,7 @@ export default {
     acceptRequest() {
       this.modal.loading = true;
 
-      apiPutDocument(this.modal.detailItem.id, {
+      apiPutDocument(this.document.id, {
         description: this.modal.descriptionBox,
         is_done: true,
         is_waiting: false
@@ -309,12 +310,21 @@ export default {
         .then(result => {
           this.modal.descriptionBox = null;
           this.$toast.success("Permohonan berhasil di terima");
+          return apiFindDocument();
+        })
+        .then(result => {
+          this.requestLength = result.data.documents.length;
+          if (result.data.documents.length <= 0) {
+            this.isResultExists = true;
+          }
         })
         .catch(err => {
           this.$toast.error("Terjadi Kesalahan pada Server");
         })
         .finally(() => {
           this.modal.loading = false;
+          this.modal.displayModalDetail = false;
+          this.resultList = [];
         });
     },
     discardRequest() {
@@ -325,7 +335,7 @@ export default {
 
       this.modal.loading = true;
 
-      apiPutDocument(this.modal.detailItem.id, {
+      apiPutDocument(this.document.id, {
         description: this.modal.descriptionBox,
         is_done: false,
         is_waiting: false
@@ -333,14 +343,41 @@ export default {
         .then(result => {
           this.modal.descriptionBox = null;
           this.$toast.success("Permohonan berhasil di tolak");
+          return apiFindDocument();
+        })
+        .then(result => {
+          this.requestLength = result.data.documents.length;
+          if (result.data.documents.length <= 0) {
+            this.isResultExists = true;
+          }
         })
         .catch(err => {
           this.$toast.error("Terjadi Kesalahan pada Server");
         })
         .finally(() => {
           this.modal.loading = false;
+          this.modal.displayModalDetail = false;
+          this.resultList = [];
         });
     }
+  },
+  created() {
+    apiFindDocument()
+      .then(result => {
+        this.requestLength = result.data.documents.length;
+        if (result.data.documents.length <= 0) {
+          this.isResultExists = true;
+        }
+      })
+      .catch(err => {
+        console.error(err, "error");
+      })
+      .finally(() => {
+        this.loadingOverlay = false;
+      });
+  },
+  computed: {
+    ...mapState({ document: "detailDocument" })
   }
 };
 </script>

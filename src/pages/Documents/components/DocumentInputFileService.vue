@@ -131,7 +131,7 @@ export default {
           localStorage.getItem(process.env.VUE_APP_USER_INFO)
         ).id;
 
-        const fileName = `${userId}/pelayanan/${this.subFolder}/${this.serviceId}/${this.uploadedFileName}_${this.prefixDate}.${fileType}`;
+        const fileName = `${userId}/${this.subFolder}/${this.serviceId}/${this.uploadedFileName}_${this.prefixDate}.${fileType}`;
 
         uploadFile({ fileName: fileName, fileDocument: selectedFile })
           .then(result => {

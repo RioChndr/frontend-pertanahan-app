@@ -1,18 +1,5 @@
 <template>
   <div>
-    <div class="d-flex align-items-center">
-      <img
-        src="@/assets/img/logo_pasti.png"
-        alt="logo-pasti"
-        width="100"
-        height="100"
-      />
-      <h3 class="text-left font-weight-bold" style="color: #222">
-        {{ appTitle }}
-      </h3>
-    </div>
-    <hr />
-
     <div class="auth-form-login">
       <fg-input
         type="text"
