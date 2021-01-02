@@ -7,7 +7,7 @@ const baseUrl =
   process.env.NODE_ENV === "production" ? production : development;
 
 const instance = axios.create({
-  baseURL: baseUrl
+  baseURL: production
 });
 
 instance.interceptors.request.use(
