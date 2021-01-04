@@ -16,7 +16,7 @@
         />
 
         <sidebar-link
-          v-if="userInfo.role.id === 5"
+          v-if="displayMenu"
           to="/dashboard"
           name="Dashboard"
           icon="ti-home"
@@ -30,14 +30,14 @@
         />
 
         <sidebar-link
-          v-if="userInfo.role.id === 5"
+          v-if="displayMenu"
           to="/setting/services"
           name="Pelayanan"
           icon="ti-rss-alt"
         />
 
         <sidebar-link
-          v-if="userInfo.role.id === 5"
+          v-if="displayMenu"
           to="/history"
           name="Riwayat Permohonan"
           icon="ti-reload"
@@ -62,7 +62,7 @@
       <a
         target="_blank"
         class="chat-app-widget float-right"
-        href="https://wa.me/082218761876?text=Halo%20Admin%20BPN"
+        href="https://wa.me/6282218761876?text=Halo%20Admin%20BPN"
       >
         <i class="fa fa-whatsapp"></i>
         Chat dengan Admin
@@ -101,6 +101,10 @@ export default {
   computed: {
     userInfo() {
       return this.$store.state.userInfo;
+    },
+    displayMenu() {
+      return [5, 4].includes(this.userInfo.role.id);
+      // [5, 4].includes(userInfo.role.id)
     }
   }
 };

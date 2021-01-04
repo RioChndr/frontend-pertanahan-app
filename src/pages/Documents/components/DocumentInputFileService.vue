@@ -71,11 +71,11 @@ export default {
       type: String,
       default: null
     },
-    subFolder: {
+    documentId: {
       type: String,
       default: null
     },
-    identityCard: {
+    fileCode: {
       type: String,
       default: null
     }
@@ -131,7 +131,7 @@ export default {
           localStorage.getItem(process.env.VUE_APP_USER_INFO)
         ).id;
 
-        const fileName = `${userId}/${this.subFolder}/${this.serviceId}/${this.uploadedFileName}_${this.prefixDate}.${fileType}`;
+        const fileName = `${userId}/${this.documentId}/${this.serviceId}/${this.uploadedFileName}_${this.documentId}.${fileType}`;
 
         uploadFile({ fileName: fileName, fileDocument: selectedFile })
           .then(result => {
@@ -145,7 +145,7 @@ export default {
             const { url } = result.result;
             this.form.file_url = url;
             this.form.service_id = this.serviceId;
-            this.form.document_id = this.subFolder;
+            this.form.document_id = this.documentId;
             return apiPostFile(this.form);
           })
           .then(result => {

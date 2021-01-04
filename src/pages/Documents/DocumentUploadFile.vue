@@ -436,7 +436,7 @@ label {
           properties="application_letter"
           file-url-name="application_letter_url"
           :service-id="detailDocument.service_id"
-          :sub-folder="$route.params.id"
+          :document-id="detailDocument.unique_id"
           :identity-card="identityCard"
         >
           <template #label>
@@ -451,7 +451,7 @@ label {
           uploaded-file-name="bukti_alas_hak"
           properties="proof_of_rights"
           :service-id="detailDocument.service_id"
-          :sub-folder="$route.params.id"
+          :document-id="detailDocument.unique_id"
           :identity-card="identityCard"
         >
           <template #label>
@@ -466,7 +466,7 @@ label {
           uploaded-file-name="pajak_bumi_dan_bangunan"
           properties="property_tax"
           :service-id="detailDocument.service_id"
-          :sub-folder="$route.params.id"
+          :document-id="detailDocument.unique_id"
           :identity-card="identityCard"
         >
           <template #label>
@@ -481,7 +481,7 @@ label {
           uploaded-file-name="bukti_verifikasi_bphtb"
           properties="verification_bphtb"
           :service-id="detailDocument.service_id"
-          :sub-folder="$route.params.id"
+          :document-id="detailDocument.unique_id"
           :identity-card="identityCard"
         >
           <template #label>
@@ -497,7 +497,7 @@ label {
           uploaded-file-name="file_akta"
           properties="file_akta"
           :service-id="detailDocument.service_id"
-          :sub-folder="$route.params.id"
+          :document-id="detailDocument.unique_id"
           :identity-card="identityCard"
         >
           <template #label>
@@ -516,7 +516,7 @@ label {
           uploaded-file-name="file_sertifikat_hak_atas_tanah"
           properties="file_sertifikat_hak_atas_tanah"
           :service-id="detailDocument.service_id"
-          :sub-folder="$route.params.id"
+          :document-id="detailDocument.unique_id"
           :identity-card="identityCard"
         >
           <template #label>
@@ -534,7 +534,7 @@ label {
           uploaded-file-name="kelengkapan_berkas_lainnya_1"
           properties="kelengkapan_berkas_lainnya_1"
           :service-id="detailDocument.service_id"
-          :sub-folder="$route.params.id"
+          :document-id="detailDocument.unique_id"
           :identity-card="identityCard"
         >
           <template #label>
@@ -549,7 +549,7 @@ label {
           uploaded-file-name="kelengkapan_berkas_lainnya_2"
           properties="kelengkapan_berkas_lainnya_2"
           :service-id="detailDocument.service_id"
-          :sub-folder="$route.params.id"
+          :document-id="detailDocument.unique_id"
           :identity-card="identityCard"
         >
           <template #label>
@@ -564,7 +564,7 @@ label {
           uploaded-file-name="kelengkapan_berkas_lainnya_3"
           properties="kelengkapan_berkas_lainnya_3"
           :service-id="detailDocument.service_id"
-          :sub-folder="$route.params.id"
+          :document-id="detailDocument.unique_id"
           :identity-card="identityCard"
         >
           <template #label>
@@ -579,7 +579,7 @@ label {
           uploaded-file-name="kelengkapan_berkas_lainnya_4"
           properties="kelengkapan_berkas_lainnya_4"
           :service-id="detailDocument.service_id"
-          :sub-folder="$route.params.id"
+          :document-id="detailDocument.unique_id"
           :identity-card="identityCard"
         >
           <template #label>
@@ -594,7 +594,7 @@ label {
           uploaded-file-name="kelengkapan_berkas_lainnya_5"
           properties="kelengkapan_berkas_lainnya_5"
           :service-id="detailDocument.service_id"
-          :sub-folder="$route.params.id"
+          :document-id="detailDocument.unique_id"
           :identity-card="identityCard"
         >
           <template #label>

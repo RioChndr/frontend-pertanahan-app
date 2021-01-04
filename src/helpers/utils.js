@@ -20,6 +20,7 @@ export function downloadFileHelpers(filePath) {
 }
 
 export function checkFileSize(fileSize = 0) {
+  console.log(fileSize);
   const maxSize = 5 * 1024 * 1024;
   if (fileSize > maxSize) {
     return false;

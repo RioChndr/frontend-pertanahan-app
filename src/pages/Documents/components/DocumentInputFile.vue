@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import { checkFileSize, checkFileType } from "../../../helpers/utils";
 import {
   createSharedLink,
   deleteFile,
@@ -95,20 +96,20 @@ export default {
 
       if (files.length) {
         const selectedFile = files[0];
-        const MAX_SIZE = 1 * 1024 * 1024;
-        if (selectedFile.size > MAX_SIZE) {
-          this.$toast.error("Ukuran file yang diupload maksimal 1 MB");
+
+        if (!checkFileSize(selectedFile.size)) {
+          this.$toast.error("Ukuran file yang diupload maksimal 5 MB");
           return;
         }
 
-        if (selectedFile.type !== "application/pdf") {
+        const fileType = selectedFile.name.split(".")[1];
+        if (!checkFileType(fileType)) {
           this.$toast.error("File yang diupload harus berupa PDF");
           return;
         }
 
         this.loading.submit = true;
 
-        const fileType = selectedFile.name.split(".")[1];
         const userId = JSON.parse(
           localStorage.getItem(process.env.VUE_APP_USER_INFO)
         ).id;
@@ -120,7 +121,7 @@ export default {
           "/" +
           this.uploadedFileName +
           "_" +
-          this.prefixDate +
+          this.documentId +
           "." +
           fileType;
 
@@ -164,19 +165,6 @@ export default {
         .finally(() => {
           this.loading.delete = false;
         });
-    }
-  },
-  computed: {
-    prefixDate() {
-      const date = new Date();
-      const prefixDate =
-        date.getFullYear().toString() +
-        date.getMonth().toString() +
-        date.getDate().toString() +
-        date.getHours().toString() +
-        date.getMinutes().toString() +
-        date.getSeconds().toString();
-      return prefixDate;
     }
   }
 };
