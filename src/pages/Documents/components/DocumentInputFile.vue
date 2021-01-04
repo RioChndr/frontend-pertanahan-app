@@ -70,7 +70,7 @@ export default {
       type: String,
       default: null
     },
-    documentId: {
+    fileCode: {
       type: String,
       default: 0
     }
@@ -117,11 +117,11 @@ export default {
         const fileName =
           userId +
           "/" +
-          this.documentId +
+          this.fileCode +
           "/" +
           this.uploadedFileName +
           "_" +
-          this.documentId +
+          this.fileCode +
           "." +
           fileType;
 

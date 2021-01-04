@@ -131,7 +131,7 @@ export default {
           localStorage.getItem(process.env.VUE_APP_USER_INFO)
         ).id;
 
-        const fileName = `${userId}/${this.documentId}/${this.serviceId}/${this.uploadedFileName}_${this.documentId}.${fileType}`;
+        const fileName = `${userId}/${this.fileCode}/${this.serviceId}/${this.uploadedFileName}_${this.fileCode}.${fileType}`;
 
         uploadFile({ fileName: fileName, fileDocument: selectedFile })
           .then(result => {

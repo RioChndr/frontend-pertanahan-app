@@ -58,7 +58,7 @@
             :authorizer-identity="form.authorizer_card_identity"
             :authorized-identity="form.authorized_card_identity"
             @get-uploaded-url="uploadedUrl"
-            :document-id="form.unique_id"
+            :file-code="form.unique_id"
           >
             <template #label>
               <label for="authorized_card_path" class="control-label">
@@ -153,7 +153,7 @@
             :authorizer-identity="form.authorizer_card_identity"
             :authorized-identity="form.authorized_card_identity"
             @get-uploaded-url="uploadedUrl"
-            :document-id="form.unique_id"
+            :file-code="form.unique_id"
           >
             <template #label>
               <label for="authorizer_card_path" class="control-label">

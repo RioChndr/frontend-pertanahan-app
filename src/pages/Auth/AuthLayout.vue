@@ -64,7 +64,7 @@ export default {
     @media screen and (min-height: 900px) {
       display: none;
     }
-    margin-top: 5rem;
+    margin-top: 2rem;
     margin-bottom: 2rem;
     display: flex;
 
@@ -83,14 +83,14 @@ export default {
     width: 150px;
     height: 150px;
 
-    @media screen and (max-height: 800px) {
+    @media screen and (max-width: 400px) {
       display: none;
     }
   }
 
   .icon-header {
     width: 6rem;
-    @media screen and (max-height: 800px) {
+    @media screen and (max-width: 400px) {
       display: none;
     }
   }
