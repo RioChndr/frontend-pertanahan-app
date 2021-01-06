@@ -12,7 +12,9 @@ const router = new VueRouter({
 const token = localStorage.getItem(process.env.VUE_APP_TOKEN_STORAGE);
 let userInfo =
   JSON.parse(localStorage.getItem(process.env.VUE_APP_USER_INFO)) || null;
-let roleId = userInfo && userInfo.role && userInfo.role.id;
+
+let roleId =
+  userInfo === null ? null : userInfo && userInfo.role && userInfo.role.id;
 
 router.beforeEach((to, from, next) => {
   if (to.name !== "login" && to.name !== "signup" && !token)
@@ -23,6 +25,7 @@ router.beforeEach((to, from, next) => {
     } else {
       next({ name: "request" });
     }
+    next();
   } else if (to.path === "/" && roleId === 5) {
     next({ name: "dashboard" });
   } else if (to.path === "/" && roleId !== 5) {

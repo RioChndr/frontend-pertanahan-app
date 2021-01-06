@@ -181,6 +181,7 @@ export default {
         .catch(err => console.error(err, "Error"))
         .finally(() => {
           this.loadingOverlay = false;
+          window.location.reload();
         });
     },
     printRequest() {
@@ -220,20 +221,55 @@ export default {
         this.detailDocument.files &&
         this.detailDocument.files.length
       );
+    },
+    containerClass() {
+      if (this.isRequestApproved) {
+        return ["col-md-12", "col-lg-12", "col-sm-12"];
+      } else {
+        return ["col-md-6", "col-lg-6", "col-sm-12"];
+      }
+    },
+    containerClassItem() {
+      if (this.isRequestApproved) {
+        return ["col-md-3", "col-lg-3", "col-sm-12"];
+      } else {
+        return ["col-md-12", "col-lg-12", "col-sm-12"];
+      }
+    },
+    isRequestApproved() {
+      const isDocumentOnProgress = this.detailDocument.is_waiting;
+      const isDocumentApproved = this.detailDocument.is_done;
+      const isDocumentSubbmited = this.detailDocument.is_submitted;
+      if (isDocumentOnProgress) {
+        return true;
+      }
+      return !isDocumentOnProgress && isDocumentSubbmited && isDocumentApproved;
+    },
+    isDocumentSuccessApproved() {
+      const isDocumentOnProgress = this.detailDocument.is_waiting;
+      const isDocumentApproved = this.detailDocument.is_done;
+      const isDocumentSubbmited = this.detailDocument.is_submitted;
+
+      if (!isDocumentOnProgress && isDocumentSubbmited && isDocumentApproved) {
+        return {
+          class: "alert-success",
+          title: "Pengajuan Anda Diterima!"
+        };
+      } else if (
+        !isDocumentOnProgress &&
+        isDocumentSubbmited &&
+        !isDocumentApproved
+      ) {
+        return {
+          class: "alert-danger",
+          title: "Pengajuan Anda Ditolak!"
+        };
+      }
     }
   }
 };
 </script>
 
-<style lang="scss" scoped>
-label {
-  color: #89857f;
-}
-
-.form-group {
-  margin: 2.5rem 0;
-}
-</style>
 <template>
   <div class="container-fluid">
     <nav class="d-flex align-items-center justify-content-between">
@@ -247,7 +283,7 @@ label {
     <hr />
 
     <div class="row">
-      <div class="col">
+      <div class="col-lg-12">
         <div class="alert alert-success" role="alert">
           Apabila File PDF Anda terlalu besar, perkecil ukurannya pada
           <a
@@ -261,57 +297,66 @@ label {
       </div>
     </div>
 
-    <div
-      class="row"
-      v-if="
-        document.is_submitted &&
-          !detailDocument.is_done &&
-          !detailDocument.is_waiting
-      "
-    >
-      <div class="col">
-        <div class="alert alert-danger" role="alert">
-          <h4 class="alert-heading m-0">Pengajuan Anda Ditolak!</h4>
-          <hr />
-          <p class="mb-0">
-            {{ detailDocument.description }}
-          </p>
+    <v-loading
+      :active.sync="loadingOverlay"
+      :can-cancel="false"
+      :is-full-page="true"
+    ></v-loading>
+
+    <div class="row border mb-2">
+      <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="row">
+          <div class="col-lg-6 col-sm-6 col-md-12">
+            <div class="form-group my-2">
+              <label for="services" class="control-label">
+                Kode Berkas
+              </label>
+              <h4 class="m-0 font-weight-bold d-flex align-items-center">
+                {{ detailDocument.unique_id }}
+              </h4>
+            </div>
+          </div>
+          <div
+            class="col-lg-6 col-sm-12 col-md-12 d-flex align-items-center"
+            v-if="detailDocument.is_submitted && !detailDocument.is_waiting"
+          >
+            <div
+              class="alert my-2"
+              :class="[isDocumentSuccessApproved.class]"
+              role="alert"
+            >
+              <h4 class="alert-heading m-0">
+                {{ isDocumentSuccessApproved.title }}
+              </h4>
+              <hr v-if="detailDocument.description" />
+              <p class="mb-0">
+                {{ detailDocument.description }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-end">
+        <div class="form-group my-2 d-flex align-items-center">
+          <button
+            class="btn btn-info btn-sm mr-2"
+            :disabled="fileLength === 0"
+            @click.prevent="submitRequest"
+            v-if="!detailDocument.is_submitted"
+          >
+            <span class="ti-share mr-2"></span>
+            Ajukan Permohonan
+          </button>
+
+          <button class="btn btn-sm" @click="printRequest">
+            <span class="ti-printer mr-2"></span>
+            Cetak Permohonan
+          </button>
         </div>
       </div>
     </div>
-
-    <div
-      class="row"
-      v-if="detailDocument.is_done && !detailDocument.is_waiting"
-    >
-      <div class="col">
-        <div class="alert alert-success" role="alert">
-          <h4 class="alert-heading m-0">Pengajuan Anda Diterima!</h4>
-          <hr />
-          <p class="mb-0">
-            {{ detailDocument.description }}
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <v-loading
-        :active.sync="loadingOverlay"
-        :can-cancel="false"
-        :is-full-page="true"
-      ></v-loading>
-
-      <div class="col-lg 6 col-md-6 col-sm-12 mx-2 px-4">
-        <div class="form-group">
-          <label for="services" class="control-label">
-            Kode Berkas
-          </label>
-          <h4 class="m-0 font-weight-bold d-flex align-items-center">
-            {{ detailDocument.unique_id }}
-          </h4>
-        </div>
-
+    <div class="row border mb-2">
+      <div class="col-lg-4 col-md-4 col-sm-12">
         <div class="form-group">
           <label for="services" class="control-label">
             Penerima Kuasa / Pemohon
@@ -320,7 +365,6 @@ label {
             {{ detailDocument.authorized_name }}
           </h4>
         </div>
-
         <div class="form-group">
           <label for="services" class="control-label">
             Nomor KTP Penerima Kuasa / Pemohon
@@ -329,7 +373,8 @@ label {
             {{ detailDocument.authorized_card_identity || "-" }}
           </h4>
         </div>
-
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
         <div class="form-group">
           <label for="services" class="control-label">
             Email
@@ -338,7 +383,6 @@ label {
             {{ detailDocument.email }}
           </h4>
         </div>
-
         <div class="form-group">
           <label for="services" class="control-label">
             Nomor Telephone
@@ -347,7 +391,8 @@ label {
             {{ detailDocument.authorized_phone_number }}
           </h4>
         </div>
-
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-12">
         <div class="form-group">
           <label for="services" class="control-label">
             Jenis Layanan
@@ -356,10 +401,12 @@ label {
             {{ detailDocument.service && detailDocument.service.service_name }}
           </h4>
         </div>
-
+      </div>
+      <div
+        class="col-lg-12 col-md-12 col-sm-12"
+        :class="{ 'border-top': detailDocument.authorizer_name }"
+      >
         <div id="section-authorizer" v-if="detailDocument.authorizer_name">
-          <hr />
-
           <div class="form-group">
             <label for="services" class="control-label">
               Pemberi Kuasa
@@ -378,32 +425,17 @@ label {
             </h4>
           </div>
         </div>
-        <div class="form-group">
-          <button
-            class="btn btn-info btn-sm mr-2"
-            :disabled="fileLength === 0"
-            @click.prevent="submitRequest"
-            v-if="!detailDocument.is_submitted"
-          >
-            <span class="ti-share mr-2"></span>
-            Ajukan Permohonan
-          </button>
-
-          <button class="btn btn-sm" @click="printRequest">
-            <span class="ti-printer mr-2"></span>
-            Cetak Permohonan
-          </button>
-        </div>
-
-        <hr />
-
-        <div class="form-group">
+      </div>
+    </div>
+    <div class="row mt-2">
+      <div :class="containerClass">
+        <div class="form-group my-2">
           <label for="services" class="control-label">
             Dokumen yang telah diupload
           </label>
           <div class="row mt-2">
             <div
-              class="col-md-6"
+              :class="containerClassItem"
               v-for="file in detailDocument.files"
               :key="file.id"
             >
@@ -428,8 +460,7 @@ label {
           </div>
         </div>
       </div>
-
-      <div class="col-lg-6 col-md-6 col-sm-10 border mx-2 px-4">
+      <div class="col-lg-6 col-md-6 col-sm-12 border" v-if="!isRequestApproved">
         <!-- Surat Permohonan -->
         <document-input-file-service
           uploaded-file-name="surat_permohonan"
@@ -618,3 +649,13 @@ label {
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+label {
+  color: #89857f;
+}
+
+.form-group {
+  margin: 2.5rem 0;
+}
+</style>

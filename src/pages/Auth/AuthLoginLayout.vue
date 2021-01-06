@@ -74,14 +74,18 @@ export default {
       this.loading.signin = true;
       apiPostLogin({ email: this.form.email, password: this.form.password })
         .then(result => {
-          this.$toast.success("Login Berhasil");
-          const { token, ...withoutToken } = result.data;
-          localStorage.setItem(process.env.VUE_APP_TOKEN_STORAGE, token);
-          localStorage.setItem(
-            process.env.VUE_APP_USER_INFO,
-            JSON.stringify(withoutToken)
-          );
-          window.location.reload();
+          if (result.data.status === 0) {
+            this.$toast.error(result.data.message);
+          } else {
+            this.$toast.success("Login Berhasil");
+            const { token, ...withoutToken } = result.data;
+            localStorage.setItem(process.env.VUE_APP_TOKEN_STORAGE, token);
+            localStorage.setItem(
+              process.env.VUE_APP_USER_INFO,
+              JSON.stringify(withoutToken)
+            );
+            window.location.reload();
+          }
         })
         .catch(err => {
           this.$toast.error("Login Tidak Berhasil");
