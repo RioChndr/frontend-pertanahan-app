@@ -59,7 +59,7 @@ export default {
     signup() {
       this.loading.signup = true;
       apiPostSignup({
-        emai: this.form.email,
+        email: this.form.email,
         password: this.form.password,
         full_name: this.form.full_name
       })

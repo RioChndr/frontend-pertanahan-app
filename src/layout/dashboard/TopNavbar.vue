@@ -1,7 +1,8 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">{{ routeName }}</a>
+      <!-- <a class="navbar-brand" href="#">{{ routeName }}</a> -->
+      <p class="m-3">Selamat Datang, {{ userInfo.full_name }}</p>
       <button
         class="navbar-toggler navbar-burger"
         type="button"
@@ -18,7 +19,7 @@
           <li class="nav-item d-flex align-item-center">
             <!-- <span> -->
             <!-- <i class="ti-panel"></i> -->
-            <p class="m-0">Selamat Datang, {{ userInfo.full_name }}</p>
+            <!-- <p class="m-0">Selamat Datang, {{ userInfo.full_name }}</p> -->
             <!-- </span> -->
           </li>
           <!-- <li class="nav-item">

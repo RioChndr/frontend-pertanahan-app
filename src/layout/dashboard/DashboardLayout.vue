@@ -60,6 +60,7 @@
 
       <content-footer></content-footer>
       <a
+        v-if="userInfo.role.id === 3"
         target="_blank"
         class="chat-app-widget float-right"
         href="https://wa.me/6282218761876?text=Halo%20Admin%20BPN"
@@ -104,7 +105,6 @@ export default {
     },
     displayMenu() {
       return [5, 4].includes(this.userInfo.role.id);
-      // [5, 4].includes(userInfo.role.id)
     }
   }
 };

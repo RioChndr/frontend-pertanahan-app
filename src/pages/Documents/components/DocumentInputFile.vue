@@ -9,7 +9,7 @@
       >
         <i class="fa fa-spinner fa-spin fa-fw my-1" v-if="loading.submit"></i>
         <span v-else>
-          Unggah Dokumen
+          File PDF * <small>Max 5 Mb</small>
           <span class="ti-upload ml-2"></span>
         </span>
       </button>

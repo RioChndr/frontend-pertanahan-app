@@ -44,7 +44,7 @@ export function apiPrintDocument(docId) {
 }
 
 export function apiPutDocument(docId, formData = {}) {
-  return axios.put(`documents/${docId}`, formData);
+  return axios.patch(`documents/${docId}`, formData);
 }
 
 export function apiFindDocument(keyword = "") {

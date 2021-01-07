@@ -1,8 +1,11 @@
 <template>
   <div class="form-group">
-    <div v-if="uploadedFileName === 'file_sertifikat_hak_atas_tanah'">
+    <div
+      v-if="uploadedFileName === 'file_sertifikat_hak_atas_tanah'"
+      class="mb-2"
+    >
       <label for="sertifikat_tanah" class="control-label">
-        Sertifikat Hak Atas Tanah *
+        Sertifikat Hak Atas Tanah
         <small>
           (HM, HGB, HW, HMSRS, HP, HPL) / Kecamatan /Kelurahan, yang dimohon)
         </small>
@@ -10,7 +13,7 @@
       <input
         v-model="form.description"
         type="text"
-        class="form-control border"
+        class="form-control border mb-4"
         placeholder="Format M100/Sekajati ( Hak Milik No 100 kelurahan sekejati )"
       />
     </div>

@@ -4,7 +4,7 @@
       <nav>
         <ul>
           <li>
-            <router-link :to="{ path: '/admin' }">Beranda</router-link>
+            <router-link :to="{ path: '/admin' }">{{ appName }}</router-link>
           </li>
         </ul>
       </nav>
@@ -15,7 +15,13 @@
   </footer>
 </template>
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      appName: process.env.VUE_APP_APP_NAME
+    };
+  }
+};
 </script>
 <style scoped>
 @media screen and (min-width: 1200px) {

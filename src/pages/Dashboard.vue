@@ -137,6 +137,24 @@
                 {{ document.service.service_name }}
               </template>
             </label-horizontal-vue>
+
+            <label-horizontal-vue v-if="document.authorizer_name">
+              <template #left-column>
+                Pemberi Kuasa
+              </template>
+              <template #right-column>
+                {{ document.authorizer_name || "-" }}
+              </template>
+            </label-horizontal-vue>
+
+            <label-horizontal-vue v-if="document.authorizer_card_identity">
+              <template #left-column>
+                Nomor KTP Pemberi Kuasa
+              </template>
+              <template #right-column>
+                {{ document.authorizer_card_identity || "-" }}
+              </template>
+            </label-horizontal-vue>
           </div>
           <div class="col-4">
             <div class="row">

@@ -265,6 +265,14 @@ export default {
           title: "Pengajuan Anda Ditolak!"
         };
       }
+    },
+    isDocumentCanRequest() {
+      return (
+        (!this.detailDocument.is_submitted && !this.detailDocument.is_done) ||
+        (this.detailDocument.is_submitted &&
+          !this.detailDocument.is_done &&
+          !this.detailDocument.is_waiting)
+      );
     }
   }
 };
@@ -272,14 +280,21 @@ export default {
 
 <template>
   <div class="container-fluid">
-    <nav class="d-flex align-items-center justify-content-between">
-      <router-link :to="{ name: 'list' }" class="d-flex align-items-center">
-        <span class="ti-arrow-left mr-2"></span>
-        Kembali
-      </router-link>
-
-      <span>Unggah Dokumen / Surat - Surat</span>
-    </nav>
+    <div class="row ">
+      <div
+        class="col-lg-6 col-md-6 col-sm-12 d-flex align-items-center justify-content-start"
+      >
+        <router-link :to="{ name: 'list' }" class="d-flex align-items-center">
+          <span class="ti-arrow-left mr-2"></span>
+          Kembali
+        </router-link>
+      </div>
+      <div
+        class="col-lg-6 col-md-6 col-sm-12 d-flex align-items-center justify-content-end"
+      >
+        <span>Unggah Dokumen / Surat - Surat</span>
+      </div>
+    </div>
     <hr />
 
     <div class="row">
@@ -306,7 +321,7 @@ export default {
     <div class="row border mb-2">
       <div class="col-lg-6 col-md-6 col-sm-12">
         <div class="row">
-          <div class="col-lg-6 col-sm-6 col-md-12">
+          <div class="col-lg-6 col-sm-6 col-md-12 d-flex align-items-center">
             <div class="form-group my-2">
               <label for="services" class="control-label">
                 Kode Berkas
@@ -321,15 +336,15 @@ export default {
             v-if="detailDocument.is_submitted && !detailDocument.is_waiting"
           >
             <div
-              class="alert my-2"
+              class="alert my-2 p-0"
               :class="[isDocumentSuccessApproved.class]"
               role="alert"
             >
-              <h4 class="alert-heading m-0">
+              <h4 class="alert-heading m-0 px-4 pt-2">
                 {{ isDocumentSuccessApproved.title }}
               </h4>
-              <hr v-if="detailDocument.description" />
-              <p class="mb-0">
+              <hr class="my-2" v-if="detailDocument.description" />
+              <p class="mb-0 px-4 pb-2">
                 {{ detailDocument.description }}
               </p>
             </div>
@@ -340,9 +355,8 @@ export default {
         <div class="form-group my-2 d-flex align-items-center">
           <button
             class="btn btn-info btn-sm mr-2"
-            :disabled="fileLength === 0"
             @click.prevent="submitRequest"
-            v-if="!detailDocument.is_submitted"
+            v-if="isDocumentCanRequest"
           >
             <span class="ti-share mr-2"></span>
             Ajukan Permohonan
@@ -558,7 +572,7 @@ export default {
         >
           <template #label>
             <label for="file_sertifikat_hak_atas_tanah" class="control-label">
-              File Sertipikat Hak Atas Tanah *
+              File Sertipikat Hak Atas Tanah
               <small>
                 Berwarna Seperti Sertipikat Aslinya Semua Halaman
               </small>
