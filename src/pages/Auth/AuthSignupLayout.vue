@@ -4,21 +4,21 @@
       <fg-input
         type="text"
         label="Nama Lengkap"
-        placeholder="Paper dashboard"
+        placeholder="Nama Lengkap"
         v-model="form.full_name"
       ></fg-input>
 
       <fg-input
-        type="text"
+        type="email"
         label="Alamat Email"
-        placeholder="Paper dashboard"
+        placeholder="Email"
         v-model="form.email"
       ></fg-input>
 
       <fg-input
         type="password"
         label="Password"
-        placeholder="Paper dashboard"
+        placeholder="Password"
         v-model="form.password"
       ></fg-input>
 
@@ -58,6 +58,33 @@ export default {
   methods: {
     signup() {
       this.loading.signup = true;
+
+      if (!this.form.email) {
+        this.$toast.error("Email Wajib Terisi !");
+        return;
+        this.loading.signup = false;
+      } else if (!this.validEmail(this.form.email)) {
+        this.$toast.error("Format Email yang Anda masukan Salah !");
+        this.loading.signup = false;
+        return;
+      }
+
+      if (!this.form.password) {
+        this.$toast.error("Password Wajib Terisi");
+        this.loading.signup = false;
+        return;
+      } else if (this.form.password.length < 8) {
+        this.loading.signup = false;
+        this.$toast.error("Password Wajib Memiliki 8 Karakter");
+        return;
+      }
+
+      if (!this.form.full_name) {
+        this.loading.signup = false;
+        this.$toast.error("Nama Wajib Terisi");
+        return;
+      }
+
       apiPostSignup({
         email: this.form.email,
         password: this.form.password,
@@ -75,6 +102,10 @@ export default {
         .finally(() => {
           this.loading.signup = false;
         });
+    },
+    validEmail: function(email) {
+      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
     }
   }
 };
