@@ -96,6 +96,7 @@ export default {
         file_type: null,
         description: null
       },
+      fileId: null,
       displayButton: true
     };
   },
@@ -152,7 +153,7 @@ export default {
             return apiPostFile(this.form);
           })
           .then(result => {
-            console.log(result);
+            this.fileId = result.data.message.file.id;
             this.$store.dispatch("apiGetDetailDocument", {
               doc_id: this.$route.params.id
             });
@@ -178,7 +179,7 @@ export default {
           this.form.file_path = null;
           this.form.file_type = null;
           this.$toast.success("File Berhasil terhapus");
-          return apiRemoveFile();
+          return apiRemoveFile(this.fileId);
         })
         .catch(err => {
           this.$toast.error("File Tidak Terhapus");
