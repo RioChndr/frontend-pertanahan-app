@@ -20,7 +20,7 @@ router.beforeEach((to, from, next) => {
   if (to.name !== "login" && to.name !== "signup" && !token)
     next({ name: "login" });
   else if ((token && to.name === "login") || (token && to.name === "signup")) {
-    if (roleId === 5) {
+    if ([5, 4].includes(roleId)) {
       next({ name: "dashboard" });
     } else {
       next({ name: "request" });
