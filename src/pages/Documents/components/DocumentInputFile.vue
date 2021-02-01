@@ -102,8 +102,8 @@ export default {
           return;
         }
 
-        const fileType = selectedFile.name.split(".")[1];
-        if (!checkFileType(fileType)) {
+        const extension = selectedFile.name.split(".").pop();
+        if (!checkFileType(extension)) {
           this.$toast.error("File yang diupload harus berupa PDF");
           return;
         }
@@ -123,7 +123,7 @@ export default {
           "_" +
           this.fileCode +
           "." +
-          fileType;
+          extension;
 
         uploadFile({ fileName: fileName, fileDocument: selectedFile })
           .then(result => {
