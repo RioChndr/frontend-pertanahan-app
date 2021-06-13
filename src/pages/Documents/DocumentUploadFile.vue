@@ -1,14 +1,16 @@
 <script>
 import moment from "moment";
-import { createSharedLink, downloadFile, uploadFile } from "../../http/dropbox";
+import { downloadFile } from "../../http/dropbox";
 import DocumentInputFileService from "./components/DocumentInputFileService";
 import { mapState } from "vuex";
-import { apiPrintDocument } from "../../http/api";
 import jsPDF from "jspdf";
+import { getStatusSubmission } from "../../helpers/utils";
+import Modal from "../../components/Modal.vue";
 
 export default {
   components: {
-    DocumentInputFileService
+    DocumentInputFileService,
+    Modal,
   },
   filters: {
     dateHuman(val) {
@@ -19,9 +21,12 @@ export default {
     fileType(val) {
       return val
         .split("_")
-        .map(v => v.charAt(0).toUpperCase() + v.substr(1).toLowerCase())
+        .map((v) => v.charAt(0).toUpperCase() + v.substr(1).toLowerCase())
         .join(" ");
-    }
+    },
+    filterStatus(value) {
+      return getStatusSubmission(value);
+    },
   },
   data() {
     return {
@@ -39,7 +44,7 @@ export default {
         kelengkapan_berkas_lainnya_3: null,
         kelengkapan_berkas_lainnya_4: null,
         kelengkapan_berkas_lainnya_5: null,
-        sertifikat_hak_atas_tanah: null
+        sertifikat_hak_atas_tanah: null,
       },
       document: {
         application_letter: {
@@ -47,35 +52,35 @@ export default {
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null
+          file_url: null,
         },
         proof_of_rights: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null
+          file_url: null,
         },
         property_tax: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null
+          file_url: null,
         },
         verification_bphtb: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null
+          file_url: null,
         },
         file_akta: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null
+          file_url: null,
         },
         file_sertifikat_hak_atas_tanah: {
           is_loading: false,
@@ -83,52 +88,53 @@ export default {
           file_path: null,
           file_type: null,
           file_url: null,
-          description: null
+          description: null,
         },
         kelengkapan_berkas_lainnya_1: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null
+          file_url: null,
         },
         kelengkapan_berkas_lainnya_2: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null
+          file_url: null,
         },
         kelengkapan_berkas_lainnya_3: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null
+          file_url: null,
         },
         kelengkapan_berkas_lainnya_4: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null
+          file_url: null,
         },
         kelengkapan_berkas_lainnya_5: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null
-        }
+          file_url: null,
+        },
       },
-      loadingOverlay: false
+      loadingOverlay: false,
+      displayModal: false,
     };
   },
   created() {
     this.loadingOverlay = true;
     this.$store
       .dispatch("apiGetDetailDocument", {
-        doc_id: this.$route.params.id
+        doc_id: this.$route.params.id,
       })
       .finally(() => {
         this.loadingOverlay = false;
@@ -137,14 +143,14 @@ export default {
   methods: {
     downloadFile(path) {
       downloadFile({ filePath: path })
-        .then(result => {
+        .then((result) => {
           let link = document.createElement("a");
           link.href = result.result.link;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
         });
     },
@@ -152,43 +158,62 @@ export default {
       const requiredDocument = [
         "surat_permohonan",
         "bukti_alas_hak",
-        "pajak_bumi_dan_bangunan"
+        "pajak_bumi_dan_bangunan",
       ];
 
       const uploadedFiles = [];
-      this.detailDocument.files.map(v => {
+      this.detailDocument.files.map((v) => {
         uploadedFiles.push(v.file_type);
       });
 
-      const result = requiredDocument.map(v => uploadedFiles.includes(v));
+      const result = requiredDocument.map((v) => uploadedFiles.includes(v));
 
+      // // TODO :: Uncomment
       if (result.includes(false)) {
         this.$toast.error("Dokumen yang Anda unggah belum lengkap");
         return;
       }
 
-      this.$store
-        .dispatch("actionPutDocument", {
-          doc_id: this.$route.params.id,
-          form: {
-            is_submitted: true,
-            is_waiting: true
-          }
-        })
-        .then(() => {
-          this.$toast.success("Permohonan Berhasil diajukan");
-        })
-        .catch(err => console.error(err, "Error"))
-        .finally(() => {
-          this.loadingOverlay = false;
-          window.location.reload();
-        });
+      this.$dialog({
+        title: "Informasi",
+        content:
+          "Apakah Anda sudah yakin untuk mengajukan Permohonan ? Permohonan Anda tidak dapat dibatalkan",
+        btns: [
+          {
+            label: "OK",
+            color: "#09f",
+            callback: () => {
+              this.$store
+                .dispatch("actionPutDocument", {
+                  doc_id: this.$route.params.id,
+                  form: {
+                    is_submitted: true,
+                    is_waiting: true,
+                  },
+                })
+                .then(() => {
+                  this.$toast.success("Permohonan Berhasil diajukan");
+                })
+                .catch((err) => console.error(err, "Error"))
+                .finally(() => {
+                  this.loadingOverlay = false;
+                  window.location.reload();
+                });
+            },
+          },
+          {
+            label: "Cancel",
+            color: "#444",
+            ghost: true,
+          },
+        ],
+      });
     },
     printRequest() {
       const perLine = 8;
       let pdfFile = this.detailDocument.unique_id;
       const doc = new jsPDF({
-        orientation: "potrait"
+        orientation: "potrait",
       });
 
       const pageWidth = doc.internal.pageSize.getWidth();
@@ -247,7 +272,7 @@ export default {
         doc.text(this.detailDocument.authorizer_name, 80, perLine * 5);
       }
       doc.save(pdfFile + ".pdf");
-    }
+    },
   },
   computed: {
     ...mapState(["detailDocument"]),
@@ -289,7 +314,7 @@ export default {
       if (!isDocumentOnProgress && isDocumentSubbmited && isDocumentApproved) {
         return {
           class: "alert-success",
-          title: "Pengajuan Anda Diterima!"
+          title: "Pengajuan Anda Diterima!",
         };
       } else if (
         !isDocumentOnProgress &&
@@ -298,7 +323,7 @@ export default {
       ) {
         return {
           class: "alert-danger",
-          title: "Pengajuan Anda Ditolak!"
+          title: "Pengajuan Anda Ditolak!",
         };
       }
     },
@@ -309,25 +334,21 @@ export default {
           !this.detailDocument.is_done &&
           !this.detailDocument.is_waiting)
       );
-    }
-  }
+    },
+  },
 };
 </script>
 
 <template>
   <div class="container-fluid">
-    <div class="row ">
-      <div
-        class="col-lg-6 col-md-6 col-sm-12 d-flex align-items-center justify-content-start"
-      >
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-12">
         <router-link :to="{ name: 'list' }" class="d-flex align-items-center">
           <span class="ti-arrow-left mr-2"></span>
           Kembali
         </router-link>
       </div>
-      <div
-        class="col-lg-6 col-md-6 col-sm-12 d-flex align-items-center justify-content-end"
-      >
+      <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-end">
         <span>Unggah Dokumen / Surat - Surat</span>
       </div>
     </div>
@@ -354,35 +375,130 @@ export default {
       :is-full-page="true"
     ></v-loading>
 
+    <div class="row border mb-2" v-if="detailDocument.sps_path">
+      <div class="col-12 p-2 d-flex align-items-center justify-content-center">
+        <strong>
+          SPS Telah Terbit, silahkan&nbsp;<a
+            :href="detailDocument.sps_path || '#'"
+          >
+            download disini
+          </a>
+        </strong>
+      </div>
+      <div
+        class="col-12 my-2 d-flex align-items-center justify-content-center"
+        v-if="detailDocument.delivery_services === null"
+      >
+        <button
+          class="btn btn-sm btn-primary mx-2"
+          @click="
+            $router.push({
+              name: 'delivery.send',
+              params: {
+                document_id: detailDocument.id,
+              },
+              query: {
+                type: 'certificate',
+              },
+            })
+          "
+        >
+          Kirim Berkas oleh BPN
+        </button>
+        <button
+          class="btn btn-sm btn-secondary mx-2"
+          @click="$router.push({ name: 'request.pickup' })"
+        >
+          Ambil Sendiri Berkas
+        </button>
+      </div>
+      <div class="col-12 my-2 d-flex align-items-center justify-content-center">
+        Anda memilih untuk Menggunakan Jasa Pengiriman Kantor BPN &nbsp;
+        <router-link
+          :to="{
+            name: 'delivery.detail',
+            params: { id: detailDocument.delivery_services.id },
+          }"
+          >check disini</router-link
+        >
+      </div>
+    </div>
+
+    <div
+      class="row border mb-2"
+      v-if="detailDocument.status === 'finish_verification'"
+    >
+      <div class="col-12 p-2 d-flex align-items-center justify-content-center">
+        <strong v-if="detailDocument.delivery_services === null">
+          Verifikasi Berkas telah selesai, silahkan kirim kan Berkasnya.
+        </strong>
+        <strong v-else>
+          Lacak Penjemputan Berkas
+          <router-link
+            :to="{
+              name: 'delivery.detail',
+              params: { id: detailDocument.delivery_services.id },
+            }"
+            >disini</router-link
+          >
+        </strong>
+      </div>
+      <div
+        class="col-12 my-2 d-flex align-items-center justify-content-center"
+        v-if="detailDocument.delivery_services === null"
+      >
+        <button
+          class="btn btn-sm btn-primary mx-2"
+          @click="
+            $router.push({
+              name: 'delivery.send',
+              params: {
+                document_id: detailDocument.id,
+              },
+              query: {
+                type: 'documents',
+              },
+            })
+          "
+        >
+          Jemput Berkas oleh BPN
+        </button>
+        <button
+          class="btn btn-sm btn-secondary mx-2"
+          @click="$router.push({ name: 'request.pickup' })"
+        >
+          Antar Sendiri Berkas
+        </button>
+      </div>
+    </div>
+
     <div class="row border mb-2">
       <div class="col-lg-6 col-md-6 col-sm-12">
         <div class="row">
-          <div class="col-lg-6 col-sm-6 col-md-12 d-flex align-items-center">
+          <div
+            class="col-sm-12 d-flex align-items-center"
+            :class="[
+              detailDocument.status !== ''
+                ? 'col-lg-9 col-md-9'
+                : 'col-lg-6 col-md-6',
+            ]"
+          >
             <div class="form-group my-2">
               <label for="services" class="control-label">
                 Kode Berkas
+                <span
+                  class="badge"
+                  :class="[
+                    detailDocument.status !== 'reject_submission'
+                      ? 'badge-success'
+                      : 'badge-danger',
+                  ]"
+                  >{{ detailDocument.status | filterStatus }}</span
+                >
               </label>
               <h4 class="m-0 font-weight-bold d-flex align-items-center">
                 {{ detailDocument.unique_id }}
               </h4>
-            </div>
-          </div>
-          <div
-            class="col-lg-6 col-sm-12 col-md-12 d-flex align-items-center"
-            v-if="detailDocument.is_submitted && !detailDocument.is_waiting"
-          >
-            <div
-              class="alert my-2 p-0"
-              :class="[isDocumentSuccessApproved.class]"
-              role="alert"
-            >
-              <h4 class="alert-heading m-0 px-4 pt-2">
-                {{ isDocumentSuccessApproved.title }}
-              </h4>
-              <hr class="my-2" v-if="detailDocument.description" />
-              <p class="mb-0 px-4 pb-2">
-                {{ detailDocument.description }}
-              </p>
             </div>
           </div>
         </div>
@@ -392,7 +508,11 @@ export default {
           <button
             class="btn btn-info btn-sm mr-2"
             @click.prevent="submitRequest"
-            v-if="isDocumentCanRequest"
+            v-if="
+              detailDocument.status === '' ||
+              detailDocument.status === 'reject_submission' ||
+              detailDocument.status === null
+            "
           >
             <span class="ti-share mr-2"></span>
             Ajukan Permohonan
@@ -402,6 +522,50 @@ export default {
             <span class="ti-printer mr-2"></span>
             Cetak Permohonan
           </button>
+          <button
+            class="btn btn-sm ml-2"
+            @click="displayModal = true"
+            data-toggle="tooltip"
+            data-placement="top"
+            title="Catatan Riwayat Permohonan"
+            type="button"
+          >
+            <span class="ti-view-list-alt"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row border mb-2">
+      <div class="col">
+        <div class="row">
+          <div class="col-lg-3 col-sm-12 col-md-3 d-flex align-items-center">
+            <div class="form-group my-2">
+              <label for="services" class="control-label"> Tipe Hak </label>
+              <h4 class="m-0 font-weight-bold d-flex align-items-center">
+                {{
+                  detailDocument.type_hak ? detailDocument.type_hak.name : "-"
+                }}
+              </h4>
+            </div>
+          </div>
+          <div class="col-lg-3 col-sm-12 col-md-3 d-flex align-items-center">
+            <div class="form-group my-2">
+              <label for="services" class="control-label"> No. Hak </label>
+              <h4 class="m-0 font-weight-bold d-flex align-items-center">
+                {{ detailDocument.number_hak || "-" }}
+              </h4>
+            </div>
+          </div>
+          <div class="col-lg-3 col-sm-12 col-md-3 d-flex align-items-center">
+            <div class="form-group my-2">
+              <label for="services" class="control-label"> Alamat </label>
+              <h4 class="m-0 font-weight-bold d-flex align-items-center">
+                {{ detailDocument.kecamatan_name }},
+                {{ detailDocument.kelurahan_name }}
+              </h4>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -426,17 +590,13 @@ export default {
       </div>
       <div class="col-lg-4 col-md-4 col-sm-12">
         <div class="form-group">
-          <label for="services" class="control-label">
-            Email
-          </label>
+          <label for="services" class="control-label"> Email </label>
           <h4 class="m-0 font-weight-bold">
             {{ detailDocument.email }}
           </h4>
         </div>
         <div class="form-group">
-          <label for="services" class="control-label">
-            Nomor Telephone
-          </label>
+          <label for="services" class="control-label"> Nomor Telephone </label>
           <h4 class="m-0 font-weight-bold">
             {{ detailDocument.authorized_phone_number }}
           </h4>
@@ -444,9 +604,7 @@ export default {
       </div>
       <div class="col-lg-4 col-md-4 col-sm-12">
         <div class="form-group">
-          <label for="services" class="control-label">
-            Jenis Layanan
-          </label>
+          <label for="services" class="control-label"> Jenis Layanan </label>
           <h4 class="m-0 font-weight-bold">
             {{ detailDocument.service && detailDocument.service.service_name }}
           </h4>
@@ -458,9 +616,7 @@ export default {
       >
         <div id="section-authorizer" v-if="detailDocument.authorizer_name">
           <div class="form-group">
-            <label for="services" class="control-label">
-              Pemberi Kuasa
-            </label>
+            <label for="services" class="control-label"> Pemberi Kuasa </label>
             <h4 class="m-0 font-weight-bold">
               {{ detailDocument.authorizer_name || "-" }}
             </h4>
@@ -609,9 +765,7 @@ export default {
           <template #label>
             <label for="file_sertifikat_hak_atas_tanah" class="control-label">
               File Sertipikat Hak Atas Tanah
-              <small>
-                Berwarna Seperti Sertipikat Aslinya Semua Halaman
-              </small>
+              <small> Berwarna Seperti Sertipikat Aslinya Semua Halaman </small>
             </label>
           </template>
         </document-input-file-service>
@@ -697,6 +851,30 @@ export default {
         </document-input-file-service>
       </div>
     </div>
+
+    <modal v-if="displayModal" @close="displayModal = false">
+      <template #header> Riwayat Catatan Permohonan Pelayanan </template>
+      <template #body>
+        <table class="table border">
+          <thead>
+            <tr>
+              <th style="width: 10%">No.</th>
+              <th style="width: 20%">Aksi</th>
+              <th style="width: 50%">Deskripsi</th>
+              <th style="width: 20%">Waktu</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in detailDocument.logs" :key="index">
+              <td>{{ index + 1 }}</td>
+              <td>{{ item.status }}</td>
+              <td>{{ item.description }}</td>
+              <td>{{ item.created_at | moment("lll") }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </template>
+    </modal>
   </div>
 </template>
 

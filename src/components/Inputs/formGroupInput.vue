@@ -1,8 +1,9 @@
 <template>
   <div class="form-group" :class="{ 'input-group': hasIcon }">
     <slot name="label">
-      <label v-if="label" class="control-label">
-        {{ label }}
+      <label v-if="label" class="control-label" v-html="label"></label>
+      <label style="color: red" v-if="isRequired">
+        <i><sup>* Mandatory</sup></i>
       </label>
     </slot>
     <slot name="addonLeft">
@@ -46,8 +47,12 @@ export default {
     addonLeftIcon: String,
     isNumber: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
+    isRequired: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     hasIcon() {
@@ -58,10 +63,10 @@ export default {
         this.addonRightIcon !== undefined ||
         this.addonLeftIcon !== undefined
       );
-    }
+    },
   },
   methods: {
-    validateNumber: function(evt) {
+    validateNumber: function (evt) {
       evt = evt ? evt : window.event;
       var charCode = evt.which ? evt.which : evt.keyCode;
       if (
@@ -73,8 +78,8 @@ export default {
       } else {
         return true;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style></style>

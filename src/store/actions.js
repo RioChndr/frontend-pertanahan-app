@@ -7,7 +7,8 @@ import {
   apiPatchResetPassword,
   apiPatchDisableUser,
   apiPatchEnableUser,
-  apiGetAllDoneRequest
+  apiGetAllDoneRequest,
+  apiPostSubmission
 } from "../http/api";
 
 export default {
@@ -29,14 +30,15 @@ export default {
   //#region Document
   actionPutDocument({ dispatch }, payload) {
     return new Promise((resolve, reject) => {
-      apiPutDocument(payload.doc_id, payload.form)
-        .then(result => {
-          dispatch("apiGetDetailDocument", payload);
-          resolve(result);
-        })
-        .catch(err => {
-          reject(err);
-        });
+      apiPostSubmission({
+        document_id: payload.doc_id,
+      }).then(result => {
+        resolve(result);
+      }).catch(err => {
+        reject(err);
+      }).finally(() => {
+        dispatch("apiGetDetailDocument", payload);
+      });
     });
   },
 
@@ -45,6 +47,7 @@ export default {
     return new Promise((resolve, reject) => {
       apiGetDetailDocument(doc_id)
         .then(result => {
+          console.log(result, 'detail document')
           commit("setDocumentDetail", result.data.document);
           resolve(result);
         })

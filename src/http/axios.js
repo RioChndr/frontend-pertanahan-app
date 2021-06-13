@@ -1,31 +1,32 @@
 import axios from "axios";
 import router from "../router/index";
 const development = "http://localhost:4000/api/";
-// const production = "https://damp-reef-43427.herokuapp.com/api/";
 const production = "https://api.pastibpn.id/api/";
 const baseUrl =
   process.env.NODE_ENV === "production" ? production : development;
 
+console.log(baseUrl);
+
 const instance = axios.create({
-  baseURL: baseUrl
+  baseURL: baseUrl,
 });
 
 instance.interceptors.request.use(
-  config => {
+  (config) => {
     const token = localStorage.getItem(process.env.VUE_APP_TOKEN_STORAGE);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  error => {
+  (error) => {
     Promise.reject(error);
   }
 );
 
 instance.interceptors.response.use(
-  response => response,
-  error => {
+  (response) => response,
+  (error) => {
     if (error.response.status === 401) {
       router.push("/auth/login");
     }

@@ -1,180 +1,262 @@
 <template>
   <div class="container-fluid">
     <div class="d-flex align-items-center justify-content-between">
-      <!-- <router-link class="d-flex align-items-center" :to="{ name: 'list' }">
-        <span class="ti-arrow-left mr-2"></span>
-        Kembali
-      </router-link> -->
       <span>Buat Permohonan</span>
     </div>
     <div class="container-body">
       <div class="row">
-        <div
-          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
-        >
-          <div class="form-group">
-            <fg-input
-              label="Alamat Email *"
-              v-model="form.email"
-              placeholder="Alamat Email"
-              type="email"
-            ></fg-input>
-          </div>
-        </div>
+        <div class="col-lg col-md col-sm">
+          <div class="border py-2 px-2 mb-4">
+            <div class="my-4 ml-2">
+              <u>Keterangan Pemohon</u>
+            </div>
+            <div class="row">
+              <div class="col-lg-4 col-md-4 col-sm-12">
+                <div class="form-group">
+                  <label for="services" class="control-label">
+                    Jenis Layanan
+                  </label>
+                  <label style="color: red">
+                    <i><sup>* Mandatory</sup></i>
+                  </label>
+                  <v-select
+                    :options="services"
+                    label="service_name"
+                    :reduce="(service) => service.id"
+                    v-model="form.service_id"
+                  ></v-select>
+                </div>
+              </div>
 
-        <div
-          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
-        >
-          <div class="form-group">
-            <fg-input
-              label="Nomor KTP Penerima Kuasa / Pemohon *"
-              v-model="form.authorized_card_identity"
-              placeholder="Nomor KTP Penerima Kuasa"
-              :is-number="true"
-            ></fg-input>
-          </div>
-        </div>
+              <div class="col-lg-4 col-md-4 col-sm-12">
+                <div class="form-group">
+                  <label for="services" class="control-label">
+                    Kecamatan
+                  </label>
+                  <label style="color: red">
+                    <i><sup>* Mandatory</sup></i>
+                  </label>
+                  <v-select
+                  @input="setKelurahan"
+                    :options="list_kecamatan"
+                    label="nama"
+                    :reduce="(kecamatan) => kecamatan"
+                  ></v-select>
+                </div>
+              </div>
 
-        <div
-          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
-        >
-          <div class="form-group">
-            <fg-input
-              label="Nama Penerima Kuasa / Pemohon *"
-              v-model="form.authorized_name"
-              placeholder="Nama Lengkap Anda"
-              type="text"
-            ></fg-input>
-          </div>
-        </div>
+              <div class="col-lg-4 col-md-4 col-sm-12">
+                <div class="form-group">
+                  <label for="services" class="control-label">
+                    Kelurahan
+                  </label>
+                  <label style="color: red">
+                    <i><sup>* Mandatory</sup></i>
+                  </label>
+                  <v-select
+                    :options="list_kelurahan"
+                    label="nama"
+                    :reduce="(kelurahan) => kelurahan"
+                    @input="selectedOptionKelurahan"
+                  ></v-select>
+                </div>
+              </div>
 
-        <div
-          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
-        >
-          <document-input-file
-            properties="authorized_card_path"
-            uploaded-file-name="ktp_file_penerima_kuasa"
-            file-url-name="authorized_card_url"
-            :authorizer-identity="form.authorizer_card_identity"
-            :authorized-identity="form.authorized_card_identity"
-            @get-uploaded-url="uploadedUrl"
-            :file-code="form.unique_id"
-          >
-            <template #label>
-              <label for="authorized_card_path" class="control-label">
-                File Penerima Kuasa / Pemohon ( KTP ) *
-              </label>
-            </template>
-          </document-input-file>
-        </div>
+              <div class="col-lg-4 col-md-4 col-sm-12">
+                <div class="form-group">
+                  <label for="services" class="control-label"> Tipe HAK </label>
+                  <label style="color: red">
+                    <i><sup>* Mandatory</sup></i>
+                  </label>
+                  <v-select
+                    :options="list_type_hak"
+                    label="name"
+                    :reduce="(type_hak) => type_hak.id"
+                    v-model="form.type_hak_id"                    
+                  ></v-select>
+                </div>
+              </div>
 
-        <div
-          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
-        >
-          <div class="form-group">
-            <fg-input
-              label="Nomor Telepon"
-              v-model="form.authorized_phone_number"
-              placeholder="Nomor telepon yang bisa kami hubungi"
-              type="text"
-            ></fg-input>
-          </div>
-        </div>
+              <div class="col-lg-4 col-md-4 col-sm-12">
+                <div class="form-group">
+                  <fg-input
+                    label="Nomor HAK"
+                    v-model="form.number_hak"
+                    placeholder="Nomor Hak"
+                    :is-number="true"
+                    :is-required="true"
+                  ></fg-input>
+                </div>
+              </div>
 
-        <div
-          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-lg-3 offset-sm-2"
-        >
-          <div class="form-group">
-            <label for="services" class="control-label">Jenis Layanan *</label>
-            <v-select
-              :options="services"
-              label="service_name"
-              :reduce="service => service.id"
-              v-model="form.service_id"
-            ></v-select>
-          </div>
-        </div>
-
-        <div
-          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
-        >
-          <div class="form-group">
-            <div class="custom-control custom-checkbox">
-              <input
-                type="checkbox"
-                class="custom-control-input"
-                id="customCheck1"
-                v-model="isEmpowered"
-                value="true"
-              />
-              <label class="custom-control-label" for="customCheck1">
-                Apakah Permohonan dikuasakan ?
-              </label>
+              <div class="col-lg-4 col-md-4 col-sm-12 d-flex align-items-center">
+                <a href="#">Petunjuk melihat Kode HAK</a>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-lg-6">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="form-group">
+                <fg-input
+                  label="Alamat Email"
+                  v-model="form.email"
+                  placeholder="Alamat Email"
+                  type="email"
+                  :is-required="true"
+                ></fg-input>
+              </div>
+            </div>
 
-        <div
-          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
-          v-if="isEmpowered"
-        >
-          <div class="form-group">
-            <fg-input
-              label="Nomor KTP Pemberi Kuasa"
-              v-model="form.authorizer_card_identity"
-              placeholder="Nomor KTP Pemberi Kuasa (Jika Dikuasakan)"
-              :is-number="true"
-            ></fg-input>
+            <div class="col-lg-12">
+              <div class="form-group">
+                <fg-input
+                  label="Nomor KTP Penerima Kuasa / Pemohon"
+                  v-model="form.authorized_card_identity"
+                  placeholder="Nomor KTP Penerima Kuasa"
+                  :is-number="true"
+                  :is-required="true"
+                ></fg-input>
+              </div>
+            </div>
+
+            <div class="col-lg-12">
+              <div class="form-group">
+                <fg-input
+                  label="Nama Penerima Kuasa / Pemohon"
+                  v-model="form.authorized_name"
+                  placeholder="Nama Lengkap Anda"
+                  type="text"
+                  :is-required="true"
+                ></fg-input>
+              </div>
+            </div>
+
+            <div class="col-lg-12">
+              <document-input-file
+                properties="authorized_card_path"
+                uploaded-file-name="ktp_file_penerima_kuasa"
+                file-url-name="authorized_card_url"
+                @get-uploaded-url="uploadedUrl"
+                :file-code="form.unique_id"
+              >
+                <template #label>
+                  <label for="authorized_card_path" class="control-label">
+                    File Penerima Kuasa / Pemohon ( KTP )
+                  </label>
+                  <label style="color: red">
+                    <i><sup>* Mandatory</sup></i>
+                  </label>
+                </template>
+              </document-input-file>
+            </div>
+
+            <div class="col-lg-12">
+              <div class="form-group">
+                <fg-input
+                  label="Nomor Telepon"
+                  v-model="form.authorized_phone_number"
+                  placeholder="Nomor telepon yang bisa kami hubungi"
+                  type="text"
+                  :is-required="true"
+                ></fg-input>
+              </div>
+            </div>
+
+            <div class="col-lg-12">
+              <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="customCheck1"
+                    v-model="isEmpowered"
+                    value="true"
+                  />
+                  <label class="custom-control-label" for="customCheck1">
+                    Apakah Permohonan dikuasakan ?
+                  </label>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+        <div class="col-md-6 col-lg-6">
+          <div class="row">
+            <div class="col-lg-12" v-if="isEmpowered">
+              <div class="form-group">
+                <fg-input
+                  label="Nomor KTP Pemberi Kuasa"
+                  v-model="form.authorizer_card_identity"
+                  placeholder="Nomor KTP Pemberi Kuasa (Jika Dikuasakan)"
+                  :is-number="true"
+                ></fg-input>
+              </div>
+            </div>
 
-        <div
-          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
-          v-if="isEmpowered"
-        >
-          <div class="form-group">
-            <fg-input
-              label="Pemberi Kuasa"
-              v-model="form.authorizer_name"
-              placeholder="Nama Pemberi Kuasa (Jika Dikuasakan)"
-              type="text"
-            ></fg-input>
+            <div class="col-lg-12" v-if="isEmpowered">
+              <div class="form-group">
+                <fg-input
+                  label="Pemberi Kuasa"
+                  v-model="form.authorizer_name"
+                  placeholder="Nama Pemberi Kuasa (Jika Dikuasakan)"
+                  type="text"
+                ></fg-input>
+              </div>
+            </div>
+
+            <div class="col-lg-12" v-if="isEmpowered">
+              <document-input-file
+                properties="authorizer_card_path"
+                uploaded-file-name="ktp_file_pemberi_kuasa"
+                file-url-name="authorizer_card_url"
+                @get-uploaded-url="uploadedUrl"
+                :file-code="form.unique_id"
+              >
+                <template #label>
+                  <label for="authorizer_card_path" class="control-label">
+                    File Pemberi Kuasa ( KTP )
+                  </label>
+                </template>
+              </document-input-file>
+            </div>
+
+            <div class="col-lg-12" v-if="isEmpowered">
+              <document-input-file
+                properties="empower_file_path"
+                uploaded-file-name="file_surat_kuasa"
+                file-url-name="empower_file_url"
+                @get-uploaded-url="uploadedUrl"
+                :file-code="form.unique_id"
+              >
+                <template #label>
+                  <label for="empower_file_path" class="control-label">
+                    Surat Kuasa
+                  </label>
+                </template>
+              </document-input-file>
+            </div>
           </div>
         </div>
-
-        <div
-          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
-          v-if="isEmpowered"
-        >
-          <document-input-file
-            properties="authorizer_card_path"
-            uploaded-file-name="ktp_file_pemberi_kuasa"
-            file-url-name="authorizer_card_url"
-            :authorizer-identity="form.authorizer_card_identity"
-            :authorized-identity="form.authorized_card_identity"
-            @get-uploaded-url="uploadedUrl"
-            :file-code="form.unique_id"
-          >
-            <template #label>
-              <label for="authorizer_card_path" class="control-label">
-                File Pemberi Kuasa ( KTP )
-              </label>
-            </template>
-          </document-input-file>
-        </div>
-
-        <div
-          class="col-md-8 col-sm-8 col-lg-6 offset-md-2 offset-sm-2 offset-lg-3"
-        >
-          <div class="form-group">
-            <button
-              class="btn btn-block"
-              @click.prevent="postDocument"
-              :disabled="loading"
-            >
-              Simpan
-              <i class="fa fa-spinner fa-spin fa-fw" v-if="loading"></i>
-            </button>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-lg-6">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="form-group">
+                <button
+                  class="btn btn-block"
+                  @click.prevent="postDocument"
+                  :disabled="loading"
+                >
+                  Simpan
+                  <i class="fa fa-spinner fa-spin fa-fw" v-if="loading"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -184,12 +266,14 @@
 
 <script>
 import { mapState } from "vuex";
-import { apiPostDocument } from "../../http/api";
+import { apiGetListTypeHak, apiPostDocument } from "../../http/api";
 import { createSharedLink, deleteFile, uploadFile } from "../../http/dropbox";
 import DocumentInputFile from "./components/DocumentInputFile";
+import axios from 'axios'
+
 export default {
   components: {
-    DocumentInputFile
+    DocumentInputFile,
   },
   data() {
     return {
@@ -204,24 +288,44 @@ export default {
         authorizer_card_path: null,
         authorizer_card_url: null,
         authorizer_card_identity: null,
+        empower_file_path: null,
+        empower_file_url: null,
+        empower_file_identity: null,
         unique_id: null,
-        service_id: null
+        service_id: null,
+
+        kecamatan_id: null,
+        kecamatan_name: null,
+        kelurahan_id: null,
+        kelurahan_name: null,
+        type_hak_id: null,
+        number_hak: null
       },
 
       document: {
         authorized_card_path: {
           is_loading: false,
-          file_name: null
+          file_name: null,
         },
         authorizer_card_path: {
           is_loading: false,
-          file_name: null
-        }
+          file_name: null,
+        },
+        empower_file_path: {
+          is_loading: false,
+          file_name: null,
+        },
       },
 
       isEmpowered: false,
 
-      loading: false
+      loading: false,
+
+      list_kecamatan: [],
+
+      list_kelurahan: [],
+
+      list_type_hak: []
     };
   },
   methods: {
@@ -240,11 +344,12 @@ export default {
       }
 
       this.loading = true;
+
       apiPostDocument(this.form)
-        .then(result => {
+        .then((result) => {
           this.$toast.success("Permohan berhasil diajukan");
         })
-        .catch(err => {
+        .catch((err) => {
           this.$toast.error("Permohonan Gagal Diajukan");
           if (this.form.authorized_card_path) {
             deleteFile({ filePath: this.form.authorized_card_path });
@@ -258,6 +363,25 @@ export default {
           this.$router.replace({ name: "request" });
           this.loading = false;
         });
+    },
+    setKelurahan(value) {
+      console.log(value);
+      this.form.kecamatan_id = value.id;
+      this.form.kecamatan_name = value.nama;
+
+      this.form.kelurahan_id = null;
+      this.list_kelurahan = [];
+
+      axios.get(`http://dev.farizdotid.com/api/daerahindonesia/kelurahan?id_kecamatan=${value.id}`).then(response => {
+        this.list_kelurahan = response.data.kelurahan;
+      }).catch(err => {
+        console.error(err);
+        this.$toast.error("Terjadi Kesalahan pada Sever");
+      })
+    },
+    selectedOptionKelurahan(value) {
+      this.form.kelurahan_id = value.id;
+      this.form.kelurahan_name = value.nama;
     }
   },
   created() {
@@ -267,11 +391,27 @@ export default {
     const arrayNumber = uniqueId.toString().match(/.{1,3}/g);
     this.form.unique_id = arrayNumber.join("-");
 
+    axios.get('https://dev.farizdotid.com/api/daerahindonesia/kecamatan?id_kota=3273').then(response => {
+      this.list_kecamatan = response.data.kecamatan
+    }).catch(err => {
+      console.error(err)
+      this.$toast.error("Terjadi Kesalahan pada Sever");
+    })
+
+    apiGetListTypeHak().then(result => {
+      this.list_type_hak = result.data.typeHak;
+    }).catch(err => {
+      console.error(err)
+      this.$toast.error("Terjadi Kesalahan pada Sever");
+    })
+
+
+
     this.$store.dispatch("apiGetServices");
   },
   computed: {
-    ...mapState(["services"])
-  }
+    ...mapState(["services"]),
+  },
 };
 </script>
 
