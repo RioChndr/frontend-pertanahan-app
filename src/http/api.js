@@ -61,6 +61,14 @@ export function apiGetAllDoneRequest({
   );
 }
 
+export function apiGetListTypeHak() {
+  return axios.get('documents/type-hak');
+}
+
+export function apiPostSubmission(data) {
+  return axios.post('documents/submit', data);
+}
+
 //#endregion
 
 //#region Service
@@ -112,4 +120,19 @@ export function apiPatchResetPassword(userId = null) {
   return axios.patch(`users/reset-password/${userId}`);
 }
 
+//#endregion
+
+
+//#region Delivery
+export function apiRequestDeliveryServices(body = {}) {
+  return axios.post(`delivery/request`, body);
+}
+
+export function apiGetDeliveryDetail(id) {
+  return axios.get(`delivery/${id}`);
+}
+
+export function apiGetListDeliveryServices(page = 1, pageSize = 5) {
+  return axios.get(`delivery?page=${page}&page_size=${pageSize}`);
+}
 //#endregion

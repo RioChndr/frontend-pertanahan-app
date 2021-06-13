@@ -6,42 +6,13 @@
           <span class="badge badge-success">
             {{ detail.unique_id }}
           </span>
-        </div>
-        <div class="col-lg-6 col-sm-12 col-md-12">
-          <span
-            class="badge badge-info float-right mt-1"
-            v-if="!detail.is_submitted"
-          >
-            Belum Diajukan
-          </span>
-
-          <span
-            class="badge badge-primary float-right mt-1"
-            v-if="detail.is_waiting && detail.is_submitted"
-          >
-            Menunggu Persetujuan
-          </span>
-
-          <span
-            class="badge badge-success float-right mt-1"
-            v-if="detail.is_submitted && !detail.is_waiting && detail.is_done"
-          >
-            Diterima
-          </span>
-
-          <span
-            class="badge badge-danger float-right mt-1"
-            v-if="detail.is_submitted && !detail.is_waiting && !detail.is_done"
-          >
-            Ditolak
-          </span>
-        </div>
+        </div>        
       </div>
-      <div class="row my-2">
-        <div class="col-lg-12 col-md-12 col-sm-12">
-          <h4 class="m-0 mr-2 limit-text">
-            {{ detail.authorized_name }}
-          </h4>
+      <div class="row">
+        <div class="col-lg-6 col-sm-12 col-md-12">
+          <span class="badge badge-info">
+            {{detail.status | getStatusValue}}
+          </span>
         </div>
       </div>
       <div class="row">
@@ -51,7 +22,14 @@
           </span>
         </div>
       </div>
-      <div class="row card-flex-bottom">
+      <div class="row my-2">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+          <h4 class="m-0 mr-2 limit-text">
+            {{ detail.authorized_name }}
+          </h4>
+        </div>
+      </div>      
+      <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12">
           <router-link
             :to="{ name: 'upload-file', params: { id: detail.id } }"

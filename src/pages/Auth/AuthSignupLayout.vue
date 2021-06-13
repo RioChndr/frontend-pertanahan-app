@@ -47,12 +47,12 @@ export default {
       form: {
         full_name: null,
         email: null,
-        password: null
+        password: null,
       },
       loading: {
-        signup: false
+        signup: false,
       },
-      appTitle: process.env.VUE_APP_APP_NAME
+      appTitle: process.env.VUE_APP_APP_NAME,
     };
   },
   methods: {
@@ -88,26 +88,31 @@ export default {
       apiPostSignup({
         email: this.form.email,
         password: this.form.password,
-        full_name: this.form.full_name
+        full_name: this.form.full_name,
       })
-        .then(result => {
+        .then(() => {
           this.form.full_name = null;
           this.form.email = null;
           this.form.password = null;
           this.$toast.success("Pendaftaran Berhasil, silahkan melakukan Login");
+
+          setTimeout(() => {
+            this.$router.push({ name: "login" });
+          }, 2000);
         })
-        .catch(err => {
+        .catch((err) => {
           this.$toast.error("Pendaftaran Tidak Berhasil, coba email yang lain");
         })
         .finally(() => {
           this.loading.signup = false;
         });
     },
-    validEmail: function(email) {
-      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    validEmail: function (email) {
+      var re =
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(email);
-    }
-  }
+    },
+  },
 };
 </script>
 

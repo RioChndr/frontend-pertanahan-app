@@ -4,7 +4,9 @@
       <button type="button" aria-hidden="true" class="close">×</button>
       <span>
         Anda belum menggunggah / membuat Permohonan
-        <a href=""><u>Buat Permohonan</u></a>
+        <router-link :to="{ name: 'create' }">
+          <u>Buat Permohonan</u>
+        </router-link>
       </span>
     </div>
 
@@ -35,11 +37,11 @@ import DocumentItemVue from "./components/DocumentItem.vue";
 export default {
   data() {
     return {
-      documents: []
+      documents: [],
     };
   },
   components: {
-    DocumentItemVue
+    DocumentItemVue,
   },
   async mounted() {
     const responseDocument = await apiGetListDocument();
@@ -47,6 +49,6 @@ export default {
       this.documents = responseDocument.data.message.documents;
     }
   },
-  computed: {}
+  computed: {},
 };
 </script>

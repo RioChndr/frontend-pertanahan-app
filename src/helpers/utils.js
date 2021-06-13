@@ -34,3 +34,29 @@ export function checkFileType(fileType = null) {
   }
   return false;
 }
+
+export function getStatusSubmission(status = null) {
+  let message = null;
+  switch (status) {
+    case 'submit_submission':
+      return message = 'Permohonan Telah Diajukan';
+
+    case 'reject_submission':
+      return message = 'Permohonan Ditolak';
+
+    case 'approve_submission':
+      return message = 'Permohonan Diterima';
+
+    case 'process_verification':
+      return message = 'Proses Verifikasi';
+
+    case 'finish_verification':
+      return message = 'Proses Verifikasi telah selesai';
+
+    case 'process_submission':
+      return message = 'Permohonan Sedang di Proses';
+
+    case 'finish_submission':
+      return message = 'Permohonan telah Selesai';
+  }
+}

@@ -8,11 +8,19 @@
           name="Permohonan"
           icon="ti-view-list-alt"
         />
+
         <sidebar-link
           v-if="userInfo.role.id === 3"
           to="/request/create"
           name="Buat Permohonan"
           icon="ti-plus"
+        />
+
+        <sidebar-link
+          v-if="userInfo.role.id === 3"
+          to="/delivery"
+          name="Kirim &amp; Jemput"
+          icon="ti-map-alt"
         />
 
         <sidebar-link
@@ -44,7 +52,7 @@
         />
 
         <li class="nav-item" @click="logout" style="cursor: pointer">
-          <div class="nav-link d-flex ">
+          <div class="nav-link d-flex">
             <span class="ti-shift-left mr-2" style="font-size: 1.5rem"></span>
             <span style="font-size: 1rem; font-weight: 400" class="ml-2 pl-1">
               Keluar
@@ -83,7 +91,7 @@ export default {
     TopNavbar,
     ContentFooter,
     DashboardContent,
-    MobileMenu
+    MobileMenu,
   },
   data() {
     return {};
@@ -97,7 +105,7 @@ export default {
     logout() {
       localStorage.clear();
       window.location.reload();
-    }
+    },
   },
   computed: {
     userInfo() {
@@ -105,8 +113,8 @@ export default {
     },
     displayMenu() {
       return [5, 4].includes(this.userInfo.role.id);
-    }
-  }
+    },
+  },
 };
 </script>
 
