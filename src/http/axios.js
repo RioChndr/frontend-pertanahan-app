@@ -1,14 +1,8 @@
 import axios from "axios";
 import router from "../router/index";
-const development = "http://localhost:4000/api/";
-const production = "https://api.pastibpn.id/api/";
-const baseUrl =
-  process.env.NODE_ENV === "production" ? production : development;
-
-console.log(baseUrl);
 
 const instance = axios.create({
-  baseURL: baseUrl,
+  baseURL: process.env.VUE_APP_BASE_URL,
 });
 
 instance.interceptors.request.use(
