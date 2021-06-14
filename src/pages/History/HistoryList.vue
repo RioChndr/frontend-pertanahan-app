@@ -37,9 +37,7 @@
     </div>
 
     <div class="row" v-if="!documents.length">
-      <div class="col-12 text-center">
-        Tidak Terdapat Riwayat Permohonan
-      </div>
+      <div class="col-12 text-center">Tidak Terdapat Riwayat Permohonan</div>
     </div>
 
     <modal-vue v-if="displayModal" @close="closeModal">
@@ -52,83 +50,77 @@
       <template #body>
         <div class="container-fluid px-2">
           <div class="row">
-            <div class="col-sm-12 col-md-8 offset-md-2">
+            <div class="col-sm-12 col-md-10 offset-md-1">
               <label-horizontal-vue>
-                <template #left-column>
-                  Penerima Kuasa / Pemohon
-                </template>
+                <template #left-column> Penerima Kuasa / Pemohon </template>
                 <template #right-column>
                   {{ detail.authorized_name }}
                 </template>
               </label-horizontal-vue>
 
               <label-horizontal-vue>
-                <template #left-column>
-                  Email
-                </template>
+                <template #left-column> Email </template>
                 <template #right-column>
                   {{ detail.email }}
                 </template>
               </label-horizontal-vue>
 
               <label-horizontal-vue>
-                <template #left-column>
-                  Telephone Pemohon / Kuasa
-                </template>
+                <template #left-column> Telephone Pemohon / Kuasa </template>
                 <template #right-column>
                   {{ detail.authorized_phone_number }}
                 </template>
               </label-horizontal-vue>
 
               <label-horizontal-vue v-if="detail.authorizer_name">
-                <template #left-column>
-                  Nama Pemberi Kuasa
-                </template>
+                <template #left-column> Nama Pemberi Kuasa </template>
                 <template #right-column>
                   {{ detail.authorizer_name }}
                 </template>
               </label-horizontal-vue>
 
               <label-horizontal-vue>
-                <template #left-column>
-                  Jenis Pelayanan
-                </template>
+                <template #left-column> Jenis Pelayanan </template>
                 <template #right-column>
                   {{ detail.service.service_name }}
                 </template>
               </label-horizontal-vue>
 
-              <label-horizontal-vue v-if="!detail.is_waiting">
-                <template #left-column>
-                  Status
-                </template>
+              <label-horizontal-vue>
+                <template #left-column> Status </template>
                 <template #right-column>
                   <h4 class="m-0">
-                    <span
-                      class="badge badge-lg"
-                      :class="{
-                        'badge-success': detail.is_done,
-                        'badge-danger': !detail.is_done
-                      }"
-                    >
-                      {{ detail.is_done ? "Disetujui" : "Ditolak" }}
+                    <span class="badge badge-lg badge-primary">
+                      {{ detail.status | getStatusValue }}
                     </span>
                   </h4>
                 </template>
               </label-horizontal-vue>
 
               <label-horizontal-vue>
-                <template #left-column>
-                  Keterangan
-                </template>
+                <template #left-column> Keterangan </template>
                 <template #right-column>
                   <p class="m-0">{{ detail.description || "-" }}</p>
                 </template>
               </label-horizontal-vue>
 
-              <label-horizontal-vue v-if="!detail.is_waiting">
+              <label-horizontal-vue>
                 <template #right-column>
                   <button
+                    class="btn btn-danger btn-sm px-4 d-flex align-items-center"
+                    @click="updateVerificationDone"
+                    :disabled="loadingArchived"
+                  >
+                    <div v-if="loadingArchived">
+                      <i class="fa fa-spinner fa-spin fa-fw"></i>
+                    </div>
+                    <div v-else>
+                      <span class="ti-package mr-2"></span>
+                      Verifikasi Selesai
+                    </div>
+                  </button>
+                  <button
+                    v-if="detail.status === 'finish_submission'"
                     class="btn btn-danger btn-sm px-4 d-flex align-items-center"
                     @click="archiveRequest"
                     :disabled="loadingArchived"
@@ -154,7 +146,7 @@
                     <td class="d-flex align-items-center justify-content-end">
                       <DownloadButtonVue
                         :file="{
-                          file_path: detail.authorized_card_path
+                          file_path: detail.authorized_card_path,
                         }"
                       />
                       <button
@@ -170,7 +162,7 @@
                     <td class="d-flex align-items-center justify-content-end">
                       <DownloadButtonVue
                         :file="{
-                          file_path: detail.authorizer_card_path
+                          file_path: detail.authorizer_card_path,
                         }"
                       />
                       <button
@@ -209,8 +201,7 @@ import { FacebookLoader } from "vue-spinners-css";
 import ModalVue from "../../components/Modal.vue";
 import LabelHorizontalVue from "../../components/LabelHorizontal.vue";
 import DownloadButtonVue from "../../components/DownloadButton.vue";
-import { apiDeleteDocument, apiRemoveFile } from "../../http/api";
-import { deleteFile } from "../../http/dropbox";
+import { apiPostLogsDocuments } from "../../http/api";
 import DeleteButtonVue from "../../components/DeleteButton.vue";
 
 export default {
@@ -220,30 +211,30 @@ export default {
     ModalVue,
     LabelHorizontalVue,
     DownloadButtonVue,
-    DeleteButtonVue
+    DeleteButtonVue,
   },
   watch: {
-    keyword: function(value) {
+    keyword: function (value) {
       if (value.length >= 3) {
         this.loadData();
       } else if (value.length <= 0) {
         this.loadData();
       }
-    }
+    },
   },
   data() {
     return {
       keyword: "",
       pagination: {
         page: 0,
-        pageSize: 10
+        pageSize: 10,
       },
       loading: false,
       loadingArchived: false,
       modal: {
-        display: false
+        display: false,
       },
-      busy: false
+      busy: false,
     };
   },
   created() {
@@ -258,9 +249,9 @@ export default {
         .dispatch("apiGetAllRequest", {
           page: this.pagination.page,
           pageSize: this.pagination.pageSize,
-          keyword: this.keyword
+          keyword: this.keyword,
         })
-        .catch(err => {
+        .catch((err) => {
           this.$toast.error("Terjadi Kesalahan pada Server");
         })
         .finally(() => {
@@ -276,6 +267,29 @@ export default {
     closeModal() {
       this.$store.commit("setDisplayModalDetailHistory", false);
     },
+    updateVerificationDone() {
+      this.loadingArchived = true;
+      apiPostLogsDocuments({
+        document_id: this.detail.id,
+        status: "finish_verification",
+      })
+        .then((result) => {
+          if (result.data.success) {
+            this.$toast.success("Permohonan Selesai di Verifikasi");
+            return this.$store.dispatch("apiGetAllRequest", {
+              page: 0,
+              pageSize: this.pagination.pageSize,
+            });
+          }
+        })
+        .catch((err) => {
+          console.error(err, "error_archived");
+          this.$toast.error("Terjadi Kesalahan Pada Server");
+        })
+        .finally(() => {
+          this.loadingArchived = false;
+        });
+    },
     archiveRequest() {
       const { id } = JSON.parse(
         localStorage.getItem(process.env.VUE_APP_USER_INFO)
@@ -286,18 +300,18 @@ export default {
           doc_id: this.detail.id,
           form: {
             is_archived: true,
-            archived_by: id
-          }
+            archived_by: id,
+          },
         })
-        .then(result => {
+        .then((result) => {
           this.$toast.success("Permohonan Berhasil di Arsipkan");
           this.$store.commit("setListRequestEmpty");
           return this.$store.dispatch("apiGetAllRequest", {
             page: 0,
-            pageSize: this.pagination.pageSize
+            pageSize: this.pagination.pageSize,
           });
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err, "error_archived");
           this.$toast.error("Terjadi Kesalahan Pada Server");
         })
@@ -307,16 +321,16 @@ export default {
     },
     deleteItem(filePath, fileId) {
       this.$toast.info("On Progress");
-    }
+    },
   },
   computed: {
     ...mapState({
       detail: "detailDocument",
       displayModal: "displayModalDetailHistory",
       documents: "documents",
-      documentLength: "documentPagination"
-    })
-  }
+      documentLength: "documentPagination",
+    }),
+  },
 };
 </script>
 

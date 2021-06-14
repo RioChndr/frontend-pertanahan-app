@@ -69,6 +69,23 @@ export function apiPostSubmission(data) {
   return axios.post('documents/submit', data);
 }
 
+export function apiPostLogsDocuments(data) {
+  return axios.post('documents/logs', data);
+}
+
+export function apiGetCheckSchedule(date, type) {
+  return axios.get(`delivery/check-schedule?schedule=${date}&type=${type}`)
+}
+
+export function apiUpdateDeliverDocument(document_id, body) {
+  return axios.patch(`documents/deliver/${document_id}`, body)
+}
+
+export function apiGetSubmissionList(keyword, page, page_size) {
+  let queryKeyword = keyword ? `&keyword=${keyword}` : '';
+  return axios.get(`documents/submission/list?page=${page}&page_size=${page_size}${queryKeyword}`)
+}
+
 //#endregion
 
 //#region Service
@@ -120,8 +137,11 @@ export function apiPatchResetPassword(userId = null) {
   return axios.patch(`users/reset-password/${userId}`);
 }
 
-//#endregion
+export function apiGetAllCourier() {
+  return axios.get('users/courier')
+}
 
+//#endregion
 
 //#region Delivery
 export function apiRequestDeliveryServices(body = {}) {
@@ -134,5 +154,22 @@ export function apiGetDeliveryDetail(id) {
 
 export function apiGetListDeliveryServices(page = 1, pageSize = 5) {
   return axios.get(`delivery?page=${page}&page_size=${pageSize}`);
+}
+
+export function apiPostAssignCourier(courier_id, delivery_id) {
+  return axios.post('delivery/assign-courier', {
+    courier: courier_id,
+    delivery_id: delivery_id
+  })
+}
+
+export function apiPostDeliveryLogs(formBody) {
+  return axios.post('delivery/logs', formBody)
+}
+//#endregion
+
+//#region Roles
+export function apiGetRoles() {
+  return axios.get('roles')
 }
 //#endregion

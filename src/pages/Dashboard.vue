@@ -94,63 +94,49 @@
         <div class="row mx-2">
           <div class="col-8">
             <label-horizontal-vue>
-              <template #left-column>
-                Penerima Kuasa / Pemohon
-              </template>
+              <template #left-column> Penerima Kuasa / Pemohon </template>
               <template #right-column>
                 {{ document.authorized_name }}
               </template>
             </label-horizontal-vue>
 
             <label-horizontal-vue>
-              <template #left-column>
-                Email
-              </template>
+              <template #left-column> Email </template>
               <template #right-column>
                 {{ document.email }}
               </template>
             </label-horizontal-vue>
 
             <label-horizontal-vue>
-              <template #left-column>
-                Telephone Pemohon / Kuasa
-              </template>
+              <template #left-column> Telephone Pemohon / Kuasa </template>
               <template #right-column>
                 {{ document.authorized_phone_number }}
               </template>
             </label-horizontal-vue>
 
             <label-horizontal-vue v-if="document.authorizer_name">
-              <template #left-column>
-                Nama Pemberi Kuasa
-              </template>
+              <template #left-column> Nama Pemberi Kuasa </template>
               <template #right-column>
                 {{ document.authorizer_name }}
               </template>
             </label-horizontal-vue>
 
             <label-horizontal-vue>
-              <template #left-column>
-                Jenis Pelayanan
-              </template>
+              <template #left-column> Jenis Pelayanan </template>
               <template #right-column>
                 {{ document.service.service_name }}
               </template>
             </label-horizontal-vue>
 
             <label-horizontal-vue v-if="document.authorizer_name">
-              <template #left-column>
-                Pemberi Kuasa
-              </template>
+              <template #left-column> Pemberi Kuasa </template>
               <template #right-column>
                 {{ document.authorizer_name || "-" }}
               </template>
             </label-horizontal-vue>
 
             <label-horizontal-vue v-if="document.authorizer_card_identity">
-              <template #left-column>
-                Nomor KTP Pemberi Kuasa
-              </template>
+              <template #left-column> Nomor KTP Pemberi Kuasa </template>
               <template #right-column>
                 {{ document.authorizer_card_identity || "-" }}
               </template>
@@ -196,7 +182,7 @@
                   <td>
                     <DownloadButtonVue
                       :file="{
-                        file_path: document.authorized_card_path
+                        file_path: document.authorized_card_path,
                       }"
                     />
                   </td>
@@ -206,7 +192,7 @@
                   <td>
                     <DownloadButtonVue
                       :file="{
-                        file_path: document.authorizer_card_path
+                        file_path: document.authorizer_card_path,
                       }"
                     />
                   </td>
@@ -232,7 +218,7 @@ import Chartist from "chartist";
 import {
   apiFindDocument,
   apiGetDetailDocument,
-  apiPutDocument
+  apiPutDocument,
 } from "../http/api";
 import Dropdown from "bp-vuejs-dropdown";
 import ModalVue from "../components/Modal.vue";
@@ -249,7 +235,7 @@ export default {
     Dropdown,
     ModalVue,
     LabelHorizontalVue,
-    DownloadButtonVue
+    DownloadButtonVue,
   },
   /**
    * Chart data used to render stats, charts. Should be replaced with server data
@@ -265,8 +251,8 @@ export default {
           title: "Dokumen",
           value: "8",
           footerText: "Unggah Dokumen",
-          footerIcon: "ti-upload"
-        }
+          footerIcon: "ti-upload",
+        },
       ],
       resultList: [],
       requestLength: 0,
@@ -274,24 +260,24 @@ export default {
         displayModalDetail: false,
         // detailItem: {},
         descriptionBox: null,
-        loading: false
+        loading: false,
       },
-      isResultExists: false
+      isResultExists: false,
     };
   },
   watch: {
-    keyword: function(value) {
+    keyword: function (value) {
       if (value.length >= 3) {
         this.loadingOverlay = true;
         this.isResultExists = false;
         apiFindDocument(value)
-          .then(result => {
+          .then((result) => {
             this.resultList = result.data.documents;
             if (result.data.documents.length <= 0) {
               this.isResultExists = true;
             }
           })
-          .catch(err => {
+          .catch((err) => {
             console.error(err, "error");
           })
           .finally(() => {
@@ -302,7 +288,7 @@ export default {
         this.isResultExists = false;
         this.resultList = [];
       }
-    }
+    },
   },
   methods: {
     openDetailRequest(item) {
@@ -310,10 +296,10 @@ export default {
 
       this.$store
         .dispatch("apiGetDetailDocument", { doc_id: id })
-        .then(result => {
+        .then((result) => {
           this.modal.displayModalDetail = true;
         })
-        .catch(err => {
+        .catch((err) => {
           this.$toast.error("Terjadi Kesalahan pada Server");
         });
     },
@@ -322,21 +308,20 @@ export default {
 
       apiPutDocument(this.document.id, {
         description: this.modal.descriptionBox,
-        is_done: true,
-        is_waiting: false
+        status: "process_verification",
       })
-        .then(result => {
+        .then((result) => {
           this.modal.descriptionBox = null;
           this.$toast.success("Permohonan berhasil di terima");
           return apiFindDocument();
         })
-        .then(result => {
+        .then((result) => {
           this.requestLength = result.data.documents.length;
           if (result.data.documents.length <= 0) {
             this.isResultExists = true;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.$toast.error("Terjadi Kesalahan pada Server");
         })
         .finally(() => {
@@ -355,21 +340,20 @@ export default {
 
       apiPutDocument(this.document.id, {
         description: this.modal.descriptionBox,
-        is_done: false,
-        is_waiting: false
+        status: "reject_submission",
       })
-        .then(result => {
+        .then((result) => {
           this.modal.descriptionBox = null;
           this.$toast.success("Permohonan berhasil di tolak");
           return apiFindDocument();
         })
-        .then(result => {
+        .then((result) => {
           this.requestLength = result.data.documents.length;
           if (result.data.documents.length <= 0) {
             this.isResultExists = true;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.$toast.error("Terjadi Kesalahan pada Server");
         })
         .finally(() => {
@@ -377,17 +361,17 @@ export default {
           this.modal.displayModalDetail = false;
           this.resultList = [];
         });
-    }
+    },
   },
   created() {
     apiFindDocument()
-      .then(result => {
+      .then((result) => {
         this.requestLength = result.data.documents.length;
         if (result.data.documents.length <= 0) {
           this.isResultExists = true;
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err, "error");
       })
       .finally(() => {
@@ -395,8 +379,8 @@ export default {
       });
   },
   computed: {
-    ...mapState({ document: "detailDocument" })
-  }
+    ...mapState({ document: "detailDocument" }),
+  },
 };
 </script>
 <style>
