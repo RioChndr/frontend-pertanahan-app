@@ -20,6 +20,9 @@ import historyRoutes from './history';
 // Delivery
 import deliveryRoutes from './delivery';
 
+// Archive
+import archiveRoutes from "./archive";
+
 const routes = [
   {
     path: "/",
@@ -29,7 +32,8 @@ const routes = [
       ...requestRoutes,
       ...settingsRoutes,
       ...historyRoutes,
-      ...deliveryRoutes
+      ...deliveryRoutes,
+      ...archiveRoutes
     ]
   },
   ...authRoutes,

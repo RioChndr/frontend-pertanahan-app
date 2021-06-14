@@ -21,6 +21,7 @@
     "moment": "^2.29.1",
     "vue": "^2.6.10",
     "vue-clickaway": "^2.1.0",
+    "vue-date": "^1.2.0",
     "vue-dialog-loading": "^0.5.3",
     "vue-google-login": "^2.0.5",
     "vue-infinite-scroll": "^2.0.2",

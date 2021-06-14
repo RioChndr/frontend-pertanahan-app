@@ -12,6 +12,39 @@
     <div class="row my-2">
       <div class="col-lg-6 col-md-6 col-sm-12 mb-2">
         <div class="border rounded px-2 py-1">
+          <div class="row pt-4" v-if="detail.courier === null">
+            <div class="col">
+              <h4 class="m-0">Proses Pengiriman</h4>
+              <div class="row my-2">
+                <div class="col">
+                  <div class="form-group">
+                    <label for="services" class="control-label">
+                      Kurir Ekspedisi</label
+                    >
+                    <v-select
+                      :options="couriers"
+                      label="full_name"
+                      :reduce="(courier) => courier.id"
+                      v-model="form_courier.courier_id"
+                    ></v-select>
+                  </div>
+                </div>
+              </div>
+              <div class="row my-2">
+                <div class="col">
+                  <button
+                    class="btn btn-primary"
+                    @click.prevent="sendDocumentsByCourier"
+                    :disabled="loading"
+                  >
+                    Kirim Berkas
+                    <i class="fa fa-spinner fa-spin fa-fw" v-if="loading"></i>
+                  </button>
+                </div>
+              </div>
+              <hr />
+            </div>
+          </div>
           <div class="row">
             <div class="col-5">
               <div class="row">
@@ -57,6 +90,20 @@
                     <label for="">Deskripsi Singkat</label>
                     <p>{{ detail.description }}</p>
                   </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col my-4">
+                  <button
+                    class="btn btn-primary btn-sm"
+                    @click.prevent="approveEkspedisiBerkas"
+                  >
+                    Proses Ekspedisi Berkas
+                    <i
+                      class="fa fa-spinner fa-spin fa-fw"
+                      v-if="loading_deliver_documents"
+                    ></i>
+                  </button>
                 </div>
               </div>
             </div>
@@ -178,7 +225,10 @@
 
 <script>
 import {
+  apiGetAllCourier,
   apiGetDeliveryDetail,
+  apiPostAssignCourier,
+  apiPostDeliveryLogs,
   apiRequestDeliveryServices,
 } from "../../http/api";
 export default {
@@ -192,11 +242,21 @@ export default {
         description: null,
       },
 
+      form_courier: {
+        courier_id: null,
+      },
+
       detail: null,
 
       loading_content: true,
 
       loading_button: false,
+
+      couriers: [],
+
+      loading: false,
+
+      loading_deliver_documents: false,
     };
   },
 
@@ -204,6 +264,11 @@ export default {
     try {
       const documentId = this.$route.params.id;
       const detail = await apiGetDeliveryDetail(documentId);
+      const couriers = await apiGetAllCourier();
+
+      if (couriers.data.success) {
+        this.couriers = couriers.data.data;
+      }
 
       if (detail.data.success) {
         this.detail = detail.data.data;
@@ -238,6 +303,45 @@ export default {
         this.$toast.error("Terjadi kesalahan pada Sistem");
       } finally {
         this.loading_button = false;
+      }
+    },
+    async sendDocumentsByCourier() {
+      this.loading = true;
+      const documentId = this.$route.params.id;
+      try {
+        const response = await apiPostAssignCourier(
+          this.form_courier.courier_id,
+          documentId
+        );
+
+        if (response.data.success) {
+          const detail = await apiGetDeliveryDetail(documentId);
+          this.detail = detail.data.data;
+        }
+      } catch (error) {
+        this.$toast.error("Terjadi Kesalahan pada Sistem");
+      } finally {
+        this.loading = false;
+      }
+    },
+    async approveEkspedisiBerkas() {
+      this.loading_deliver_documents = true;
+
+      try {
+        const documentId = this.$route.params.id;
+        const response = await apiPostDeliveryLogs({
+          status: "sent",
+          delivery_id: parseInt(documentId),
+        });
+
+        if (response.data.success) {
+          const detail = await apiGetDeliveryDetail(documentId);
+          this.detail = detail.data.data;
+        }
+      } catch (error) {
+        this.$toast.error("Terjadi kesalahan pada Sistem");
+      } finally {
+        this.loading_deliver_documents = false;
       }
     },
   },

@@ -3,52 +3,11 @@
     <side-bar>
       <template slot="links">
         <sidebar-link
-          v-if="userInfo.role.id === 3"
-          to="/request"
-          name="Permohonan"
-          icon="ti-view-list-alt"
-        />
-
-        <sidebar-link
-          v-if="userInfo.role.id === 3"
-          to="/request/create"
-          name="Buat Permohonan"
-          icon="ti-plus"
-        />
-
-        <sidebar-link
-          v-if="userInfo.role.id === 3"
-          to="/delivery"
-          name="Kirim &amp; Jemput"
-          icon="ti-map-alt"
-        />
-
-        <sidebar-link
-          v-if="displayMenu"
-          to="/dashboard"
-          name="Dashboard"
-          icon="ti-home"
-        />
-
-        <sidebar-link
-          v-if="userInfo.role.id === 5"
-          to="/setting/users"
-          name="Pengguna"
-          icon="ti-user"
-        />
-
-        <sidebar-link
-          v-if="displayMenu"
-          to="/setting/services"
-          name="Pelayanan"
-          icon="ti-rss-alt"
-        />
-
-        <sidebar-link
-          v-if="displayMenu"
-          to="/history"
-          name="Riwayat Permohonan"
-          icon="ti-reload"
+          v-for="menu in menuRoute"
+          :key="menu.path"
+          :to="menu.path"
+          :name="menu.title"
+          icon="ti-control-play"
         />
 
         <li class="nav-item" @click="logout" style="cursor: pointer">
@@ -68,7 +27,7 @@
 
       <content-footer></content-footer>
       <a
-        v-if="userInfo.role.id === 3"
+        v-if="userInfo.role.id === 5"
         target="_blank"
         class="chat-app-widget float-right"
         href="https://wa.me/6282218761876?text=Halo%20Admin%20BPN"
@@ -86,6 +45,8 @@ import ContentFooter from "./ContentFooter.vue";
 import DashboardContent from "./Content.vue";
 import MobileMenu from "./MobileMenu";
 
+import menuItems from "../../navigation";
+
 export default {
   components: {
     TopNavbar,
@@ -94,7 +55,9 @@ export default {
     MobileMenu,
   },
   data() {
-    return {};
+    return {
+      menuRoute: menuItems,
+    };
   },
   methods: {
     toggleSidebar() {
@@ -110,9 +73,6 @@ export default {
   computed: {
     userInfo() {
       return this.$store.state.userInfo;
-    },
-    displayMenu() {
-      return [5, 4].includes(this.userInfo.role.id);
     },
   },
 };

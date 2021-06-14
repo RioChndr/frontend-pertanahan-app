@@ -18,7 +18,7 @@ export default [{
       name: "upload-file",
       component: DocumentUploadFile
     }, {
-      path: 'pickup',
+      path: 'pickup/:document_id',
       name: 'request.pickup',
       component: DocumentPickup
     }

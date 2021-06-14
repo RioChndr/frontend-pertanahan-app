@@ -20,16 +20,20 @@ router.beforeEach((to, from, next) => {
   if (to.name !== "login" && to.name !== "signup" && !token)
     next({ name: "login" });
   else if ((token && to.name === "login") || (token && to.name === "signup")) {
-    if ([5, 4].includes(roleId)) {
+    if ([5, 4, 1].includes(roleId)) {
       next({ name: "dashboard" });
-    } else {
+    } else if (roleId === 3) {
       next({ name: "request" });
+    } else if ([6, 2].includes(roleId)) {
+      next({ name: "delivery.list" });
     }
     next();
-  } else if (to.path === "/" && roleId === 5) {
+  } else if (to.path === "/" && [5, 4, 1].includes(roleId)) {
     next({ name: "dashboard" });
-  } else if (to.path === "/" && roleId !== 5) {
+  } else if (to.path === "/" && roleId === 3) {
     next({ name: "request" });
+  } else if (to.path === "/" && [6, 2].includes(roleId)) {
+    next({ name: "delivery.list" });
   } else {
     next();
   }

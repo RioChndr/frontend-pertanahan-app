@@ -24,25 +24,8 @@
         </div>
       </div>
       <div class="flex-fill d-flex justify-content-end pr-4">
-        <h4
-          class="m-0 text-primary"
-          v-if="document.is_waiting && document.is_submitted"
-        >
-          Menunggu Persetujuan
-        </h4>
-
-        <h4
-          class="m-0 text-success"
-          v-else-if="!document.is_waiting && document.is_done"
-        >
-          Disetujui
-        </h4>
-
-        <h4
-          class="m-0 text-danger"
-          v-else-if="!document.is_waiting && !document.is_done"
-        >
-          Ditolak
+        <h4 class="m-0 text-primary">
+          {{ document.status | getStatusValue }}
         </h4>
       </div>
     </div>
@@ -53,27 +36,27 @@
 export default {
   name: "HistoryItem",
   props: {
-    document: { type: Object, default: null }
+    document: { type: Object, default: null },
   },
   data() {
     return {
       success: {
-        color: ""
-      }
+        color: "",
+      },
     };
   },
   methods: {
     displayModal() {
       this.$store
         .dispatch("apiGetDetailDocument", { doc_id: this.document.id })
-        .then(result => {
+        .then((result) => {
           this.$store.commit("setDisplayModalDetailHistory", true);
         })
-        .catch(err => {
+        .catch((err) => {
           this.$toast.error("Terjadi Kesalahan pada Server");
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -6,11 +6,10 @@ const DeliveryDetail = () => import(/* webpackChunkName: "delivery" */ '@/pages/
 export default [
   {
     path: 'delivery',
-    name: 'delivery',
     component: DeliveryLayout,
     children: [
       {
-        path: '/',
+        path: '',
         name: 'delivery.list',
         component: DeliveryList
       },

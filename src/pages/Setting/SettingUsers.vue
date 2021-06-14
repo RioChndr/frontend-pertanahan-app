@@ -48,7 +48,7 @@
               </td>
             </tr>
           </tbody>
-          <!-- <tfoot>
+          <tfoot>
             <tr>
               <td colspan="3">Total : {{ totalData }}</td>
               <td class="text-right">
@@ -56,15 +56,12 @@
                 <button class="m-2 btn btn-sm">Next</button>
               </td>
             </tr>
-          </tfoot> -->
+          </tfoot>
         </table>
-        <!-- <div class="d-flex justify-content-end"></div> -->
       </div>
     </div>
     <modal-vue v-if="displayModal" @close="displayModal = false">
-      <template #header>
-        Tambah Admin Pengguna
-      </template>
+      <template #header> Tambah Admin Pengguna </template>
       <template #body>
         <v-loading
           :active.sync="modalLoading"
@@ -100,6 +97,19 @@
                     id="inputEmail3"
                     placeholder="Email"
                   />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="services" class="col-sm-2 col-form-label">
+                  Role
+                </label>
+                <div class="col-sm-10">
+                  <v-select
+                    :options="roles"
+                    label="role_name"
+                    :reduce="(role) => role.id"
+                    v-model="form.role_id"
+                  ></v-select>
                 </div>
               </div>
               <div class="form-group row">
@@ -140,14 +150,15 @@ import { mapState } from "vuex";
 import ModalVue from "../../components/Modal.vue";
 import {
   apiGetListUsers,
+  apiGetRoles,
   apiPatchDisableUser,
   apiPatchEnableUser,
-  apiPostSignup
+  apiPostSignup,
 } from "../../http/api";
 
 export default {
   components: {
-    ModalVue
+    ModalVue,
   },
   data() {
     return {
@@ -155,16 +166,17 @@ export default {
       displayModal: false,
       modalLoading: false,
       tableLoading: false,
+      roles: [],
       form: {
         full_name: null,
         email: null,
         password: null,
-        role_id: 5
+        role_id: null,
       },
       pagination: {
         page: 0,
-        pageSize: 10
-      }
+        pageSize: 10,
+      },
     };
   },
   created() {
@@ -173,13 +185,21 @@ export default {
     this.$store
       .dispatch("apiListUser", {
         page: this.pagination.page,
-        pageSize: this.pagination.pageSize
+        pageSize: this.pagination.pageSize,
       })
-      .catch(err => {
+      .catch((err) => {
         this.$toast.error("Terjadi kesalahan pada server");
       })
       .finally(() => {
         this.tableLoading = false;
+      });
+
+    apiGetRoles()
+      .then((result) => {
+        this.roles = result.data;
+      })
+      .catch((err) => {
+        this.$toast.error("Terjadi Kesalahan pada Sistem");
       });
   },
   methods: {
@@ -187,15 +207,15 @@ export default {
       this.modalLoading = true;
       this.$store.commit("setListUsersEmpty");
       apiPostSignup(this.form)
-        .then(result => {
+        .then((result) => {
           this.$toast.success("Admin berhasil ditambahkan");
           this.displayModal = false;
           return this.$store.dispatch("apiListUser", {
             page: this.pagination.page,
-            pageSize: this.pagination.pageSize
+            pageSize: this.pagination.pageSize,
           });
         })
-        .catch(err => {
+        .catch((err) => {
           this.$toast.error("Data tidak tersimpan");
         })
         .finally(() => {
@@ -209,12 +229,12 @@ export default {
         .dispatch("apiLockUser", {
           id: id,
           page: this.pagination.page,
-          pageSize: this.pagination.pageSize
+          pageSize: this.pagination.pageSize,
         })
-        .then(result => {
+        .then((result) => {
           this.$toast.success(result.data.message);
         })
-        .catch(err => {
+        .catch((err) => {
           this.$toast.error("Terjadi kesalahan pada server");
         })
         .finally(() => (this.tableLoading = false));
@@ -226,12 +246,12 @@ export default {
         .dispatch("apiUnlockUser", {
           id: id,
           page: this.pagination.page,
-          pageSize: this.pagination.pageSize
+          pageSize: this.pagination.pageSize,
         })
-        .then(result => {
+        .then((result) => {
           this.$toast.success(result.data.message);
         })
-        .catch(err => {
+        .catch((err) => {
           this.$toast.error("Terjadi kesalahan pada server");
         })
         .finally(() => (this.tableLoading = false));
@@ -242,19 +262,19 @@ export default {
         .dispatch("apiResetPassword", {
           page: this.pagination.page,
           pageSize: this.pagination.pageSize,
-          id: id
+          id: id,
         })
-        .then(result => {
+        .then((result) => {
           this.$toast.success("Password berhasil di reset ulang");
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err, "Error");
           this.$toast.err("Gagal mereset ulang password");
         })
         .finally(() => {
           this.tableLoading = false;
         });
-    }
+    },
   },
   computed: {
     disabledButtonSubmit() {
@@ -270,8 +290,8 @@ export default {
       }
       return false;
     },
-    ...mapState(["users"])
-  }
+    ...mapState(["users"]),
+  },
 };
 </script>
 

@@ -10,7 +10,5 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - frontend:/src
-
-volumes:
-  frontend:
+      - .:/src
+      - /src/node_modules

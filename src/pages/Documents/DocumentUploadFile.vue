@@ -375,10 +375,15 @@ export default {
       :is-full-page="true"
     ></v-loading>
 
-    <div class="row border mb-2" v-if="detailDocument.sps_path">
+    <div
+      class="row border mb-2"
+      v-if="detailDocument.status === 'finish_submission'"
+    >
       <div class="col-12 p-2 d-flex align-items-center justify-content-center">
         <strong>
-          SPS Telah Terbit, silahkan&nbsp;<a
+          SPS Telah Terbit
+          <a
+            v-if="detailDocument.sps_path"
             :href="detailDocument.sps_path || '#'"
           >
             download disini
@@ -407,20 +412,34 @@ export default {
         </button>
         <button
           class="btn btn-sm btn-secondary mx-2"
-          @click="$router.push({ name: 'request.pickup' })"
+          @click="
+            $router.push({
+              name: 'request.pickup',
+              params: {
+                document_id: detailDocument.id,
+              },
+              query: {
+                type: 'certificate',
+              },
+            })
+          "
         >
           Ambil Sendiri Berkas
         </button>
       </div>
-      <div class="col-12 my-2 d-flex align-items-center justify-content-center">
+      <div
+        class="col-12 my-2 d-flex align-items-center justify-content-center"
+        v-if="detailDocument.delivery_services !== null"
+      >
         Anda memilih untuk Menggunakan Jasa Pengiriman Kantor BPN &nbsp;
         <router-link
           :to="{
             name: 'delivery.detail',
             params: { id: detailDocument.delivery_services.id },
           }"
-          >check disini</router-link
         >
+          check disini
+        </router-link>
       </div>
     </div>
 
@@ -445,7 +464,10 @@ export default {
       </div>
       <div
         class="col-12 my-2 d-flex align-items-center justify-content-center"
-        v-if="detailDocument.delivery_services === null"
+        v-if="
+          detailDocument.delivery_services === null &&
+          detailDocument.delivery_schedule === null
+        "
       >
         <button
           class="btn btn-sm btn-primary mx-2"
@@ -465,10 +487,27 @@ export default {
         </button>
         <button
           class="btn btn-sm btn-secondary mx-2"
-          @click="$router.push({ name: 'request.pickup' })"
+          @click="
+            $router.push({
+              name: 'request.pickup',
+              params: {
+                document_id: detailDocument.id,
+              },
+              query: {
+                type: 'documents',
+              },
+            })
+          "
         >
           Antar Sendiri Berkas
         </button>
+      </div>
+      <div
+        class="col-12 my-2 d-flex align-items-center justify-content-center"
+        v-else
+      >
+        Anda telah memilih untuk mengirimkan Sendiri berkas pada
+        {{ detailDocument.delivery_schedule | moment("ll") }}
       </div>
     </div>
 
