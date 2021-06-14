@@ -1,17 +1,15 @@
-FROM node:12-alpine
+FROM node:14-alpine
 
-RUN mkdir -p /src
+WORKDIR /app
 
-WORKDIR /src
-
-COPY package*.json /src/
+COPY package*.json /app/
 
 RUN npm install
 
-RUN npm install @vue/cli@3.7.0 -g
+RUN npm rebuild node-sass
 
 COPY . .
 
-EXPOSE 4040
+RUN npm install @vue/cli@3.7.0 -g
 
 CMD [ "npm", "run", "serve" ]
