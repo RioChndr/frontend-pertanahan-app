@@ -26,14 +26,18 @@ router.beforeEach((to, from, next) => {
       next({ name: "request" });
     } else if ([6, 2].includes(roleId)) {
       next({ name: "delivery.list" });
+    } else if (roleId === 1) {
+      next({ name: "archive" });
     }
     next();
-  } else if (to.path === "/" && [5, 4, 1].includes(roleId)) {
+  } else if (to.path === "/" && [5, 4].includes(roleId)) {
     next({ name: "dashboard" });
   } else if (to.path === "/" && roleId === 3) {
     next({ name: "request" });
   } else if (to.path === "/" && [6, 2].includes(roleId)) {
     next({ name: "delivery.list" });
+  } else if (to.path === "/" && roleId === 1) {
+    next({ name: "archive" });
   } else {
     next();
   }
