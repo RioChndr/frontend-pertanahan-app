@@ -10,7 +10,8 @@
         <table class="table table-hover">
           <thead>
             <th width="5%">No.</th>
-            <th width="50%">Nama</th>
+            <th width="30%">Nama</th>
+            <th width="20%">Email</th>
             <th width="20%">Role</th>
             <th width="15%">Aksi</th>
           </thead>
@@ -23,6 +24,7 @@
             <tr v-for="(user, i) in users" :key="user.id">
               <td>{{ i + 1 }}</td>
               <td>{{ user.full_name }}</td>
+              <td>{{ user.email }}</td>
               <td>{{ user.role.role_name }}</td>
               <td>
                 <button
