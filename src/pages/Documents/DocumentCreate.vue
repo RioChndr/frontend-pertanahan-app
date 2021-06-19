@@ -37,7 +37,7 @@
                     <i><sup>* Mandatory</sup></i>
                   </label>
                   <v-select
-                  @input="setKelurahan"
+                    @input="setKelurahan"
                     :options="list_kecamatan"
                     label="nama"
                     :reduce="(kecamatan) => kecamatan"
@@ -72,7 +72,7 @@
                     :options="list_type_hak"
                     label="name"
                     :reduce="(type_hak) => type_hak.id"
-                    v-model="form.type_hak_id"                    
+                    v-model="form.type_hak_id"
                   ></v-select>
                 </div>
               </div>
@@ -89,7 +89,9 @@
                 </div>
               </div>
 
-              <div class="col-lg-4 col-md-4 col-sm-12 d-flex align-items-center">
+              <div
+                class="col-lg-4 col-md-4 col-sm-12 d-flex align-items-center"
+              >
                 <a href="#">Petunjuk melihat Kode HAK</a>
               </div>
             </div>
@@ -269,7 +271,7 @@ import { mapState } from "vuex";
 import { apiGetListTypeHak, apiPostDocument } from "../../http/api";
 import { createSharedLink, deleteFile, uploadFile } from "../../http/dropbox";
 import DocumentInputFile from "./components/DocumentInputFile";
-import axios from 'axios'
+import axios from "axios";
 
 export default {
   components: {
@@ -299,7 +301,7 @@ export default {
         kelurahan_id: null,
         kelurahan_name: null,
         type_hak_id: null,
-        number_hak: null
+        number_hak: null,
       },
 
       document: {
@@ -325,7 +327,7 @@ export default {
 
       list_kelurahan: [],
 
-      list_type_hak: []
+      list_type_hak: [],
     };
   },
   methods: {
@@ -372,17 +374,22 @@ export default {
       this.form.kelurahan_id = null;
       this.list_kelurahan = [];
 
-      axios.get(`http://dev.farizdotid.com/api/daerahindonesia/kelurahan?id_kecamatan=${value.id}`).then(response => {
-        this.list_kelurahan = response.data.kelurahan;
-      }).catch(err => {
-        console.error(err);
-        this.$toast.error("Terjadi Kesalahan pada Sever");
-      })
+      axios
+        .get(
+          `https://dev.farizdotid.com/api/daerahindonesia/kelurahan?id_kecamatan=${value.id}`
+        )
+        .then((response) => {
+          this.list_kelurahan = response.data.kelurahan;
+        })
+        .catch((err) => {
+          console.error(err);
+          this.$toast.error("Terjadi Kesalahan pada Sever");
+        });
     },
     selectedOptionKelurahan(value) {
       this.form.kelurahan_id = value.id;
       this.form.kelurahan_name = value.nama;
-    }
+    },
   },
   created() {
     const dateNow = Date.now();
@@ -391,21 +398,26 @@ export default {
     const arrayNumber = uniqueId.toString().match(/.{1,3}/g);
     this.form.unique_id = arrayNumber.join("-");
 
-    axios.get('https://dev.farizdotid.com/api/daerahindonesia/kecamatan?id_kota=3273').then(response => {
-      this.list_kecamatan = response.data.kecamatan
-    }).catch(err => {
-      console.error(err)
-      this.$toast.error("Terjadi Kesalahan pada Sever");
-    })
+    axios
+      .get(
+        "https://dev.farizdotid.com/api/daerahindonesia/kecamatan?id_kota=3273"
+      )
+      .then((response) => {
+        this.list_kecamatan = response.data.kecamatan;
+      })
+      .catch((err) => {
+        console.error(err);
+        this.$toast.error("Terjadi Kesalahan pada Sever");
+      });
 
-    apiGetListTypeHak().then(result => {
-      this.list_type_hak = result.data.typeHak;
-    }).catch(err => {
-      console.error(err)
-      this.$toast.error("Terjadi Kesalahan pada Sever");
-    })
-
-
+    apiGetListTypeHak()
+      .then((result) => {
+        this.list_type_hak = result.data.typeHak;
+      })
+      .catch((err) => {
+        console.error(err);
+        this.$toast.error("Terjadi Kesalahan pada Sever");
+      });
 
     this.$store.dispatch("apiGetServices");
   },
