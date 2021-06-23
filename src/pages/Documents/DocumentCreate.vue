@@ -85,14 +85,23 @@
                     placeholder="Nomor Hak"
                     :is-number="true"
                     :is-required="true"
+                    :max-length="5"
                   ></fg-input>
                 </div>
               </div>
 
               <div
-                class="col-lg-4 col-md-4 col-sm-12 d-flex align-items-center"
+                class="
+                  col-lg-4 col-md-4 col-sm-12
+                  d-flex
+                  align-items-center
+                  text-justify
+                "
               >
-                <a href="#">Petunjuk melihat Kode HAK</a>
+                * Nomor sertifikat tanah terdiri dari 14 angka di dalamnya.
+                Sebagai contoh nomor sertifikat tanah yaitu 12.34.56.78.9.10111.
+                Panjang nomor tersebut memiliki arti sebagai berikut. Lima digit
+                terakhir yaitu (10111) merupakan kode dari hak milik
               </div>
             </div>
           </div>
@@ -269,7 +278,7 @@
 <script>
 import { mapState } from "vuex";
 import { apiGetListTypeHak, apiPostDocument } from "../../http/api";
-import { createSharedLink, deleteFile, uploadFile } from "../../http/dropbox";
+import { deleteFile } from "../../http/dropbox";
 import DocumentInputFile from "./components/DocumentInputFile";
 import axios from "axios";
 

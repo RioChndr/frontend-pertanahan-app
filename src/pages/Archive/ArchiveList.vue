@@ -76,7 +76,6 @@ export default {
   },
   methods: {
     openDetail(value) {
-      console.log(value);
       this.$router.push({ name: "archive.detail", params: { id: value.id } });
     },
     async load_more_data(options) {
@@ -129,7 +128,6 @@ export default {
         });
       }
     } catch (error) {
-      console.error(error);
       this.$toast.error("terjadi kesalahan pada sistem");
     }
   },

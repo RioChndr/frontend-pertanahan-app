@@ -31,14 +31,17 @@ export default {
   actionPutDocument({ dispatch }, payload) {
     return new Promise((resolve, reject) => {
       apiPostSubmission({
-        document_id: payload.doc_id,
-      }).then(result => {
-        resolve(result);
-      }).catch(err => {
-        reject(err);
-      }).finally(() => {
-        dispatch("apiGetDetailDocument", payload);
-      });
+        document_id: payload.doc_id
+      })
+        .then(result => {
+          resolve(result);
+        })
+        .catch(err => {
+          reject(err);
+        })
+        .finally(() => {
+          dispatch("apiGetDetailDocument", payload);
+        });
     });
   },
 
@@ -47,7 +50,6 @@ export default {
     return new Promise((resolve, reject) => {
       apiGetDetailDocument(doc_id)
         .then(result => {
-          console.log(result, 'detail document')
           commit("setDocumentDetail", result.data.document);
           resolve(result);
         })

@@ -20,15 +20,19 @@ import router from "./router/index";
 import PaperDashboard from "./plugins/paperDashboard";
 import "vue-notifyjs/themes/default.css";
 
-import VueMoment from 'vue-moment';
+const moment = require("moment");
+require("moment/locale/id");
+import VueMoment from "vue-moment";
 
-Vue.use(VueMoment);
+Vue.use(VueMoment, {
+  moment
+});
 Vue.use(PaperDashboard);
 
 // VueDialog
-import Dialog from 'vue-dialog-loading';
+import Dialog from "vue-dialog-loading";
 Vue.use(Dialog, {
-  dialogBtnColor: '#0f0'
+  dialogBtnColor: "#0f0"
 });
 
 // state

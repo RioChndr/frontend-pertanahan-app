@@ -1,26 +1,32 @@
 <template>
-  <div class="container-fluid" v-if="!loading_content">
+  <div class="card container-fluid py-4" v-if="!loading_content">
     <div class="row">
       <div class="col d-flex align-items-center">
         <router-link to="/delivery" class="d-flex align-items-center">
           <div class="ti-arrow-left mr-2"></div>
           Kembali
         </router-link>
-        <h3 class="m-0 ml-4">Detail Pengiriman Berkas</h3>
+        <h3 class="m-0 ml-4" v-if="detail.document_type === 'documents'">
+          Detail Penjemputan Berkas
+        </h3>
+        <h3 class="m-0 ml-4" v-else>Detail Pengiriman Berkas</h3>
       </div>
     </div>
     <div class="row my-2">
       <div class="col-lg-6 col-md-6 col-sm-12 mb-2">
         <div class="border rounded px-2 py-1">
-          <div class="row pt-4" v-if="detail.courier === null">
+          <div class="row pt-4" v-if="detail.courier === null && roleId === 2">
             <div class="col">
-              <h4 class="m-0">Proses Pengiriman</h4>
+              <h4 class="m-0" v-if="detail.document_type === 'documents'">
+                Proses Penjemputan
+              </h4>
+              <h4 class="m-0" v-else>Proses Pengiriman</h4>
               <div class="row my-2">
                 <div class="col">
                   <div class="form-group">
                     <label for="services" class="control-label">
-                      Kurir Ekspedisi</label
-                    >
+                      Kurir Ekspedisi
+                    </label>
                     <v-select
                       :options="couriers"
                       label="full_name"
@@ -37,7 +43,11 @@
                     @click.prevent="sendDocumentsByCourier"
                     :disabled="loading"
                   >
-                    Kirim Berkas
+                    Process &amp;
+                    <span v-if="detail.document_type === 'documents'">
+                      Jemput Berkas
+                    </span>
+                    <span v-else>Kirim Berkas</span>
                     <i class="fa fa-spinner fa-spin fa-fw" v-if="loading"></i>
                   </button>
                 </div>
@@ -90,20 +100,6 @@
                     <label for="">Deskripsi Singkat</label>
                     <p>{{ detail.description }}</p>
                   </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col my-4">
-                  <button
-                    class="btn btn-primary btn-sm"
-                    @click.prevent="approveEkspedisiBerkas"
-                  >
-                    Proses Ekspedisi Berkas
-                    <i
-                      class="fa fa-spinner fa-spin fa-fw"
-                      v-if="loading_deliver_documents"
-                    ></i>
-                  </button>
                 </div>
               </div>
             </div>
@@ -257,6 +253,8 @@ export default {
       loading: false,
 
       loading_deliver_documents: false,
+      roleId: JSON.parse(localStorage.getItem(process.env.VUE_APP_USER_INFO))
+        .role_id,
     };
   },
 

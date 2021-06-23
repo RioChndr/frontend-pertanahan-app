@@ -27,6 +27,7 @@
       class="form-control border"
       aria-describedby="addon-right addon-left"
       @keypress="validateNumber"
+      :maxlength="maxLength"
     />
     <slot></slot>
     <slot name="addonRight">
@@ -52,6 +53,9 @@ export default {
     isRequired: {
       type: Boolean,
       default: false,
+    },
+    maxLength: {
+      type: Number,
     },
   },
   computed: {

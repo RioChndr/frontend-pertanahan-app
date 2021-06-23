@@ -1,6 +1,6 @@
 <template>
   <div class="form-group">
-    <slot name="label">Label</slot>
+    <slot name="label"></slot>
     <div class="form-control border" v-show="!fileName">
       <button
         class="

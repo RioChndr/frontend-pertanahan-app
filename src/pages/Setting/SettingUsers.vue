@@ -212,6 +212,11 @@ export default {
         .then((result) => {
           this.$toast.success("Admin berhasil ditambahkan");
           this.displayModal = false;
+
+          this.form.full_name = null;
+          this.form.email = null;
+          this.form.password = null;
+          this.form.role_id = null;
           return this.$store.dispatch("apiListUser", {
             page: this.pagination.page,
             pageSize: this.pagination.pageSize,

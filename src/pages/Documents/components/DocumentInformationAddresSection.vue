@@ -1,0 +1,48 @@
+<template>
+  <div class="row border mb-2">
+    <div class="col">
+      <div class="row">
+        <div class="col-lg-3 col-sm-12 col-md-3 d-flex align-items-center">
+          <div class="form-group my-2">
+            <label for="services" class="control-label"> Tipe Hak </label>
+            <h4 class="m-0 font-weight-bold d-flex align-items-center">
+              {{ detail.type_hak ? detail.type_hak.name : "-" }}
+            </h4>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-12 col-md-3 d-flex align-items-center">
+          <div class="form-group my-2">
+            <label for="services" class="control-label"> No. Hak </label>
+            <h4 class="m-0 font-weight-bold d-flex align-items-center">
+              {{ detail.number_hak || "-" }}
+            </h4>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-12 col-md-3 d-flex align-items-center">
+          <div class="form-group my-2">
+            <label for="services" class="control-label"> Alamat </label>
+            <h4 class="m-0 font-weight-bold d-flex align-items-center">
+              {{ detail.kecamatan_name }},
+              {{ detail.kelurahan_name }}
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "DocumentInformationAddresSection",
+  props: {
+    detail: {
+      type: Object,
+      default: () => {},
+    },
+  },
+};
+</script>
+
+<style>
+</style>

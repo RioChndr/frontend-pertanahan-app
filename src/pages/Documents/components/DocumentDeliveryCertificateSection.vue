@@ -1,0 +1,99 @@
+<template>
+  <div class="row border mb-2" v-if="detail.status === 'finish_submission'">
+    <div class="col-12 p-2 d-flex align-items-center justify-content-center">
+      <strong>
+        SPS Telah Terbit
+        <a
+          v-if="detail.sps_path"
+          @click="downloadFile(detail.sps_path)"
+          target="_blank"
+          class="d-flex align-items-center"
+          style="cursor: pointer"
+        >
+          <span class="ti-download mr-2"></span>
+          <span>Download</span>
+        </a>
+      </strong>
+    </div>
+    <div
+      class="col-12 p-2 d-flex align-items-center justify-content-center"
+      v-if="detail.pickup_schedule !== null"
+    >
+      <strong>
+        Anda telah memilih untuk mengambil Berkas dengan perorangan pada
+        {{ detail.pickup_schedule | moment("LL") }}
+      </strong>
+    </div>
+    <div
+      class="col-12 my-2 d-flex align-items-center justify-content-center"
+      v-if="
+        detail.delivery_services.document_type !== 'certificate' &&
+        detail.pickup_schedule === null
+      "
+    >
+      <button
+        class="btn btn-sm btn-primary mx-2"
+        @click="
+          $router.push({
+            name: 'delivery.send',
+            params: {
+              document_id: detail.id,
+            },
+            query: {
+              type: 'certificate',
+            },
+          })
+        "
+      >
+        Kirim Berkas oleh BPN
+      </button>
+      <button
+        class="btn btn-sm btn-secondary mx-2"
+        @click="
+          $router.push({
+            name: 'request.pickup',
+            params: {
+              document_id: detail.id,
+            },
+            query: {
+              type: 'certificate',
+            },
+          })
+        "
+      >
+        Ambil Sendiri Berkas
+      </button>
+    </div>
+  </div>
+</template>
+
+<script>
+import { downloadFile } from "../../../http/dropbox";
+export default {
+  name: "DocumentDeliveryCertificateSection",
+  props: {
+    detail: {
+      type: Object,
+      default: () => {},
+    },
+  },
+  methods: {
+    downloadFile(path) {
+      downloadFile({ filePath: path })
+        .then((result) => {
+          let link = document.createElement("a");
+          link.href = result.result.link;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+  },
+};
+</script>
+
+<style>
+</style>

@@ -65,6 +65,37 @@
                   </template>
                 </label-horizontal-vue>
 
+                <label-horizontal-vue
+                  v-if="
+                    ['process_submission', 'finish_submission'].includes(
+                      detail.status
+                    )
+                  "
+                >
+                  <template #left-column> SPS </template>
+                  <template #right-column>
+                    <a
+                      v-if="detail.sps_path"
+                      @click="downloadFile(detail.sps_path)"
+                      target="_blank"
+                      class="d-flex align-items-center"
+                      style="cursor: pointer"
+                    >
+                      <span class="ti-download mr-2"></span>
+                      <span>Download</span>
+                    </a>
+                    <document-input-file
+                      v-else
+                      properties="sps_path"
+                      uploaded-file-name="sps_file"
+                      file-url-name="sps"
+                      @get-uploaded-url="uploadedUrl"
+                      :file-code="form.unique_id"
+                    >
+                    </document-input-file>
+                  </template>
+                </label-horizontal-vue>
+
                 <label-horizontal-vue>
                   <template #right-column>
                     <button
@@ -98,9 +129,7 @@
                       <div v-if="loading_finish_submission">
                         <i class="fa fa-spinner fa-spin fa-fw"></i>
                       </div>
-                      <div v-else>
-                        Permohonan Pelayanan Selesai &amp; Cetak SPS
-                      </div>
+                      <div v-else>SPS Telah tercetak</div>
                     </button>
                   </template>
                 </label-horizontal-vue>
@@ -150,9 +179,15 @@
 <script>
 import DownloadButtonVue from "@/components/DownloadButton.vue";
 import LabelHorizontalVue from "@/components/LabelHorizontal.vue";
-import { apiGetDetailDocument, apiPostLogsDocuments } from "../../http/api";
+import {
+  apiGetDetailDocument,
+  apiPostLogsDocuments,
+  apiPutDocument,
+} from "../../http/api";
+import DocumentInputFile from "../Documents/components/DocumentInputFile.vue";
+import { downloadFile } from "../../http/dropbox";
 export default {
-  components: { DownloadButtonVue, LabelHorizontalVue },
+  components: { DownloadButtonVue, LabelHorizontalVue, DocumentInputFile },
   data() {
     return {
       detail: {},
@@ -160,6 +195,13 @@ export default {
       loading_content: true,
       loading_process_submission: false,
       loading_finish_submission: false,
+
+      form: {
+        sps_path: null,
+        sps_url: null,
+        sps_identity: null,
+        unique_id: new Date().getTime().toString(),
+      },
     };
   },
   async created() {
@@ -176,6 +218,22 @@ export default {
     }
   },
   methods: {
+    downloadFile(path) {
+      downloadFile({ filePath: path })
+        .then((result) => {
+          let link = document.createElement("a");
+          link.href = result.result.link;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+    uploadedUrl(ref, url) {
+      this.form[ref] = url;
+    },
     async updateVerificationDone() {
       this.loading_process_submission = true;
       try {
@@ -210,11 +268,18 @@ export default {
         });
 
         if (response.data.success) {
-          this.$toast.success("Permohonan Pelayanan di menuju di Proses");
+          const update = apiPutDocument(this.$route.params.id, {
+            sps_path: this.form.sps_path,
+            status: "finish_submission",
+          });
+
+          console.log(update);
 
           const detailDocument = await apiGetDetailDocument(
             this.$route.params.id
           );
+
+          this.$toast.success("Permohonan Telah Selessai");
 
           if (detailDocument.data.success) {
             this.detail = detailDocument.data.document;

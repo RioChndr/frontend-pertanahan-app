@@ -1,5 +1,5 @@
 <template>
-  <div class="card p-4">
+  <div class="p-4">
     <router-view></router-view>
   </div>
 </template>

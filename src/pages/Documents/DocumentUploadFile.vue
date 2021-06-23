@@ -6,11 +6,19 @@ import { mapState } from "vuex";
 import jsPDF from "jspdf";
 import { getStatusSubmission } from "../../helpers/utils";
 import Modal from "../../components/Modal.vue";
+import DocumentDeliveryCertificateSection from "./components/DocumentDeliveryCertificateSection.vue";
+import DocumentDeliveryFileSection from "./components/DocumentDeliveryFileSection.vue";
+import DocumentSubmitSubmissionSection from "./components/DocumentSubmitSubmissionSection.vue";
+import DocumentInformationAddresSection from "./components/DocumentInformationAddresSection.vue";
 
 export default {
   components: {
     DocumentInputFileService,
     Modal,
+    DocumentDeliveryCertificateSection,
+    DocumentDeliveryFileSection,
+    DocumentSubmitSubmissionSection,
+    DocumentInformationAddresSection,
   },
   filters: {
     dateHuman(val) {
@@ -306,35 +314,6 @@ export default {
       }
       return !isDocumentOnProgress && isDocumentSubbmited && isDocumentApproved;
     },
-    isDocumentSuccessApproved() {
-      const isDocumentOnProgress = this.detailDocument.is_waiting;
-      const isDocumentApproved = this.detailDocument.is_done;
-      const isDocumentSubbmited = this.detailDocument.is_submitted;
-
-      if (!isDocumentOnProgress && isDocumentSubbmited && isDocumentApproved) {
-        return {
-          class: "alert-success",
-          title: "Pengajuan Anda Diterima!",
-        };
-      } else if (
-        !isDocumentOnProgress &&
-        isDocumentSubbmited &&
-        !isDocumentApproved
-      ) {
-        return {
-          class: "alert-danger",
-          title: "Pengajuan Anda Ditolak!",
-        };
-      }
-    },
-    isDocumentCanRequest() {
-      return (
-        (!this.detailDocument.is_submitted && !this.detailDocument.is_done) ||
-        (this.detailDocument.is_submitted &&
-          !this.detailDocument.is_done &&
-          !this.detailDocument.is_waiting)
-      );
-    },
   },
 };
 </script>
@@ -375,239 +354,29 @@ export default {
       :is-full-page="true"
     ></v-loading>
 
-    <div
-      class="row border mb-2"
-      v-if="detailDocument.status === 'finish_submission'"
-    >
-      <div class="col-12 p-2 d-flex align-items-center justify-content-center">
-        <strong>
-          SPS Telah Terbit
-          <a
-            v-if="detailDocument.sps_path"
-            :href="detailDocument.sps_path || '#'"
-          >
-            download disini
-          </a>
-        </strong>
-      </div>
-      <div
-        class="col-12 my-2 d-flex align-items-center justify-content-center"
-        v-if="detailDocument.delivery_services === null"
-      >
-        <button
-          class="btn btn-sm btn-primary mx-2"
-          @click="
-            $router.push({
-              name: 'delivery.send',
-              params: {
-                document_id: detailDocument.id,
-              },
-              query: {
-                type: 'certificate',
-              },
-            })
-          "
-        >
-          Kirim Berkas oleh BPN
-        </button>
-        <button
-          class="btn btn-sm btn-secondary mx-2"
-          @click="
-            $router.push({
-              name: 'request.pickup',
-              params: {
-                document_id: detailDocument.id,
-              },
-              query: {
-                type: 'certificate',
-              },
-            })
-          "
-        >
-          Ambil Sendiri Berkas
-        </button>
-      </div>
-      <div
-        class="col-12 my-2 d-flex align-items-center justify-content-center"
-        v-if="detailDocument.delivery_services !== null"
-      >
-        Anda memilih untuk Menggunakan Jasa Pengiriman Kantor BPN &nbsp;
-        <router-link
-          :to="{
-            name: 'delivery.detail',
-            params: { id: detailDocument.delivery_services.id },
-          }"
-        >
-          check disini
-        </router-link>
-      </div>
-    </div>
+    <document-delivery-certificate-section
+      :detail="detailDocument"
+    ></document-delivery-certificate-section>
 
-    <div
-      class="row border mb-2"
-      v-if="detailDocument.status === 'finish_verification'"
-    >
-      <div class="col-12 p-2 d-flex align-items-center justify-content-center">
-        <strong v-if="detailDocument.delivery_services === null">
-          Verifikasi Berkas telah selesai, silahkan kirim kan Berkasnya.
-        </strong>
-        <strong v-else>
-          Lacak Penjemputan Berkas
-          <router-link
-            :to="{
-              name: 'delivery.detail',
-              params: { id: detailDocument.delivery_services.id },
-            }"
-            >disini</router-link
-          >
-        </strong>
-      </div>
-      <div
-        class="col-12 my-2 d-flex align-items-center justify-content-center"
-        v-if="
-          detailDocument.delivery_services === null &&
-          detailDocument.delivery_schedule === null
-        "
-      >
-        <button
-          class="btn btn-sm btn-primary mx-2"
-          @click="
-            $router.push({
-              name: 'delivery.send',
-              params: {
-                document_id: detailDocument.id,
-              },
-              query: {
-                type: 'documents',
-              },
-            })
-          "
-        >
-          Jemput Berkas oleh BPN
-        </button>
-        <button
-          class="btn btn-sm btn-secondary mx-2"
-          @click="
-            $router.push({
-              name: 'request.pickup',
-              params: {
-                document_id: detailDocument.id,
-              },
-              query: {
-                type: 'documents',
-              },
-            })
-          "
-        >
-          Antar Sendiri Berkas
-        </button>
-      </div>
-      <div
-        class="col-12 my-2 d-flex align-items-center justify-content-center"
-        v-else
-      >
-        Anda telah memilih untuk mengirimkan Sendiri berkas pada
-        {{ detailDocument.delivery_schedule | moment("ll") }}
-      </div>
-    </div>
+    <document-delivery-file-section
+      :detail="detailDocument"
+    ></document-delivery-file-section>
 
-    <div class="row border mb-2">
-      <div class="col-lg-6 col-md-6 col-sm-12">
-        <div class="row">
-          <div
-            class="col-sm-12 d-flex align-items-center"
-            :class="[
-              detailDocument.status !== ''
-                ? 'col-lg-9 col-md-9'
-                : 'col-lg-6 col-md-6',
-            ]"
-          >
-            <div class="form-group my-2">
-              <label for="services" class="control-label">
-                Kode Berkas
-                <span
-                  class="badge"
-                  :class="[
-                    detailDocument.status !== 'reject_submission'
-                      ? 'badge-success'
-                      : 'badge-danger',
-                  ]"
-                  >{{ detailDocument.status | filterStatus }}</span
-                >
-              </label>
-              <h4 class="m-0 font-weight-bold d-flex align-items-center">
-                {{ detailDocument.unique_id }}
-              </h4>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-end">
-        <div class="form-group my-2 d-flex align-items-center">
-          <button
-            class="btn btn-info btn-sm mr-2"
-            @click.prevent="submitRequest"
-            v-if="
-              detailDocument.status === '' ||
-              detailDocument.status === 'reject_submission' ||
-              detailDocument.status === null
-            "
-          >
-            <span class="ti-share mr-2"></span>
-            Ajukan Permohonan
-          </button>
+    <document-submit-submission-section
+      :detail="detailDocument"
+      @print-request="printRequest"
+      @submit-request="submitRequest"
+      @open-modal="
+        () => {
+          displayModal = true;
+        }
+      "
+    ></document-submit-submission-section>
 
-          <button class="btn btn-sm" @click="printRequest">
-            <span class="ti-printer mr-2"></span>
-            Cetak Permohonan
-          </button>
-          <button
-            class="btn btn-sm ml-2"
-            @click="displayModal = true"
-            data-toggle="tooltip"
-            data-placement="top"
-            title="Catatan Riwayat Permohonan"
-            type="button"
-          >
-            <span class="ti-view-list-alt"></span>
-          </button>
-        </div>
-      </div>
-    </div>
+    <document-information-addres-section
+      :detail="detailDocument"
+    ></document-information-addres-section>
 
-    <div class="row border mb-2">
-      <div class="col">
-        <div class="row">
-          <div class="col-lg-3 col-sm-12 col-md-3 d-flex align-items-center">
-            <div class="form-group my-2">
-              <label for="services" class="control-label"> Tipe Hak </label>
-              <h4 class="m-0 font-weight-bold d-flex align-items-center">
-                {{
-                  detailDocument.type_hak ? detailDocument.type_hak.name : "-"
-                }}
-              </h4>
-            </div>
-          </div>
-          <div class="col-lg-3 col-sm-12 col-md-3 d-flex align-items-center">
-            <div class="form-group my-2">
-              <label for="services" class="control-label"> No. Hak </label>
-              <h4 class="m-0 font-weight-bold d-flex align-items-center">
-                {{ detailDocument.number_hak || "-" }}
-              </h4>
-            </div>
-          </div>
-          <div class="col-lg-3 col-sm-12 col-md-3 d-flex align-items-center">
-            <div class="form-group my-2">
-              <label for="services" class="control-label"> Alamat </label>
-              <h4 class="m-0 font-weight-bold d-flex align-items-center">
-                {{ detailDocument.kecamatan_name }},
-                {{ detailDocument.kelurahan_name }}
-              </h4>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="row border mb-2">
       <div class="col-lg-4 col-md-4 col-sm-12">
         <div class="form-group">
@@ -648,6 +417,21 @@ export default {
             {{ detailDocument.service && detailDocument.service.service_name }}
           </h4>
         </div>
+
+        <div class="form-group" v-if="detailDocument.empower_file_path !== ''">
+          <label for="services" class="control-label"> Surat Kuasa </label>
+          <h4 class="m-0 font-weight-bold">
+            <a
+              @click="downloadFile(detailDocument.empower_file_path)"
+              target="_blank"
+              class="d-flex align-items-center"
+              style="cursor: pointer"
+            >
+              <span class="ti-download mr-2"></span>
+              <span>Download</span>
+            </a>
+          </h4>
+        </div>
       </div>
       <div
         class="col-lg-12 col-md-12 col-sm-12"
@@ -672,6 +456,7 @@ export default {
         </div>
       </div>
     </div>
+
     <div class="row mt-2">
       <div :class="containerClass">
         <div class="form-group my-2">
@@ -705,7 +490,10 @@ export default {
           </div>
         </div>
       </div>
-      <div class="col-lg-6 col-md-6 col-sm-12 border" v-if="!isRequestApproved">
+      <div
+        class="col-lg-6 col-md-6 col-sm-12 border"
+        v-if="detailDocument.status === null"
+      >
         <!-- Surat Permohonan -->
         <document-input-file-service
           uploaded-file-name="surat_permohonan"

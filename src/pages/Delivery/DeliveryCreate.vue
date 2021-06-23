@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid" v-if="!loading_content">
+  <div class="card container-fluid py-4" v-if="!loading_content">
     <div class="row">
       <div class="col">
         <h3 class="m-0">Detail {{ deliveryType }}</h3>

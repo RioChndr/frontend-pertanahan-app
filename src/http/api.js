@@ -62,28 +62,30 @@ export function apiGetAllDoneRequest({
 }
 
 export function apiGetListTypeHak() {
-  return axios.get('documents/type-hak');
+  return axios.get("documents/type-hak");
 }
 
 export function apiPostSubmission(data) {
-  return axios.post('documents/submit', data);
+  return axios.post("documents/submit", data);
 }
 
 export function apiPostLogsDocuments(data) {
-  return axios.post('documents/logs', data);
+  return axios.post("documents/logs", data);
 }
 
 export function apiGetCheckSchedule(date, type) {
-  return axios.get(`delivery/check-schedule?schedule=${date}&type=${type}`)
+  return axios.get(`delivery/check-schedule?schedule=${date}&type=${type}`);
 }
 
 export function apiUpdateDeliverDocument(document_id, body) {
-  return axios.patch(`documents/deliver/${document_id}`, body)
+  return axios.patch(`documents/deliver/${document_id}`, body);
 }
 
 export function apiGetSubmissionList(keyword, page, page_size) {
-  let queryKeyword = keyword ? `&keyword=${keyword}` : '';
-  return axios.get(`documents/submission/list?page=${page}&page_size=${page_size}${queryKeyword}`)
+  let queryKeyword = keyword ? `&keyword=${keyword}` : "";
+  return axios.get(
+    `documents/submission/list?page=${page}&page_size=${page_size}${queryKeyword}`
+  );
 }
 
 //#endregion
@@ -138,7 +140,7 @@ export function apiPatchResetPassword(userId = null) {
 }
 
 export function apiGetAllCourier() {
-  return axios.get('users/courier')
+  return axios.get("users/courier");
 }
 
 //#endregion
@@ -157,19 +159,19 @@ export function apiGetListDeliveryServices(page = 1, pageSize = 5) {
 }
 
 export function apiPostAssignCourier(courier_id, delivery_id) {
-  return axios.post('delivery/assign-courier', {
+  return axios.post("delivery/assign-courier", {
     courier: courier_id,
     delivery_id: delivery_id
-  })
+  });
 }
 
 export function apiPostDeliveryLogs(formBody) {
-  return axios.post('delivery/logs', formBody)
+  return axios.post("delivery/logs", formBody);
 }
 //#endregion
 
 //#region Roles
 export function apiGetRoles() {
-  return axios.get('roles')
+  return axios.get("roles");
 }
 //#endregion
