@@ -176,7 +176,7 @@ export default {
 
       const result = requiredDocument.map((v) => uploadedFiles.includes(v));
 
-      // // TODO :: Uncomment
+      // TODO :: Uncomment
       if (result.includes(false)) {
         this.$toast.error("Dokumen yang Anda unggah belum lengkap");
         return;
@@ -412,9 +412,10 @@ export default {
       </div>
       <div class="col-lg-4 col-md-4 col-sm-12">
         <div class="form-group">
-          <label for="services" class="control-label"> Jenis Layanan </label>
+          <label for="services" class="control-label"> Alamat </label>
           <h4 class="m-0 font-weight-bold">
-            {{ detailDocument.service && detailDocument.service.service_name }}
+            {{ detailDocument.kecamatan_name }},
+            {{ detailDocument.kelurahan_name }}
           </h4>
         </div>
 

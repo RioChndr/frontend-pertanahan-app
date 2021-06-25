@@ -3,22 +3,22 @@ import DashboardLayout from "@/layout/dashboard/DashboardLayout.vue";
 import NotFound from "@/pages/NotFoundPage.vue";
 
 // Misc
-import miscRoutes from './misc';
+import miscRoutes from "./misc";
 
 // Auth
-import authRoutes from './auth';
+import authRoutes from "./auth";
 
 // Request
-import requestRoutes from './request';
+import requestRoutes from "./request";
 
 // Settings
-import settingsRoutes from './setting';
+import settingsRoutes from "./setting";
 
 // History
-import historyRoutes from './history';
+import historyRoutes from "./history";
 
 // Delivery
-import deliveryRoutes from './delivery';
+import deliveryRoutes from "./delivery";
 
 // Archive
 import archiveRoutes from "./archive";

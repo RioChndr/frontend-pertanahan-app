@@ -1,69 +1,55 @@
 <template>
-  <div class="container-fluid">
-    <div class="row mt-2">
-      <div class="col-12">
-        <h4 class="m-0">Riwayat Permohonan</h4>
-      </div>
-    </div>
-    <hr />
-    <div class="row mb-4">
-      <div class="col-md-4 col-lg-4 col-sm-12 offset-md-4 offset-lg-4">
+  <div class="container-fluid card">
+    <table-component>
+      <template #table-title>Daftar Permohonan Pelayanan</template>
+      <template #table-search>
+        <i class="ti-search"></i>
         <input
           type="text"
-          class="form-control border"
-          placeholder="Email / Kode Berkas / No. Unik / Nama Pemohon / Nama Pemberi Kuasa"
           v-model="keyword"
+          class="input-field"
+          placeholder="Masukan Nomor Hak"
+          @keypress.enter="searchItems"
+          maxlength="5"
         />
-      </div>
-    </div>
-    <div class="card">
-      <div class="row" v-if="loading">
-        <div class="col-12 text-center">
-          <FacebookLoader :color="'#35495e'" />
-        </div>
-      </div>
-      <table class="table" v-else>
-        <thead>
-          <th>Kode. Berkas</th>
-          <th>Nama</th>
-          <th>No. Kontak</th>
-          <th>Status</th>
-          <th>Aksi</th>
-        </thead>
-        <tbody>
-          <tr v-for="item in documents" :key="item.id">
-            <td>{{ item.unique_id }}</td>
-            <td>{{ item.authorized_name }}</td>
-            <td>{{ item.authorized_phone_number }}</td>
-            <td>{{ item.status | getStatusValue }}</td>
-            <td>
-              <button
-                class="btn btn-sm btn-success"
-                @click.prevent="setDisplayModal(item.id)"
-              >
-                <i class="ti-eye"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <hr />
-      <div class="row">
-        <div class="col-md-12 col-lg-12 mx-4">
-          <pagination
-            v-model="pagination.page"
-            :records="pagination.totalData"
-            :per-page="pagination.pageSize"
-            :options="{ chunk: 5 }"
-            @paginate="callPagination"
-          />
-        </div>
-      </div>
-    </div>
-
-    <div class="row" v-if="!documents.length">
-      <div class="col-12 text-center">Tidak Terdapat Riwayat Permohonan</div>
-    </div>
+      </template>
+      <template #table-header>
+        <th>Jenis Hak</th>
+        <th>No. Hak</th>
+        <th>Pemohon</th>
+        <th>Jenis Permohonan</th>
+        <th>Tanggal Pengajuan</th>
+        <th>Status</th>
+        <th>Aksi</th>
+      </template>
+      <template #table-body>
+        <tr v-for="item in documents" :key="item.id">
+          <td>{{ item.type_hak.name }}</td>
+          <td>{{ item.number_hak }}</td>
+          <td>{{ item.authorized_name }}</td>
+          <td>{{ item.service.service_name }}</td>
+          <td>{{ item.submitted_at | moment("LL") }}</td>
+          <td>{{ item.status | getStatusValue }}</td>
+          <td>
+            <button
+              class="btn btn-sm btn-primary"
+              @click="setDisplayModal(item.id)"
+            >
+              <i class="ti-eye"></i>
+            </button>
+          </td>
+        </tr>
+      </template>
+      <template #table-pagination>
+        <pagination
+          v-model="pagination.page"
+          :records="pagination.totalData"
+          :per-page="pagination.pageSize"
+          :options="{ chunk: 5 }"
+          @paginate="callPagination"
+        ></pagination>
+      </template>
+    </table-component>
 
     <history-modal
       :detail="detail"
@@ -77,29 +63,21 @@
 
 <script>
 import HistoryModal from "./components/HistoryModal.vue";
-import { mapState } from "vuex";
 import { FacebookLoader } from "vue-spinners-css";
 import {
-  apiGetAllDoneRequest,
   apiGetDetailDocument,
   apiPostLogsDocuments,
+  apiGetListFinishVerification,
 } from "../../http/api";
 import Pagination from "vue-pagination-2";
+import TableComponent from "../../components/TableComponent.vue";
 
 export default {
   components: {
     FacebookLoader,
     Pagination,
     HistoryModal,
-  },
-  watch: {
-    keyword: function (value) {
-      if (value.length >= 3) {
-        this.loadData();
-      } else if (value.length <= 0) {
-        this.loadData();
-      }
-    },
+    TableComponent,
   },
   data() {
     return {
@@ -120,15 +98,16 @@ export default {
     };
   },
   created() {
-    apiGetAllDoneRequest({
-      page: this.pagination.page,
-      pageSize: this.pagination.pageSize,
-      keyword: this.keyword,
-    })
+    apiGetListFinishVerification(
+      this.keyword,
+      this.pagination.page,
+      this.pagination.pageSize
+    )
       .then((result) => {
-        if (result.data.status) {
-          this.data = result.data.documents.results;
-          this.pagination.totalData = result.data.documents.total;
+        console.log(result);
+        if (result.data.success) {
+          this.data = result.data.data.results;
+          this.pagination.totalData = result.data.data.total;
         } else {
           this.data = [];
           this.pagination.totalData = 0;
@@ -145,15 +124,15 @@ export default {
   methods: {
     loadData() {
       this.pagination.page = 1;
-      apiGetAllDoneRequest({
-        page: this.pagination.page,
-        pageSize: this.pagination.pageSize,
-        keyword: this.keyword,
-      })
+      apiGetListFinishVerification(
+        this.keyword,
+        this.pagination.page,
+        this.pagination.pageSize
+      )
         .then((result) => {
-          if (result.data.status) {
-            this.data = result.data.documents.results;
-            this.pagination.totalData = result.data.documents.total;
+          if (result.data.success) {
+            this.data = result.data.data.results;
+            this.pagination.totalData = result.data.data.total;
           } else {
             this.data = [];
             this.pagination.totalData = 0;
@@ -170,11 +149,11 @@ export default {
     closeModal() {
       this.$store.commit("setDisplayModalDetailHistory", false);
     },
-    updateVerificationDone(id) {
+    updateVerificationDone() {
       this.loadingArchived = true;
       apiPostLogsDocuments({
         document_id: this.detail.id,
-        status: "finish_verification",
+        status: "process_submission",
       })
         .then((result) => {
           if (result.data.success) {
@@ -188,35 +167,6 @@ export default {
         })
         .finally(() => {
           this.displayModal = false;
-          this.loadingArchived = false;
-        });
-    },
-    archiveRequest() {
-      const { id } = JSON.parse(
-        localStorage.getItem(process.env.VUE_APP_USER_INFO)
-      );
-      this.loadingArchived = true;
-      this.$store
-        .dispatch("actionPutDocument", {
-          doc_id: this.detail.id,
-          form: {
-            is_archived: true,
-            archived_by: id,
-          },
-        })
-        .then((result) => {
-          this.$toast.success("Permohonan Berhasil di Arsipkan");
-          this.$store.commit("setListRequestEmpty");
-          return this.$store.dispatch("apiGetAllRequest", {
-            page: 0,
-            pageSize: this.pagination.pageSize,
-          });
-        })
-        .catch((err) => {
-          console.error(err, "error_archived");
-          this.$toast.error("Terjadi Kesalahan Pada Server");
-        })
-        .finally(() => {
           this.loadingArchived = false;
         });
     },
@@ -236,21 +186,46 @@ export default {
         });
     },
     callPagination(params) {
-      apiGetAllDoneRequest({
-        page: params,
-        pageSize: this.pagination.pageSize,
-        keyword: this.keyword,
-      })
+      this.pagination.page = params;
+      apiGetListFinishVerification(
+        this.keyword,
+        this.pagination.page,
+        this.pagination.pageSize
+      )
         .then((result) => {
-          if (result.data.status) {
-            this.data = result.data.documents.results;
-            this.pagination.totalData = result.data.documents.total;
+          if (result.data.success) {
+            this.data = result.data.data.results;
+            this.pagination.totalData = result.data.data.total;
           } else {
             this.data = [];
             this.pagination.totalData = 0;
           }
         })
         .catch((err) => {
+          console.log(err);
+          this.$toast.error("Terjadi kesalahan pada Sistem");
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    searchItems() {
+      apiGetListFinishVerification(
+        this.keyword,
+        this.pagination.page,
+        this.pagination.pageSize
+      )
+        .then((result) => {
+          if (result.data.success) {
+            this.data = result.data.data.results;
+            this.pagination.totalData = result.data.data.total;
+          } else {
+            this.data = [];
+            this.pagination.totalData = 0;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
           this.$toast.error("Terjadi kesalahan pada Sistem");
         })
         .finally(() => {

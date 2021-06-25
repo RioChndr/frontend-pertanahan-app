@@ -117,6 +117,26 @@
                       <span>{{ log.description }}</span>
                     </li>
                   </ul>
+                  <div
+                    class="col-lg-12"
+                    v-if="detail.last_status === 'deliver'"
+                  >
+                    <!-- Todo, update form bukti -->
+                    <!-- <document-input-file
+                      properties="evidence_path"
+                      uploaded-file-name="tanda_bukti"
+                      file-url-name="evidence_file_url"
+                      @get-uploaded-url="uploadedUrl"
+                      :file-code="new Date().getTime()"
+                    >
+                      <template #type-file>PNG, JPG</template>
+                      <template #label>
+                        <label for="evidence_path" class="control-label">
+                          Tanda Bukti
+                        </label>
+                      </template>
+                    </document-input-file> -->
+                  </div>
                 </div>
               </div>
             </div>
@@ -220,6 +240,7 @@
 </template>
 
 <script>
+import DocumentInputFile from "../../pages/Documents/components/DocumentInputFile.vue";
 import {
   apiGetAllCourier,
   apiGetDeliveryDetail,
@@ -228,6 +249,7 @@ import {
   apiRequestDeliveryServices,
 } from "../../http/api";
 export default {
+  components: { DocumentInputFile },
   data() {
     return {
       form: {
@@ -236,6 +258,10 @@ export default {
         receipent_address: null,
         receipent_email: null,
         description: null,
+
+        evidence_file_name: null,
+        evidence_path: null,
+        evidence_file_url: null,
       },
 
       form_courier: {
@@ -279,6 +305,9 @@ export default {
   },
 
   methods: {
+    uploadedUrl(ref, url) {
+      this.form[ref] = url;
+    },
     async sendDocument() {
       this.loading_button = true;
       try {

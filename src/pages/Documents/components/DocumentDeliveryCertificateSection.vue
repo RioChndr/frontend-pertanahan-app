@@ -1,6 +1,9 @@
 <template>
   <div class="row border mb-2" v-if="detail.status === 'finish_submission'">
-    <div class="col-12 p-2 d-flex align-items-center justify-content-center">
+    <div
+      class="col-12 p-2 d-flex align-items-center justify-content-center"
+      v-if="detail.sps_path"
+    >
       <strong>
         SPS Telah Terbit
         <a
@@ -15,6 +18,7 @@
         </a>
       </strong>
     </div>
+
     <div
       class="col-12 p-2 d-flex align-items-center justify-content-center"
       v-if="detail.pickup_schedule !== null"
@@ -24,27 +28,12 @@
         {{ detail.pickup_schedule | moment("LL") }}
       </strong>
     </div>
+
     <div
       class="col-12 my-2 d-flex align-items-center justify-content-center"
-      v-if="
-        detail.delivery_services.document_type !== 'certificate' &&
-        detail.pickup_schedule === null
-      "
+      v-if="detail.pickup_schedule === null"
     >
-      <button
-        class="btn btn-sm btn-primary mx-2"
-        @click="
-          $router.push({
-            name: 'delivery.send',
-            params: {
-              document_id: detail.id,
-            },
-            query: {
-              type: 'certificate',
-            },
-          })
-        "
-      >
+      <button class="btn btn-sm btn-primary mx-2" @click="openDialogModal">
         Kirim Berkas oleh BPN
       </button>
       <button
@@ -90,6 +79,32 @@ export default {
         .catch((err) => {
           console.error(err);
         });
+    },
+    openDialogModal() {
+      this.$dialog({
+        title: "Informasi",
+        content: "Sedang dalam pengembangan",
+        btns: [
+          {
+            label: "OK",
+            color: "#09f",
+          },
+          {
+            label: "Cancel",
+            color: "#444",
+            ghost: true,
+          },
+        ],
+      });
+      // this.$router.push({
+      //   name: "delivery.send",
+      //   params: {
+      //     document_id: this.detail.id,
+      //   },
+      //   query: {
+      //     type: "certificate",
+      //   },
+      // });
     },
   },
 };

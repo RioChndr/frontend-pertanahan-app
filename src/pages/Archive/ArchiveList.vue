@@ -1,69 +1,70 @@
 <template>
   <div class="row">
-    <div class="col-12">
-      <card :title="table.title" :subTitle="table.subTitle">
-        <div slot="raw-content" class="table-responsive">
-          <paper-table
-            :data="table.data"
-            :columns="table.columns"
-            @click="openDetail"
-          >
-          </paper-table>
-          <v-loading
-            :active.sync="pagination.loading"
-            :can-cancel="false"
-            :is-full-page="false"
-          ></v-loading>
-        </div>
-        <div slot="footer">
-          <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-end">
-              <li
-                class="page-item"
-                :class="{ disabled: pagination.page === 1 }"
-              >
-                <a class="page-link" @click.prevent="load_more_data('add')">
-                  Previous
-                </a>
-              </li>
-              <li
-                class="page-item"
-                :class="{ disabled: disabledButtonPagination }"
-              >
-                <a class="page-link" @click.prevent="load_more_data('remove')">
-                  Next
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </card>
+    <div class="col-12 card">
+      <table-component>
+        <template #table-title>{{ table.title }}</template>
+        <template #table-search>
+          <i class="ti-search"></i>
+          <input
+            type="text"
+            v-model="keywords"
+            class="input-field"
+            placeholder="Masukan Nomor Hak"
+            @keypress.enter="searchItems"
+            maxlength="5"
+          />
+        </template>
+        <template #table-header>
+          <th>Jenis Hak</th>
+          <th>No. Hak</th>
+          <th>Pemohon</th>
+          <th>Jenis Permohonan</th>
+          <th>Tanggal Pengajuan</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </template>
+        <template #table-body>
+          <tr v-for="item in table.data" :key="item.id">
+            <td>{{ item.type_hak.name }}</td>
+            <td>{{ item.number_hak }}</td>
+            <td>{{ item.authorized_name }}</td>
+            <td>{{ item.service.service_name }}</td>
+            <td>{{ item.submitted_at | moment("LL") }}</td>
+            <td>{{ item.status | getStatusValue }}</td>
+            <td>
+              <button class="btn btn-sm btn-primary" @click="openDetail(item)">
+                <i class="ti-eye"></i>
+              </button>
+            </td>
+          </tr>
+        </template>
+        <template #table-pagination>
+          <pagination
+            v-model="pagination.page"
+            :records="pagination.totalData"
+            :per-page="pagination.pageSize"
+            :options="{ chunk: 5 }"
+            @paginate="loadMoreData"
+          ></pagination>
+        </template>
+      </table-component>
     </div>
   </div>
 </template>
 <script>
-import { PaperTable } from "@/components";
-import {
-  apiGetListDeliveryServices,
-  apiGetSubmissionList,
-} from "../../http/api";
-const tableColumns = [
-  { val: "authorized_name", title: "Pemohon" },
-  { val: "number_hak", title: "No. Hak" },
-  { val: "kecamatan_name", title: "Kecamatan" },
-  { val: "kelurahan_name", title: "Kelurahan" },
-  { val: "action", title: "Detail" },
-];
+import { apiGetArchiveSectionList, apiGetSubmissionList } from "../../http/api";
+import TableComponent from "../../components/TableComponent.vue";
+import Pagination from "vue-pagination-2";
 
 export default {
   components: {
-    PaperTable,
+    TableComponent,
+    Pagination,
   },
   data() {
     return {
       table: {
-        title: "Daftar Riwayat dan Progress Pengiriman",
-        columns: [...tableColumns],
+        title: "Daftar Riwayat Permohonan",
         data: [],
       },
 
@@ -71,14 +72,16 @@ export default {
         page: 1,
         pageSize: 5,
         loading: false,
+        totalData: 0,
       },
+      keywords: null,
     };
   },
   methods: {
     openDetail(value) {
       this.$router.push({ name: "archive.detail", params: { id: value.id } });
     },
-    async load_more_data(options) {
+    async loadMoreData(options) {
       if (options === "add") {
         this.pagination.page++;
       } else {
@@ -86,61 +89,71 @@ export default {
       }
 
       try {
-        const response = await apiGetListDeliveryServices(
+        const response = await apiGetSubmissionList(
+          "",
           this.pagination.page,
           this.pagination.pageSize
         );
 
         if (response.data.success) {
-          response.data.data.results.map((v) => {
-            self.table.data.push({
-              id: v.id,
-              service: v.document.service.service_name,
-              type: v.document_type,
-              last_status: v.last_status,
-              courir: v.courir_info ? v.courir_info.name : "-",
-            });
-          });
+          if (response.data.documents.total > 0) {
+            this.table.data = response.data.documents.results;
+            this.pagination.totalData = response.data.documents.total;
+          } else {
+            this.table.data = [];
+            this.pagination.totalData = 0;
+          }
         }
       } catch (error) {
         this.$toast.error("terjadi kesalahan pada sistem");
       }
     },
+    async searchItems() {
+      this.pagination.loading = true;
+      try {
+        this.pagination.page = 1;
+        const response = await apiGetSubmissionList(
+          this.keywords,
+          this.pagination.page,
+          this.pagination.pageSize
+        );
+
+        if (response.data.success) {
+          if (response.data.documents.total > 0) {
+            this.table.data = response.data.documents.results;
+            this.pagination.totalData = response.data.documents.total;
+          } else {
+            this.table.data = [];
+            this.pagination.totalData = 0;
+          }
+        }
+      } catch (error) {
+        this.$toast.error("Terjadi kesalahan pada Sistem");
+      } finally {
+        this.pagination.loading = false;
+      }
+    },
   },
   async mounted() {
-    const self = this;
     try {
       const response = await apiGetSubmissionList(
-        "",
+        this.keywords,
         this.pagination.page,
         this.pagination.pageSize
       );
 
       if (response.data.success) {
-        response.data.documents.results.map((v) => {
-          self.table.data.push({
-            authorized_name: v.authorized_name,
-            number_hak: v.number_hak,
-            kecamatan_name: v.kecamatan_name,
-            kelurahan_name: v.kelurahan_name,
-            id: v.id,
-          });
-        });
+        if (response.data.data.total > 0) {
+          this.table.data = response.data.data.results;
+          this.pagination.totalData = response.data.data.total;
+        } else {
+          this.table.data = [];
+          this.pagination.totalData = 0;
+        }
       }
     } catch (error) {
       this.$toast.error("terjadi kesalahan pada sistem");
     }
-  },
-  computed: {
-    disabledButtonPagination() {
-      const data_length = this.table.data.length;
-      if (data_length > 0) {
-        return false;
-      } else {
-        const response_length = this.table.data.total;
-        return true;
-      }
-    },
   },
 };
 </script>

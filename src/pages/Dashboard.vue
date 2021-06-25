@@ -1,78 +1,59 @@
 <template>
   <div>
     <!--Stats cards-->
-    <div class="row">
-      <div class="col-md-6 col-lg-6 col-sm-12 offset-md-3 offset-lg-3">
-        <p for="keyword" class="text-center">
-          Masukan Kata Kunci <small><strong>( Min 3 Karakter )</strong></small>
-        </p>
-        <p>Total Permohonan : {{ requestLength }}</p>
-        <input
-          type="text"
-          class="form-control border form-control-lg"
-          name="keyword"
-          placeholder="Email / Kode Berkas / Nama Pemohon / Nama Pemberi Kuasa"
-          v-model="keyword"
-        />
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-md-6 col-lg-6 col-sm-12 offset-md-3 offset-lg-3">
-        <div class="d-flex justify-content-center" v-if="loadingOverlay">
-          <FacebookLoader :color="'#35495e'"></FacebookLoader>
-        </div>
-      </div>
-    </div>
-
-    <div class="row my-2" v-if="isResultExists">
-      <div class="col d-flex justify-content-center">
-        <h4>Tidak Terdapat Pengajuan Permohonan</h4>
-      </div>
-    </div>
-
-    <div
-      class="row pointer"
-      v-for="item in resultList"
-      :key="item.id"
-      @click="openDetailRequest(item)"
-    >
-      <div class="col-md-8 col-lg-8 col-sm-12 offset-md-2 offset-lg-2">
-        <div class="card p-2 my-2 border">
-          <div
-            class="d-flex justify-content-between align-items-center px-2 py-2"
-          >
-            <div class="information">
-              <div class="d-flex mb-1">
-                <span class="badge badge-success px-2 py-2">
-                  {{ item.unique_id }}
-                </span>
-                <span class="badge badge-secondary mx-2 px-2 py-2">
-                  {{ item.service.service_name }}
-                </span>
-              </div>
-              <div class="d-flex align-items-center">
-                <h4 class="m-0 mr-2">
-                  {{ item.authorized_name }}
-                </h4>
-                <span>( {{ item.email }} )</span>
-              </div>
-            </div>
-            <dropdown :trigger="'click'" :is-icon="false">
-              <template slot="btn">
-                <span class="ti-more pointer"></span>
-              </template>
-              <template slot="body">
-                <ul class="dropdown-child">
-                  <li @click="openDetailRequest(item)">
-                    <span class="ti-eye mr-2"></span>
-                    Detail
-                  </li>
-                </ul>
-              </template>
-            </dropdown>
-          </div>
-        </div>
+    <div class="row card">
+      <div class="col-12">
+        <table-component>
+          <template #table-title>Daftar Permohonan Pelayanan</template>
+          <template #table-search>
+            <i class="ti-search"></i>
+            <input
+              type="text"
+              v-model="keywords"
+              class="input-field"
+              placeholder="Masukan Nomor Hak"
+              @keypress.enter="searchItems"
+              maxlength="5"
+            />
+          </template>
+          <template #table-header>
+            <th>Jenis Hak</th>
+            <th>No. Hak</th>
+            <th>Pemohon</th>
+            <th>Jenis Permohonan</th>
+            <th>Tanggal Pengajuan</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </template>
+          <template #table-body>
+            <tr v-for="item in resultList" :key="item.id">
+              <td>{{ item.type_hak.name }}</td>
+              <td>{{ item.number_hak }}</td>
+              <td>{{ item.authorized_name }}</td>
+              <td>{{ item.service.service_name }}</td>
+              <td>{{ item.submitted_at | moment("LL") }}</td>
+              <td>{{ item.status | getStatusValue }}</td>
+              <td>
+                <button
+                  class="btn btn-sm btn-primary"
+                  @click="openDetailRequest(item)"
+                >
+                  <i class="ti-eye"></i>
+                </button>
+              </td>
+            </tr>
+          </template>
+          <template #table-pagination>
+            <pagination
+              v-model="pagination.page"
+              :records="pagination.totalData"
+              :per-page="pagination.pageSize"
+              :options="{ chunk: 5 }"
+              @paginate="loadMoreData"
+            ></pagination>
+          </template>
+        </table-component>
       </div>
     </div>
 
@@ -82,7 +63,9 @@
     >
       <template #header>
         <div class="d-flex justify-content-between align-items-center">
-          <h4 class="m-0">{{ document.authorized_name }}</h4>
+          <h4 class="m-0">
+            {{ document.authorized_name }} - {{ document.service.service_name }}
+          </h4>
         </div>
       </template>
       <template #body>
@@ -122,9 +105,30 @@
             </label-horizontal-vue>
 
             <label-horizontal-vue>
+              <template #left-column> Alamat </template>
+              <template #right-column>
+                {{ document.kecamatan_name }}, {{ document.kelurahan_name }}
+              </template>
+            </label-horizontal-vue>
+
+            <label-horizontal-vue>
               <template #left-column> Jenis Pelayanan </template>
               <template #right-column>
                 {{ document.service.service_name }}
+              </template>
+            </label-horizontal-vue>
+
+            <label-horizontal-vue>
+              <template #left-column> Tipe HAK </template>
+              <template #right-column>
+                {{ document.type_hak.name }}
+              </template>
+            </label-horizontal-vue>
+
+            <label-horizontal-vue>
+              <template #left-column> No. HAK </template>
+              <template #right-column>
+                {{ document.number_hak }}
               </template>
             </label-horizontal-vue>
 
@@ -166,8 +170,13 @@
                   class="btn btn-primary flex-fill mx-2"
                   @click="acceptRequest"
                 >
-                  Terima
+                  Proses
                 </button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                * Proses dilanjutkan apabila Buku Tanah sudah ditemukan
               </div>
             </div>
           </div>
@@ -212,94 +221,61 @@
   </div>
 </template>
 <script>
-import { FacebookLoader } from "vue-spinners-css";
-import { StatsCard, ChartCard } from "@/components/index";
-import Chartist from "chartist";
 import {
   apiFindDocument,
-  apiGetDetailDocument,
   apiPutDocument,
+  apiGetArchiveSectionList,
+  apiGetDetailDocument,
 } from "../http/api";
 import Dropdown from "bp-vuejs-dropdown";
 import ModalVue from "../components/Modal.vue";
 import LabelHorizontalVue from "../components/LabelHorizontal.vue";
-import { downloadFileHelpers } from "../helpers/utils";
 import DownloadButtonVue from "../components/DownloadButton.vue";
-import { mapState } from "vuex";
+import TableComponent from "../components/TableComponent.vue";
+import Pagination from "vue-pagination-2";
 
 export default {
   components: {
-    StatsCard,
-    ChartCard,
-    FacebookLoader,
     Dropdown,
+    Pagination,
     ModalVue,
     LabelHorizontalVue,
     DownloadButtonVue,
+    TableComponent,
   },
   /**
    * Chart data used to render stats, charts. Should be replaced with server data
    */
   data() {
     return {
-      keyword: null,
-      loadingOverlay: false,
-      statsCards: [
-        {
-          type: "warning",
-          icon: "ti-server",
-          title: "Dokumen",
-          value: "8",
-          footerText: "Unggah Dokumen",
-          footerIcon: "ti-upload",
-        },
-      ],
       resultList: [],
       requestLength: 0,
       modal: {
         displayModalDetail: false,
-        // detailItem: {},
         descriptionBox: null,
         loading: false,
       },
-      isResultExists: false,
+
+      pagination: {
+        page: 1,
+        pageSize: 5,
+        loading: false,
+        totalData: 0,
+      },
+      keywords: null,
+      document: {},
     };
-  },
-  watch: {
-    keyword: function (value) {
-      if (value.length >= 3) {
-        this.loadingOverlay = true;
-        this.isResultExists = false;
-        apiFindDocument(value)
-          .then((result) => {
-            this.resultList = result.data.documents;
-            if (result.data.documents.length <= 0) {
-              this.isResultExists = true;
-            }
-          })
-          .catch((err) => {
-            console.error(err, "error");
-          })
-          .finally(() => {
-            this.loadingOverlay = false;
-          });
-      } else if (value.length <= 0) {
-        this.loadingOverlay = false;
-        this.isResultExists = false;
-        this.resultList = [];
-      }
-    },
   },
   methods: {
     openDetailRequest(item) {
       const { id } = item;
-
-      this.$store
-        .dispatch("apiGetDetailDocument", { doc_id: id })
+      apiGetDetailDocument(id)
         .then((result) => {
+          this.document = result.data.document;
           this.modal.displayModalDetail = true;
         })
         .catch((err) => {
+          console.error(err);
           this.$toast.error("Terjadi Kesalahan pada Server");
         });
     },
@@ -308,18 +284,20 @@ export default {
 
       apiPutDocument(this.document.id, {
         description: this.modal.descriptionBox,
-        status: "process_verification",
+        status: "finish_verification",
       })
         .then((result) => {
           this.modal.descriptionBox = null;
           this.$toast.success("Permohonan berhasil di terima");
-          return apiFindDocument();
+          return apiGetArchiveSectionList(
+            this.keywords,
+            this.pagination.page,
+            this.pagination.pageSize
+          );
         })
         .then((result) => {
-          this.requestLength = result.data.documents.length;
-          if (result.data.documents.length <= 0) {
-            this.isResultExists = true;
-          }
+          this.pagination.totalData = result.data.data.total;
+          this.resultList = result.data.data.results;
         })
         .catch((err) => {
           this.$toast.error("Terjadi Kesalahan pada Server");
@@ -327,7 +305,6 @@ export default {
         .finally(() => {
           this.modal.loading = false;
           this.modal.displayModalDetail = false;
-          this.resultList = [];
         });
     },
     discardRequest() {
@@ -345,13 +322,15 @@ export default {
         .then((result) => {
           this.modal.descriptionBox = null;
           this.$toast.success("Permohonan berhasil di tolak");
-          return apiFindDocument();
+          return apiGetArchiveSectionList(
+            this.keywords,
+            this.pagination.page,
+            this.pagination.pageSize
+          );
         })
         .then((result) => {
-          this.requestLength = result.data.documents.length;
-          if (result.data.documents.length <= 0) {
-            this.isResultExists = true;
-          }
+          this.pagination.totalData = result.data.data.total;
+          this.resultList = result.data.data.results;
         })
         .catch((err) => {
           this.$toast.error("Terjadi Kesalahan pada Server");
@@ -359,27 +338,76 @@ export default {
         .finally(() => {
           this.modal.loading = false;
           this.modal.displayModalDetail = false;
-          this.resultList = [];
         });
+    },
+    loadMoreData(params) {
+      this.pagination.page = params;
+
+      apiGetArchiveSectionList(
+        this.keywords,
+        this.pagination.page,
+        this.pagination.pageSize
+      )
+        .then((result) => {
+          if (result.data.success) {
+            this.pagination.totalData = result.data.data.total;
+            this.resultList = result.data.data.results;
+          } else {
+            this.pagination.totalData = 0;
+            this.resultList = [];
+          }
+        })
+        .catch((err) => {
+          console.error(err, "error");
+        })
+        .finally(() => {});
+    },
+    async searchItems() {
+      this.pagination.loading = true;
+      try {
+        this.pagination.page = 1;
+        const response = await apiGetArchiveSectionList(
+          this.keywords,
+          this.pagination.page,
+          this.pagination.pageSize
+        );
+
+        if (response.data.success) {
+          if (response.data.data.total > 0) {
+            this.resultList = response.data.data.results;
+            this.pagination.totalData = response.data.data.total;
+          } else {
+            this.resultList = [];
+            this.pagination.totalData = 0;
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        this.$toast.error("Terjadi kesalahan pada Sistem");
+      } finally {
+        this.pagination.loading = false;
+      }
     },
   },
   created() {
-    apiFindDocument()
+    apiGetArchiveSectionList(
+      this.keywords,
+      this.pagination.page,
+      this.pagination.pageSize
+    )
       .then((result) => {
-        this.requestLength = result.data.documents.length;
-        if (result.data.documents.length <= 0) {
-          this.isResultExists = true;
+        if (result.data.success) {
+          this.pagination.totalData = result.data.data.total;
+          this.resultList = result.data.data.results;
+        } else {
+          this.pagination.totalData = 0;
+          this.resultList = [];
         }
       })
       .catch((err) => {
         console.error(err, "error");
       })
-      .finally(() => {
-        this.loadingOverlay = false;
-      });
-  },
-  computed: {
-    ...mapState({ document: "detailDocument" }),
+      .finally(() => {});
   },
 };
 </script>

@@ -8,7 +8,7 @@
         <div class="col-lg col-md col-sm">
           <div class="border py-2 px-2 mb-4">
             <div class="my-4 ml-2">
-              <u>Keterangan Pemohon</u>
+              <u>Keterangan Jenis Permohonan</u>
             </div>
             <div class="row">
               <div class="col-lg-4 col-md-4 col-sm-12">
@@ -24,40 +24,6 @@
                     label="service_name"
                     :reduce="(service) => service.id"
                     v-model="form.service_id"
-                  ></v-select>
-                </div>
-              </div>
-
-              <div class="col-lg-4 col-md-4 col-sm-12">
-                <div class="form-group">
-                  <label for="services" class="control-label">
-                    Kecamatan
-                  </label>
-                  <label style="color: red">
-                    <i><sup>* Mandatory</sup></i>
-                  </label>
-                  <v-select
-                    @input="setKelurahan"
-                    :options="list_kecamatan"
-                    label="nama"
-                    :reduce="(kecamatan) => kecamatan"
-                  ></v-select>
-                </div>
-              </div>
-
-              <div class="col-lg-4 col-md-4 col-sm-12">
-                <div class="form-group">
-                  <label for="services" class="control-label">
-                    Kelurahan
-                  </label>
-                  <label style="color: red">
-                    <i><sup>* Mandatory</sup></i>
-                  </label>
-                  <v-select
-                    :options="list_kelurahan"
-                    label="nama"
-                    :reduce="(kelurahan) => kelurahan"
-                    @input="selectedOptionKelurahan"
                   ></v-select>
                 </div>
               </div>
@@ -113,6 +79,18 @@
             <div class="col-lg-12">
               <div class="form-group">
                 <fg-input
+                  label="Nama Penerima Kuasa / Pemohon"
+                  v-model="form.authorized_name"
+                  placeholder="Nama Lengkap Anda"
+                  type="text"
+                  :is-required="true"
+                ></fg-input>
+              </div>
+            </div>
+
+            <div class="col-lg-12">
+              <div class="form-group">
+                <fg-input
                   label="Alamat Email"
                   v-model="form.email"
                   placeholder="Alamat Email"
@@ -135,14 +113,39 @@
             </div>
 
             <div class="col-lg-12">
-              <div class="form-group">
-                <fg-input
-                  label="Nama Penerima Kuasa / Pemohon"
-                  v-model="form.authorized_name"
-                  placeholder="Nama Lengkap Anda"
-                  type="text"
-                  :is-required="true"
-                ></fg-input>
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-group">
+                    <label for="services" class="control-label">
+                      Kecamatan
+                    </label>
+                    <label style="color: red">
+                      <i><sup>* Mandatory</sup></i>
+                    </label>
+                    <v-select
+                      @input="setKelurahan"
+                      :options="list_kecamatan"
+                      label="nama"
+                      :reduce="(kecamatan) => kecamatan"
+                    ></v-select>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group">
+                    <label for="services" class="control-label">
+                      Kelurahan
+                    </label>
+                    <label style="color: red">
+                      <i><sup>* Mandatory</sup></i>
+                    </label>
+                    <v-select
+                      :options="list_kelurahan"
+                      label="nama"
+                      :reduce="(kelurahan) => kelurahan"
+                      @input="selectedOptionKelurahan"
+                    ></v-select>
+                  </div>
+                </div>
               </div>
             </div>
 

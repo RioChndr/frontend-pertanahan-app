@@ -88,6 +88,28 @@ export function apiGetSubmissionList(keyword, page, page_size) {
   );
 }
 
+export function apiGetArchiveSectionList(
+  keyword = "",
+  page = 1,
+  page_size = 10
+) {
+  let queryKeyword = keyword ? `&no_hak=${keyword}` : "";
+  return axios.get(
+    `documents/archive?page=${page}&page_size=${page_size}${queryKeyword}`
+  );
+}
+
+export function apiGetListFinishVerification(
+  keyword = "",
+  page = 1,
+  page_size = 10
+) {
+  let queryKeyword = keyword ? `&keyword=${keyword}` : "";
+  return axios.get(
+    `documents/verification?page=${page}&page_size=${page_size}${queryKeyword}`
+  );
+}
+
 //#endregion
 
 //#region Service

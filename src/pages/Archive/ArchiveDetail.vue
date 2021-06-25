@@ -41,6 +41,20 @@
                 </label-horizontal-vue>
 
                 <label-horizontal-vue>
+                  <template #left-column> Jenis Hak </template>
+                  <template #right-column>
+                    {{ detail.type_hak.name }}
+                  </template>
+                </label-horizontal-vue>
+
+                <label-horizontal-vue>
+                  <template #left-column> Nomor Hak </template>
+                  <template #right-column>
+                    {{ detail.number_hak }}
+                  </template>
+                </label-horizontal-vue>
+
+                <label-horizontal-vue>
                   <template #left-column> Jenis Pelayanan </template>
                   <template #right-column>
                     {{ detail.service.service_name }}

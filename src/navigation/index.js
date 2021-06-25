@@ -8,14 +8,13 @@ if (localStorage.getItem(process.env.VUE_APP_TOKEN_STORAGE) !== null) {
 
   if (userRole.id === 4) {
     menus = [
-      { path: "/dashboard", title: "Dashboard" },
-      { path: "/history", title: "Riwayat Permohonan" }
-      // { path: "/archive", title: "Bidang Arsip" }
+      { path: "/history", title: "Riwayat Permohonan" },
+      { path: "/archive", title: "Cetak SPS" }
     ];
   } else if ([2, 6].includes(userRole.id)) {
     menus = [{ path: "/delivery", title: "Kirim & Jemput Berkas" }];
   } else if (userRole.id === 1) {
-    menus = [{ path: "/archive", title: "Bidang Arsip" }];
+    menus = [{ path: "/dashboard", title: "Dashboard" }];
   } else if (userRole.id === 5) {
     menus = [
       { path: "/dashboard", title: "Dashboard" },
