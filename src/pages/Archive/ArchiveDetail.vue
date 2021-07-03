@@ -158,7 +158,7 @@
                       <td class="d-flex align-items-center justify-content-end">
                         <DownloadButtonVue
                           :file="{
-                            file_path: detail.authorized_card_path,
+                            file_path: detail.authorized_card_path
                           }"
                         />
                       </td>
@@ -168,7 +168,7 @@
                       <td class="d-flex align-items-center justify-content-end">
                         <DownloadButtonVue
                           :file="{
-                            file_path: detail.authorizer_card_path,
+                            file_path: detail.authorizer_card_path
                           }"
                         />
                       </td>
@@ -196,7 +196,7 @@ import LabelHorizontalVue from "@/components/LabelHorizontal.vue";
 import {
   apiGetDetailDocument,
   apiPostLogsDocuments,
-  apiPutDocument,
+  apiPutDocument
 } from "../../http/api";
 import DocumentInputFile from "../Documents/components/DocumentInputFile.vue";
 import { downloadFile } from "../../http/dropbox";
@@ -214,8 +214,8 @@ export default {
         sps_path: null,
         sps_url: null,
         sps_identity: null,
-        unique_id: new Date().getTime().toString(),
-      },
+        unique_id: new Date().getTime().toString()
+      }
     };
   },
   async created() {
@@ -234,14 +234,14 @@ export default {
   methods: {
     downloadFile(path) {
       downloadFile({ filePath: path })
-        .then((result) => {
+        .then(result => {
           let link = document.createElement("a");
           link.href = result.result.link;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
         })
-        .catch((err) => {
+        .catch(err => {
           console.error(err);
         });
     },
@@ -253,7 +253,7 @@ export default {
       try {
         const response = await apiPostLogsDocuments({
           document_id: this.$route.params.id,
-          status: "process_submission",
+          status: "process_submission"
         });
 
         if (response.data.success) {
@@ -278,13 +278,13 @@ export default {
       try {
         const response = await apiPostLogsDocuments({
           document_id: this.$route.params.id,
-          status: "process_submission",
+          status: "process_submission"
         });
 
         if (response.data.success) {
           const update = apiPutDocument(this.$route.params.id, {
             sps_path: this.form.sps_path,
-            status: "finish_submission",
+            status: "finish_submission"
           });
 
           console.log(update);
@@ -304,7 +304,7 @@ export default {
       } finally {
         this.loading_finish_submission = false;
       }
-    },
-  },
+    }
+  }
 };
 </script>

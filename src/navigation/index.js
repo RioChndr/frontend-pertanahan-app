@@ -15,7 +15,10 @@ if (localStorage.getItem(process.env.VUE_APP_TOKEN_STORAGE) !== null) {
   } else if ([2, 6].includes(userRole.id)) {
     menus = [{ path: "/delivery", title: "Kirim & Jemput Berkas" }];
   } else if (userRole.id === 1) {
-    menus = [{ path: "/dashboard", title: "Dashboard" }];
+    menus = [
+      { path: "/dashboard", title: "Dashboard" },
+      { path: "/archive-logs", title: "Arsip Logs" }
+    ];
   } else if (userRole.id === 5) {
     menus = [
       { path: "/dashboard", title: "Dashboard" },

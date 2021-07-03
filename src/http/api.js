@@ -209,3 +209,31 @@ export function apiGetRoles() {
   return axios.get("roles");
 }
 //#endregion
+
+//#region ArchiveLogs
+export function apiGetListArchiveLogs(
+  page = 1,
+  page_size = 10,
+  number_hak = null,
+  kelurahan = null
+) {
+  const kelurahanFilter = kelurahan ? `&kelurahan=${kelurahan}` : "";
+  const numberHakFilter = number_hak ? `&number_hak=${number_hak}` : "";
+
+  return axios.get(
+    `archive/logs?page=${page}&page_size=${page_size}${numberHakFilter}${kelurahanFilter}`
+  );
+}
+
+export function apiGetDetailArchiveLogs(id = null) {
+  return axios.get(`archive/logs/${id}`);
+}
+
+export function apiPostArchiveLogs(payload) {
+  return axios.post(`archive/logs`, payload);
+}
+
+export function apiPutArchiveLogs(id, payload) {
+  return axios.put(`/archive/logs/${id}`, payload);
+}
+//#endregion

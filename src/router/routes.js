@@ -26,6 +26,9 @@ import archiveRoutes from "./archive";
 // Submissions
 import submissionRoutes from "./submission";
 
+// ArchiveLogs
+import archiveLogsRoutes from "./archive_logs";
+
 const routes = [
   {
     path: "/",
@@ -37,7 +40,8 @@ const routes = [
       ...historyRoutes,
       ...deliveryRoutes,
       ...archiveRoutes,
-      ...submissionRoutes
+      ...submissionRoutes,
+      ...archiveLogsRoutes
     ]
   },
   ...authRoutes,
