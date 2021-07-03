@@ -191,7 +191,7 @@
                   <td>
                     <DownloadButtonVue
                       :file="{
-                        file_path: document.authorized_card_path,
+                        file_path: document.authorized_card_path
                       }"
                     />
                   </td>
@@ -201,7 +201,7 @@
                   <td>
                     <DownloadButtonVue
                       :file="{
-                        file_path: document.authorizer_card_path,
+                        file_path: document.authorizer_card_path
                       }"
                     />
                   </td>
@@ -222,10 +222,10 @@
 </template>
 <script>
 import {
-  apiFindDocument,
+  apiPostArchiveLogs,
   apiPutDocument,
   apiGetArchiveSectionList,
-  apiGetDetailDocument,
+  apiGetDetailDocument
 } from "../http/api";
 import Dropdown from "bp-vuejs-dropdown";
 import ModalVue from "../components/Modal.vue";
@@ -241,7 +241,7 @@ export default {
     ModalVue,
     LabelHorizontalVue,
     DownloadButtonVue,
-    TableComponent,
+    TableComponent
   },
   /**
    * Chart data used to render stats, charts. Should be replaced with server data
@@ -253,28 +253,28 @@ export default {
       modal: {
         displayModalDetail: false,
         descriptionBox: null,
-        loading: false,
+        loading: false
       },
 
       pagination: {
         page: 1,
         pageSize: 5,
         loading: false,
-        totalData: 0,
+        totalData: 0
       },
       keywords: null,
-      document: {},
+      document: {}
     };
   },
   methods: {
     openDetailRequest(item) {
       const { id } = item;
       apiGetDetailDocument(id)
-        .then((result) => {
+        .then(result => {
           this.document = result.data.document;
           this.modal.displayModalDetail = true;
         })
-        .catch((err) => {
+        .catch(err => {
           console.error(err);
           this.$toast.error("Terjadi Kesalahan pada Server");
         });
@@ -284,22 +284,29 @@ export default {
 
       apiPutDocument(this.document.id, {
         description: this.modal.descriptionBox,
-        status: "finish_verification",
+        status: "finish_verification"
       })
-        .then((result) => {
+        .then(result => {
           this.modal.descriptionBox = null;
           this.$toast.success("Permohonan berhasil di terima");
+          return apiPostArchiveLogs({
+            document: this.document.id
+          });
+        })
+        .then(result => {
+          console.log(result);
           return apiGetArchiveSectionList(
             this.keywords,
             this.pagination.page,
             this.pagination.pageSize
           );
         })
-        .then((result) => {
+        .then(result => {
           this.pagination.totalData = result.data.data.total;
           this.resultList = result.data.data.results;
         })
-        .catch((err) => {
+        .catch(err => {
+          console.error(err);
           this.$toast.error("Terjadi Kesalahan pada Server");
         })
         .finally(() => {
@@ -317,9 +324,9 @@ export default {
 
       apiPutDocument(this.document.id, {
         description: this.modal.descriptionBox,
-        status: "reject_submission",
+        status: "reject_submission"
       })
-        .then((result) => {
+        .then(result => {
           this.modal.descriptionBox = null;
           this.$toast.success("Permohonan berhasil di tolak");
           return apiGetArchiveSectionList(
@@ -328,11 +335,11 @@ export default {
             this.pagination.pageSize
           );
         })
-        .then((result) => {
+        .then(result => {
           this.pagination.totalData = result.data.data.total;
           this.resultList = result.data.data.results;
         })
-        .catch((err) => {
+        .catch(err => {
           this.$toast.error("Terjadi Kesalahan pada Server");
         })
         .finally(() => {
@@ -348,7 +355,7 @@ export default {
         this.pagination.page,
         this.pagination.pageSize
       )
-        .then((result) => {
+        .then(result => {
           if (result.data.success) {
             this.pagination.totalData = result.data.data.total;
             this.resultList = result.data.data.results;
@@ -357,7 +364,7 @@ export default {
             this.resultList = [];
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.error(err, "error");
         })
         .finally(() => {});
@@ -387,7 +394,7 @@ export default {
       } finally {
         this.pagination.loading = false;
       }
-    },
+    }
   },
   created() {
     apiGetArchiveSectionList(
@@ -395,7 +402,7 @@ export default {
       this.pagination.page,
       this.pagination.pageSize
     )
-      .then((result) => {
+      .then(result => {
         if (result.data.success) {
           this.pagination.totalData = result.data.data.total;
           this.resultList = result.data.data.results;
@@ -404,11 +411,11 @@ export default {
           this.resultList = [];
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err, "error");
       })
       .finally(() => {});
-  },
+  }
 };
 </script>
 <style>

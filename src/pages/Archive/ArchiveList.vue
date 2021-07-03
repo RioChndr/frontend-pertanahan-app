@@ -82,11 +82,7 @@ export default {
       this.$router.push({ name: "archive.detail", params: { id: value.id } });
     },
     async loadMoreData(options) {
-      if (options === "add") {
-        this.pagination.page++;
-      } else {
-        this.pagination.page--;
-      }
+      this.pagination.page = options;
 
       try {
         const response = await apiGetSubmissionList(

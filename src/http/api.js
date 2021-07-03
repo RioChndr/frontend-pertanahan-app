@@ -218,7 +218,7 @@ export function apiGetListArchiveLogs(
   kelurahan = null
 ) {
   const kelurahanFilter = kelurahan ? `&kelurahan=${kelurahan}` : "";
-  const numberHakFilter = number_hak ? `&number_hak=${number_hak}` : "";
+  const numberHakFilter = number_hak ? `&nomor_hak=${number_hak}` : "";
 
   return axios.get(
     `archive/logs?page=${page}&page_size=${page_size}${numberHakFilter}${kelurahanFilter}`

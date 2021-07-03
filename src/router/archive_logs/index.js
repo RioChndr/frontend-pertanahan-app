@@ -18,12 +18,12 @@ export default [
     children: [
       {
         path: "",
-        name: "archive.list",
+        name: "archive-logs.list",
         component: ArchiveLogsList
       },
       {
         path: "detail/:id",
-        name: "archive.detail",
+        name: "archive-logs.detail",
         component: ArchiveLogsDetail
       }
     ]
