@@ -1,5 +1,5 @@
 <template>
-  <div class="row border mb-2" v-if="detail.status === 'finish_submission'">
+  <div class="row border mb-2">
     <div
       class="col-12 p-2 d-flex align-items-center justify-content-center"
       v-if="detail.sps_path"
@@ -18,10 +18,11 @@
         </a>
       </strong>
     </div>
-
     <div
       class="col-12 p-2 d-flex align-items-center justify-content-center"
-      v-if="detail.pickup_schedule !== null"
+      v-if="
+        detail.pickup_schedule !== null && detail.status === 'finish_submission'
+      "
     >
       <strong>
         Anda telah memilih untuk mengambil Berkas dengan perorangan pada
@@ -39,11 +40,11 @@
           $router.push({
             name: 'request.pickup',
             params: {
-              document_id: detail.id,
+              document_id: detail.id
             },
             query: {
-              type: 'certificate',
-            },
+              type: 'certificate'
+            }
           })
         "
       >
@@ -63,20 +64,20 @@ export default {
   props: {
     detail: {
       type: Object,
-      default: () => {},
-    },
+      default: () => {}
+    }
   },
   methods: {
     downloadFile(path) {
       downloadFile({ filePath: path })
-        .then((result) => {
+        .then(result => {
           let link = document.createElement("a");
           link.href = result.result.link;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
         })
-        .catch((err) => {
+        .catch(err => {
           console.error(err);
         });
     },
@@ -87,14 +88,14 @@ export default {
         btns: [
           {
             label: "OK",
-            color: "#09f",
+            color: "#09f"
           },
           {
             label: "Cancel",
             color: "#444",
-            ghost: true,
-          },
-        ],
+            ghost: true
+          }
+        ]
       });
       // this.$router.push({
       //   name: "delivery.send",
@@ -105,10 +106,9 @@ export default {
       //     type: "certificate",
       //   },
       // });
-    },
-  },
+    }
+  }
 };
 </script>
 
-<style>
-</style>
+<style></style>
