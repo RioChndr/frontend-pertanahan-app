@@ -139,7 +139,7 @@
                       <div v-if="loading_finish_submission">
                         <i class="fa fa-spinner fa-spin fa-fw"></i>
                       </div>
-                      <div v-else>Unggah SPS</div>
+                      <div v-else>SPS Telah Terbit</div>
                     </button>
                   </template>
                 </label-horizontal-vue>
