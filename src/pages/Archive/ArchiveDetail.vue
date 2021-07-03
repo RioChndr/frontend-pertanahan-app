@@ -79,17 +79,13 @@
                   </template>
                 </label-horizontal-vue>
 
-                <label-horizontal-vue
-                  v-if="
-                    ['process_submission', 'finish_submission'].includes(
-                      detail.status
-                    )
-                  "
-                >
+                <label-horizontal-vue>
                   <template #left-column> SPS </template>
                   <template #right-column>
                     <a
-                      v-if="detail.sps_path"
+                      v-if="
+                        detail.status === 'finish_submission' || detail.sps_path
+                      "
                       @click="downloadFile(detail.sps_path)"
                       target="_blank"
                       class="d-flex align-items-center"
@@ -130,7 +126,7 @@
                     </button>
 
                     <button
-                      v-if="detail.status === 'process_submission'"
+                      v-if="detail.sps_path === null || detail.sps_path === ''"
                       class="
                         btn btn-danger btn-sm
                         px-4
@@ -143,7 +139,7 @@
                       <div v-if="loading_finish_submission">
                         <i class="fa fa-spinner fa-spin fa-fw"></i>
                       </div>
-                      <div v-else>SPS Telah tercetak</div>
+                      <div v-else>Unggah SPS</div>
                     </button>
                   </template>
                 </label-horizontal-vue>
@@ -282,21 +278,47 @@ export default {
         });
 
         if (response.data.success) {
-          const update = apiPutDocument(this.$route.params.id, {
+          const update = await apiPutDocument(this.$route.params.id, {
             sps_path: this.form.sps_path,
             status: "process_submission"
           });
-
-          console.log(update);
 
           const detailDocument = await apiGetDetailDocument(
             this.$route.params.id
           );
 
-          this.$toast.success("Permohonan Telah Selessai");
+          if (detailDocument.data.success) {
+            this.detail = detailDocument.data.document;
+            this.$toast.success("SPS Telah tercetak dan di Upload");
+          }
+        }
+      } catch (error) {
+        this.$toast.error("Terjadi kesalahan pada Sistem");
+      } finally {
+        this.loading_finish_submission = false;
+      }
+    },
+    async updateServiceFinish() {
+      this.loading_finish_submission = true;
+      try {
+        const response = await apiPostLogsDocuments({
+          document_id: this.$route.params.id,
+          status: "finish_submission"
+        });
+
+        if (response.data.success) {
+          await apiPutDocument(this.$route.params.id, {
+            sps_path: this.form.sps_path,
+            status: "finish_submission"
+          });
+
+          const detailDocument = await apiGetDetailDocument(
+            this.$route.params.id
+          );
 
           if (detailDocument.data.success) {
             this.detail = detailDocument.data.document;
+            this.$toast.success("Permohonan Telah Selessai");
           }
         }
       } catch (error) {

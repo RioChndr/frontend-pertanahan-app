@@ -20,7 +20,7 @@
             <v-select
               :options="status_filter"
               label="title"
-              :reduce="(status) => status.value"
+              :reduce="status => status.value"
               v-model="status"
               @input="setFilter"
             ></v-select>
@@ -81,7 +81,7 @@ import { FacebookLoader } from "vue-spinners-css";
 import {
   apiGetDetailDocument,
   apiPostLogsDocuments,
-  apiGetSubmissionHistoryList,
+  apiGetSubmissionHistoryList
 } from "../../http/api";
 import Pagination from "vue-pagination-2";
 import TableComponent from "../../components/TableComponent.vue";
@@ -91,7 +91,7 @@ export default {
     FacebookLoader,
     Pagination,
     HistoryModal,
-    TableComponent,
+    TableComponent
   },
   data() {
     return {
@@ -99,12 +99,12 @@ export default {
       pagination: {
         page: 1,
         pageSize: 5,
-        totalData: 0,
+        totalData: 0
       },
       loading: false,
       loadingArchived: false,
       modal: {
-        display: false,
+        display: false
       },
       data: [],
       displayModal: false,
@@ -114,8 +114,8 @@ export default {
         { value: "all", title: "Semua Status" },
         { value: "finish_submission", title: "Permohonan telah Selesai" },
         { value: "process_submission", title: "Berkas sedang di Proses" },
-        { value: "sps_created", title: "SPS Telah Terbit" },
-      ],
+        { value: "sps_created", title: "SPS Telah Terbit" }
+      ]
     };
   },
   created() {
@@ -125,7 +125,7 @@ export default {
       this.pagination.page,
       this.pagination.pageSize
     )
-      .then((result) => {
+      .then(result => {
         console.log(result);
         if (result.data.success) {
           this.data = result.data.data.results;
@@ -135,7 +135,7 @@ export default {
           this.pagination.totalData = 0;
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
         this.$toast.error("Terjadi kesalahan pada Sistem");
       })
@@ -152,7 +152,7 @@ export default {
         this.pagination.page,
         this.pagination.pageSize
       )
-        .then((result) => {
+        .then(result => {
           if (result.data.success) {
             this.data = result.data.data.results;
             this.pagination.totalData = result.data.data.total;
@@ -161,7 +161,7 @@ export default {
             this.pagination.totalData = 0;
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           this.$toast.error("Terjadi kesalahan pada Sistem");
         })
@@ -176,15 +176,15 @@ export default {
       this.loadingArchived = true;
       apiPostLogsDocuments({
         document_id: this.detail.id,
-        status: "process_submission",
+        status: "finish_submission"
       })
-        .then((result) => {
+        .then(result => {
           if (result.data.success) {
-            this.$toast.success("Permohonan Selesai di Verifikasi");
+            this.$toast.success("Permohonan Telah Selesai");
             this.loadData();
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.error(err, "error_archived");
           this.$toast.error("Terjadi Kesalahan Pada Server");
         })
@@ -198,10 +198,10 @@ export default {
     },
     setDisplayModal(id) {
       apiGetDetailDocument(id)
-        .then((result) => {
+        .then(result => {
           this.detail = result.data.document;
         })
-        .catch((err) => {
+        .catch(err => {
           this.$toast.error("Terjadi Kesalahan pada Sistem");
         })
         .finally(() => {
@@ -216,7 +216,7 @@ export default {
         this.pagination.page,
         this.pagination.pageSize
       )
-        .then((result) => {
+        .then(result => {
           if (result.data.success) {
             this.data = result.data.data.results;
             this.pagination.totalData = result.data.data.total;
@@ -225,7 +225,7 @@ export default {
             this.pagination.totalData = 0;
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           this.$toast.error("Terjadi kesalahan pada Sistem");
         })
@@ -240,7 +240,7 @@ export default {
         this.pagination.page,
         this.pagination.pageSize
       )
-        .then((result) => {
+        .then(result => {
           if (result.data.success) {
             this.data = result.data.data.results;
             this.pagination.totalData = result.data.data.total;
@@ -249,7 +249,7 @@ export default {
             this.pagination.totalData = 0;
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           this.$toast.error("Terjadi kesalahan pada Sistem");
         })
@@ -265,7 +265,7 @@ export default {
         this.pagination.page,
         this.pagination.pageSize
       )
-        .then((result) => {
+        .then(result => {
           if (result.data.success) {
             this.data = result.data.data.results;
             this.pagination.totalData = result.data.data.total;
@@ -274,20 +274,20 @@ export default {
             this.pagination.totalData = 0;
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           this.$toast.error("Terjadi kesalahan pada Sistem");
         })
         .finally(() => {
           this.loading = false;
         });
-    },
+    }
   },
   computed: {
     documents() {
       return this.data;
-    },
-  },
+    }
+  }
 };
 </script>
 

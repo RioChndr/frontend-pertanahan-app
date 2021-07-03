@@ -66,19 +66,23 @@ import moment from "moment";
 import {
   apiGetCheckSchedule,
   apiPutDocument,
-  apiUpdateDeliverDocument,
+  apiUpdateDeliverDocument
 } from "../../http/api";
 export default {
   data() {
     return {
-      min_date: moment().add(1, "days").format("y-MM-D"),
-      date: moment().add(1, "days").format("y-MM-D"),
+      min_date: moment()
+        .add(1, "days")
+        .format("y-MM-D"),
+      date: moment()
+        .add(1, "days")
+        .format("y-MM-D"),
       display_button: false,
-      loading: false,
+      loading: false
     };
   },
   components: {
-    datepicker,
+    datepicker
   },
   watch: {
     date(value) {
@@ -90,9 +94,9 @@ export default {
       }
 
       apiGetCheckSchedule(value, type)
-        .then((result) => {
+        .then(result => {
           if (result.data.success) {
-            if (result.data.data.total < 500) {
+            if (result.data.data.total < 100) {
               this.display_button = true;
               return;
             }
@@ -101,10 +105,10 @@ export default {
             );
           }
         })
-        .catch((err) => {
+        .catch(err => {
           this.$toast.error("Terjadi kesalahan pada Sistem");
         });
-    },
+    }
   },
   methods: {
     async updateDocument() {
@@ -126,8 +130,8 @@ export default {
             this.$router.push({
               name: "upload-file",
               params: {
-                id: this.$route.params.document_id,
-              },
+                id: this.$route.params.document_id
+              }
             });
           }, 500);
         }
@@ -136,7 +140,7 @@ export default {
       } finally {
         this.loading = false;
       }
-    },
+    }
   },
   computed: {
     deliveryType() {
@@ -157,7 +161,7 @@ export default {
       } else {
         return "Aksi";
       }
-    },
-  },
+    }
+  }
 };
 </script>

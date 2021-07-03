@@ -77,7 +77,7 @@
               </template>
             </label-horizontal-vue>
 
-            <label-horizontal-vue>
+            <label-horizontal-vue v-if="detail.status === 'process_submission'">
               <template #right-column>
                 <button
                   class="btn btn-danger btn-sm px-4 d-flex align-items-center"
@@ -89,21 +89,7 @@
                   </div>
                   <div v-else>
                     <span class="ti-package mr-2"></span>
-                    Berkas Diterima
-                  </div>
-                </button>
-                <button
-                  v-if="detail.status === 'finish_submission'"
-                  class="btn btn-danger btn-sm px-4 d-flex align-items-center"
-                  @click="archiveRequest"
-                  :disabled="loadingArchived"
-                >
-                  <div v-if="loadingArchived">
-                    <i class="fa fa-spinner fa-spin fa-fw"></i>
-                  </div>
-                  <div v-else>
-                    <span class="ti-package mr-2"></span>
-                    Arsipkan Permohonan
+                    Permohonan Selesai
                   </div>
                 </button>
               </template>
@@ -119,7 +105,7 @@
                   <td class="d-flex align-items-center justify-content-end">
                     <DownloadButtonVue
                       :file="{
-                        file_path: detail.authorized_card_path,
+                        file_path: detail.authorized_card_path
                       }"
                     />
                     <button
@@ -135,7 +121,7 @@
                   <td class="d-flex align-items-center justify-content-end">
                     <DownloadButtonVue
                       :file="{
-                        file_path: detail.authorizer_card_path,
+                        file_path: detail.authorizer_card_path
                       }"
                     />
                     <button
@@ -176,24 +162,23 @@ export default {
     ModalVue,
     DeleteButtonVue,
     LabelHorizontalVue,
-    DownloadButtonVue,
+    DownloadButtonVue
   },
   props: {
     detail: {
       type: Object,
-      default: () => {},
+      default: () => {}
     },
     displayModal: {
       type: Boolean,
-      default: false,
+      default: false
     },
     loadingArchived: {
       type: Boolean,
-      default: false,
-    },
-  },
+      default: false
+    }
+  }
 };
 </script>
 
-<style>
-</style>
+<style></style>
