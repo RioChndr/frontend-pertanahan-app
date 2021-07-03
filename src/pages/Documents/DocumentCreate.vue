@@ -20,10 +20,10 @@
                     <i><sup>* Mandatory</sup></i>
                   </label>
                   <v-select
+                    @input="displayFormMortgage"
                     :options="services"
                     label="service_name"
-                    :reduce="(service) => service.id"
-                    v-model="form.service_id"
+                    :reduce="(service) => service"
                   ></v-select>
                 </div>
               </div>
@@ -40,6 +40,19 @@
                     :reduce="(type_hak) => type_hak.id"
                     v-model="form.type_hak_id"
                   ></v-select>
+                </div>
+              </div>
+
+              <div class="col-lg-4 col-md-4 col-sm-12" v-if="display_form_mortgage">
+                <div class="form-group">
+                  <fg-input
+                    label="Nomor HAK Tanggungan"
+                    v-model="form.mortgage_number"
+                    placeholder="Nomor Hak"
+                    :is-number="true"
+                    :is-required="true"
+                    :max-length="5"
+                  ></fg-input>
                 </div>
               </div>
 
@@ -314,6 +327,7 @@ export default {
         kelurahan_name: null,
         type_hak_id: null,
         number_hak: null,
+        mortgage_number: null,
       },
 
       document: {
@@ -340,9 +354,19 @@ export default {
       list_kelurahan: [],
 
       list_type_hak: [],
+
+      display_form_mortgage: false
     };
   },
   methods: {
+    displayFormMortgage(value) {
+      if (value.is_form_display) {
+        this.display_form_mortgage = true
+      } else {
+        this.display_form_mortgage = false
+      }
+      this.form.service_id = value.id
+    },
     uploadedUrl(ref, url) {
       this.form[ref] = url;
     },

@@ -278,7 +278,7 @@ export default {
       try {
         const response = await apiPostLogsDocuments({
           document_id: this.$route.params.id,
-          status: "finish_submission",
+          status: "process_submission",
         });
 
         if (response.data.success) {

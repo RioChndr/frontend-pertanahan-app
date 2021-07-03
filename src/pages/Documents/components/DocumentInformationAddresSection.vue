@@ -27,6 +27,19 @@
             </h4>
           </div>
         </div>
+        <div
+          class="col-lg-3 col-sm-12 col-md-3 d-flex align-items-center"
+          v-if="detail.mortgage_number"
+        >
+          <div class="form-group my-2">
+            <label for="services" class="control-label">
+              No. Hak Tanggungan</label
+            >
+            <h4 class="m-0 font-weight-bold d-flex align-items-center">
+              {{ detail.mortgage_number || "-" }}
+            </h4>
+          </div>
+        </div>
       </div>
     </div>
   </div>
