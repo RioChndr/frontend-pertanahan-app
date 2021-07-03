@@ -32,7 +32,9 @@
 
     <div
       class="col-12 my-2 d-flex align-items-center justify-content-center"
-      v-if="detail.pickup_schedule === null"
+      v-if="
+        detail.pickup_schedule === null && detail.status === 'finish_submission'
+      "
     >
       <button
         class="btn btn-sm btn-secondary mx-2"
