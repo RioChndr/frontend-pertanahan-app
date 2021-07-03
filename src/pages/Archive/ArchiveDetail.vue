@@ -284,7 +284,7 @@ export default {
         if (response.data.success) {
           const update = apiPutDocument(this.$route.params.id, {
             sps_path: this.form.sps_path,
-            status: "finish_submission"
+            status: "process_submission"
           });
 
           console.log(update);
