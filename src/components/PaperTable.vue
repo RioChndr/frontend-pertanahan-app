@@ -1,4 +1,3 @@
-
 <template>
   <table class="table" :class="tableClass">
     <thead>
@@ -39,30 +38,30 @@ export default {
   props: {
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     columns: Array,
     data: Array,
     type: {
       type: String, // striped | hover
-      default: "striped",
+      default: "striped"
     },
     title: {
       type: String,
-      default: "",
+      default: ""
     },
     subTitle: {
       type: String,
-      default: "",
-    },
+      default: ""
+    }
   },
   filters: {
-    getValue(val) {},
+    getValue(val) {}
   },
   computed: {
     tableClass() {
       return `table-${this.type}`;
-    },
+    }
   },
   methods: {
     hasValue(item, column) {
@@ -70,8 +69,8 @@ export default {
     },
     itemValue(item, column) {
       return item[column.toLowerCase()];
-    },
-  },
+    }
+  }
 };
 </script>
 <style></style>

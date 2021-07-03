@@ -50,7 +50,7 @@
           })
         "
       >
-        Ambil Sendiri Berkas
+        Ambil Sendiri Sertifikat
       </button>
       <button class="btn btn-sm btn-primary mx-2" @click="openDialogModal">
         Kirim Berkas oleh BPN

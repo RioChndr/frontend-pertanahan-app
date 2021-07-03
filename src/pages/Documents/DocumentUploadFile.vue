@@ -18,7 +18,7 @@ export default {
     DocumentDeliveryCertificateSection,
     DocumentDeliveryFileSection,
     DocumentSubmitSubmissionSection,
-    DocumentInformationAddresSection,
+    DocumentInformationAddresSection
   },
   filters: {
     dateHuman(val) {
@@ -29,12 +29,12 @@ export default {
     fileType(val) {
       return val
         .split("_")
-        .map((v) => v.charAt(0).toUpperCase() + v.substr(1).toLowerCase())
+        .map(v => v.charAt(0).toUpperCase() + v.substr(1).toLowerCase())
         .join(" ");
     },
     filterStatus(value) {
       return getStatusSubmission(value);
-    },
+    }
   },
   data() {
     return {
@@ -52,7 +52,7 @@ export default {
         kelengkapan_berkas_lainnya_3: null,
         kelengkapan_berkas_lainnya_4: null,
         kelengkapan_berkas_lainnya_5: null,
-        sertifikat_hak_atas_tanah: null,
+        sertifikat_hak_atas_tanah: null
       },
       document: {
         application_letter: {
@@ -60,35 +60,35 @@ export default {
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null,
+          file_url: null
         },
         proof_of_rights: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null,
+          file_url: null
         },
         property_tax: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null,
+          file_url: null
         },
         verification_bphtb: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null,
+          file_url: null
         },
         file_akta: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null,
+          file_url: null
         },
         file_sertifikat_hak_atas_tanah: {
           is_loading: false,
@@ -96,53 +96,53 @@ export default {
           file_path: null,
           file_type: null,
           file_url: null,
-          description: null,
+          description: null
         },
         kelengkapan_berkas_lainnya_1: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null,
+          file_url: null
         },
         kelengkapan_berkas_lainnya_2: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null,
+          file_url: null
         },
         kelengkapan_berkas_lainnya_3: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null,
+          file_url: null
         },
         kelengkapan_berkas_lainnya_4: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null,
+          file_url: null
         },
         kelengkapan_berkas_lainnya_5: {
           is_loading: false,
           file_name: null,
           file_path: null,
           file_type: null,
-          file_url: null,
-        },
+          file_url: null
+        }
       },
       loadingOverlay: false,
-      displayModal: false,
+      displayModal: false
     };
   },
   created() {
     this.loadingOverlay = true;
     this.$store
       .dispatch("apiGetDetailDocument", {
-        doc_id: this.$route.params.id,
+        doc_id: this.$route.params.id
       })
       .finally(() => {
         this.loadingOverlay = false;
@@ -151,14 +151,14 @@ export default {
   methods: {
     downloadFile(path) {
       downloadFile({ filePath: path })
-        .then((result) => {
+        .then(result => {
           let link = document.createElement("a");
           link.href = result.result.link;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
         })
-        .catch((err) => {
+        .catch(err => {
           console.error(err);
         });
     },
@@ -166,15 +166,15 @@ export default {
       const requiredDocument = [
         "surat_permohonan",
         "bukti_alas_hak",
-        "pajak_bumi_dan_bangunan",
+        "pajak_bumi_dan_bangunan"
       ];
 
       const uploadedFiles = [];
-      this.detailDocument.files.map((v) => {
+      this.detailDocument.files.map(v => {
         uploadedFiles.push(v.file_type);
       });
 
-      const result = requiredDocument.map((v) => uploadedFiles.includes(v));
+      const result = requiredDocument.map(v => uploadedFiles.includes(v));
 
       // TODO :: Uncomment
       if (result.includes(false)) {
@@ -196,32 +196,32 @@ export default {
                   doc_id: this.$route.params.id,
                   form: {
                     is_submitted: true,
-                    is_waiting: true,
-                  },
+                    is_waiting: true
+                  }
                 })
                 .then(() => {
                   this.$toast.success("Permohonan Berhasil diajukan");
                 })
-                .catch((err) => console.error(err, "Error"))
+                .catch(err => console.error(err, "Error"))
                 .finally(() => {
                   this.loadingOverlay = false;
                   // window.location.reload();
                 });
-            },
+            }
           },
           {
             label: "Cancel",
             color: "#444",
-            ghost: true,
-          },
-        ],
+            ghost: true
+          }
+        ]
       });
     },
     printRequest() {
       const perLine = 8;
       let pdfFile = this.detailDocument.unique_id;
       const doc = new jsPDF({
-        orientation: "potrait",
+        orientation: "potrait"
       });
 
       const pageWidth = doc.internal.pageSize.getWidth();
@@ -280,7 +280,7 @@ export default {
         doc.text(this.detailDocument.authorizer_name, 80, perLine * 5);
       }
       doc.save(pdfFile + ".pdf");
-    },
+    }
   },
   computed: {
     ...mapState(["detailDocument"]),
@@ -313,8 +313,8 @@ export default {
         return true;
       }
       return !isDocumentOnProgress && isDocumentSubbmited && isDocumentApproved;
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -334,8 +334,22 @@ export default {
     <hr />
 
     <div class="row">
-      <div class="col-lg-12">
-        <div class="alert alert-success" role="alert">
+      <div class="col-lg-12 p-0">
+        <div
+          class="alert alert-info"
+          role="alert"
+          v-if="detailDocument.status === 'process_submission'"
+        >
+          Silahkan Check Berkala Berkas Permohonan pada Aplikasi
+          <a
+            href="https://play.google.com/store/apps/details?id=id.go.bpn.sentuh&hl=en&gl=US"
+            target="_blank"
+            class="font-weight-bold"
+          >
+            Sentuh Tanahku
+          </a>
+        </div>
+        <div class="alert alert-success" role="alert" v-else>
           Apabila File PDF Anda terlalu besar, perkecil ukurannya pada
           <a
             href="https://smallpdf.com/compress-pdf"

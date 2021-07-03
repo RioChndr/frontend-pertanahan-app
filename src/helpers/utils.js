@@ -63,3 +63,22 @@ export function getStatusSubmission(status = null) {
       return (message = "Permohonan telah Selesai");
   }
 }
+
+export function getStatusArchive(status = null) {
+  switch (status) {
+    case "found":
+      return "Buku Tanah Ditemukan";
+
+    case "pick_up":
+      return "Peminjaman Buku Tanah";
+
+    case "picked_up":
+      return "Buku Tanah Diserahkan";
+
+    case "return_file":
+      return "Buku Tanah Dikembalikan";
+
+    case "file_returned":
+      return "Buku Tanah Tersimpan Kembali";
+  }
+}

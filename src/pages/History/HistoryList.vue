@@ -26,7 +26,44 @@
             ></v-select>
           </div>
         </div>
+        <div class="row mb-4">
+          <div class="col-2">Filter Kecamatan</div>
+          <div class="col-4">
+            <v-select
+              :options="kecamatan"
+              label="nama"
+              :reduce="kecamatan => kecamatan.id"
+              v-model="kecamatan_id"
+              @input="setFilterKelurahan"
+            ></v-select>
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-2">Filter Kelurahan</div>
+          <div class="col-4">
+            <v-select
+              :options="kelurahan"
+              label="nama"
+              :reduce="kelurahan => kelurahan.id"
+              v-model="kelurahan_id"
+              @input="searchItems"
+            ></v-select>
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-2">Type Hak</div>
+          <div class="col-4">
+            <v-select
+              :options="type_hak"
+              label="name"
+              :reduce="type_hak => type_hak.id"
+              v-model="type_hak_id"
+              @input="searchItems"
+            ></v-select>
+          </div>
+        </div>
       </template>
+
       <template #table-header>
         <th>Jenis Hak</th>
         <th>No. Hak</th>
@@ -81,10 +118,12 @@ import { FacebookLoader } from "vue-spinners-css";
 import {
   apiGetDetailDocument,
   apiPostLogsDocuments,
-  apiGetSubmissionHistoryList
+  apiGetSubmissionHistoryList,
+  apiGetListTypeHak
 } from "../../http/api";
 import Pagination from "vue-pagination-2";
 import TableComponent from "../../components/TableComponent.vue";
+import axios from "axios";
 
 export default {
   components: {
@@ -115,7 +154,13 @@ export default {
         { value: "finish_submission", title: "Permohonan telah Selesai" },
         { value: "process_submission", title: "Berkas sedang di Proses" },
         { value: "sps_created", title: "SPS Telah Terbit" }
-      ]
+      ],
+      kecamatan: [],
+      kecamatan_id: null,
+      kelurahan: [],
+      kelurahan_id: null,
+      type_hak: [],
+      type_hak_id: null
     };
   },
   created() {
@@ -123,16 +168,32 @@ export default {
       this.keyword,
       this.status,
       this.pagination.page,
-      this.pagination.pageSize
+      this.pagination.pageSize,
+      this.kelurahan_id,
+      this.type_hak_id
     )
       .then(result => {
-        console.log(result);
         if (result.data.success) {
           this.data = result.data.data.results;
           this.pagination.totalData = result.data.data.total;
         } else {
           this.data = [];
           this.pagination.totalData = 0;
+        }
+
+        return axios.get(
+          "https://dev.farizdotid.com/api/daerahindonesia/kecamatan?id_kota=3273"
+        );
+      })
+      .then(result => {
+        if (result.status === 200) {
+          this.kecamatan = result.data.kecamatan;
+        }
+        return apiGetListTypeHak();
+      })
+      .then(result => {
+        if (result.status === 200) {
+          this.type_hak = result.data.typeHak;
         }
       })
       .catch(err => {
@@ -144,13 +205,24 @@ export default {
       });
   },
   methods: {
+    async setFilterKelurahan(id) {
+      const responseKelurahan = await axios.get(
+        `https://dev.farizdotid.com/api/daerahindonesia/kelurahan?id_kecamatan=${id}`
+      );
+
+      if (responseKelurahan.status === 200) {
+        this.kelurahan = responseKelurahan.data.kelurahan;
+      }
+    },
     loadData() {
       this.pagination.page = 1;
       apiGetSubmissionHistoryList(
         this.keyword,
         this.status,
         this.pagination.page,
-        this.pagination.pageSize
+        this.pagination.pageSize,
+        this.kelurahan_id,
+        this.type_hak_id
       )
         .then(result => {
           if (result.data.success) {
@@ -193,9 +265,6 @@ export default {
           this.loadingArchived = false;
         });
     },
-    deleteItem(filePath, fileId) {
-      this.$toast.info("On Progress");
-    },
     setDisplayModal(id) {
       apiGetDetailDocument(id)
         .then(result => {
@@ -214,7 +283,9 @@ export default {
         this.keyword,
         this.status,
         this.pagination.page,
-        this.pagination.pageSize
+        this.pagination.pageSize,
+        this.kelurahan_id,
+        this.type_hak_id
       )
         .then(result => {
           if (result.data.success) {
@@ -238,7 +309,9 @@ export default {
         this.keyword,
         this.status,
         this.pagination.page,
-        this.pagination.pageSize
+        this.pagination.pageSize,
+        this.kelurahan_id,
+        this.type_hak_id
       )
         .then(result => {
           if (result.data.success) {
@@ -263,7 +336,9 @@ export default {
         this.keyword,
         value,
         this.pagination.page,
-        this.pagination.pageSize
+        this.pagination.pageSize,
+        this.kelurahan_id,
+        this.type_hak_id
       )
         .then(result => {
           if (result.data.success) {

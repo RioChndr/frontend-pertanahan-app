@@ -147,7 +147,7 @@ export default {
       if (this.$route.query.type === "documents") {
         return "Pengantaran Berkas Sendiri";
       } else if (this.$route.query.type === "certificate") {
-        return "Pengambilan Berkas Sendiri";
+        return "Pengambilan Sertifikat Sendiri";
       } else {
         return "Pengambilan";
       }

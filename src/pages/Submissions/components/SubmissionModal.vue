@@ -119,15 +119,15 @@
                   <td class="d-flex align-items-center justify-content-end">
                     <DownloadButtonVue
                       :file="{
-                        file_path: detail.authorized_card_path,
+                        file_path: detail.authorized_card_path
                       }"
                     />
-                    <button
+                    <!-- <button
                       class="mx-4 btn btn-sm btn-danger"
                       @click="deleteItem(detail.authorized_card_path)"
                     >
                       Delete
-                    </button>
+                    </button> -->
                   </td>
                 </tr>
                 <tr v-if="detail.authorizer_card_path">
@@ -135,26 +135,26 @@
                   <td class="d-flex align-items-center justify-content-end">
                     <DownloadButtonVue
                       :file="{
-                        file_path: detail.authorizer_card_path,
+                        file_path: detail.authorizer_card_path
                       }"
                     />
-                    <button
+                    <!-- <button
                       class="mx-4 btn btn-sm btn-danger"
                       @click="deleteItem(detail.authorizer_card_path)"
                     >
                       Delete
-                    </button>
+                    </button> -->
                   </td>
                 </tr>
                 <tr v-for="file in detail.files" :key="file.id">
                   <td>{{ file.file_type }}</td>
                   <td class="d-flex align-items-center justify-content-end">
                     <DownloadButtonVue :file="file" />
-                    <DeleteButtonVue
+                    <!-- <DeleteButtonVue
                       :file-path="file.file_path"
                       :file-id="file.id"
                       :document-id="detail.id"
-                    />
+                    /> -->
                   </td>
                 </tr>
               </tbody>
@@ -176,24 +176,23 @@ export default {
     ModalVue,
     DeleteButtonVue,
     LabelHorizontalVue,
-    DownloadButtonVue,
+    DownloadButtonVue
   },
   props: {
     detail: {
       type: Object,
-      default: () => {},
+      default: () => {}
     },
     displayModal: {
       type: Boolean,
-      default: false,
+      default: false
     },
     loadingArchived: {
       type: Boolean,
-      default: false,
-    },
-  },
+      default: false
+    }
+  }
 };
 </script>
 
-<style>
-</style>
+<style></style>

@@ -13,6 +13,44 @@
           maxlength="5"
         />
       </template>
+      <template #table-filter-status>
+        <div class="row mb-4">
+          <div class="col-2">Filter Kecamatan</div>
+          <div class="col-4">
+            <v-select
+              :options="kecamatan"
+              label="nama"
+              :reduce="kecamatan => kecamatan.id"
+              v-model="kecamatan_id"
+              @input="setFilterKelurahan"
+            ></v-select>
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-2">Filter Kelurahan</div>
+          <div class="col-4">
+            <v-select
+              :options="kelurahan"
+              label="nama"
+              :reduce="kelurahan => kelurahan.id"
+              v-model="kelurahan_id"
+              @input="searchItems"
+            ></v-select>
+          </div>
+        </div>
+        <div class="row mb-4">
+          <div class="col-2">Type Hak</div>
+          <div class="col-4">
+            <v-select
+              :options="type_hak"
+              label="name"
+              :reduce="type_hak => type_hak.id"
+              v-model="type_hak_id"
+              @input="searchItems"
+            ></v-select>
+          </div>
+        </div>
+      </template>
       <template #table-header>
         <th>Jenis Hak</th>
         <th>No. Hak</th>
@@ -68,16 +106,18 @@ import {
   apiGetDetailDocument,
   apiPostLogsDocuments,
   apiGetListFinishVerification,
+  apiGetListTypeHak
 } from "../../http/api";
 import Pagination from "vue-pagination-2";
 import TableComponent from "../../components/TableComponent.vue";
+import axios from "axios";
 
 export default {
   components: {
     FacebookLoader,
     Pagination,
     SubmissionModal,
-    TableComponent,
+    TableComponent
   },
   data() {
     return {
@@ -85,26 +125,33 @@ export default {
       pagination: {
         page: 1,
         pageSize: 5,
-        totalData: 0,
+        totalData: 0
       },
       loading: false,
       loadingArchived: false,
       modal: {
-        display: false,
+        display: false
       },
       data: [],
       displayModal: false,
       detail: null,
+      kecamatan: [],
+      kecamatan_id: null,
+      kelurahan: [],
+      kelurahan_id: null,
+      type_hak: [],
+      type_hak_id: null
     };
   },
   created() {
     apiGetListFinishVerification(
       this.keyword,
       this.pagination.page,
-      this.pagination.pageSize
+      this.pagination.pageSize,
+      this.kecamatan_id,
+      this.type_hak_id
     )
-      .then((result) => {
-        console.log(result);
+      .then(result => {
         if (result.data.success) {
           this.data = result.data.data.results;
           this.pagination.totalData = result.data.data.total;
@@ -112,8 +159,23 @@ export default {
           this.data = [];
           this.pagination.totalData = 0;
         }
+
+        return axios.get(
+          "https://dev.farizdotid.com/api/daerahindonesia/kecamatan?id_kota=3273"
+        );
       })
-      .catch((err) => {
+      .then(result => {
+        if (result.status === 200) {
+          this.kecamatan = result.data.kecamatan;
+        }
+        return apiGetListTypeHak();
+      })
+      .then(result => {
+        if (result.status === 200) {
+          this.type_hak = result.data.typeHak;
+        }
+      })
+      .catch(err => {
         console.log(err);
         this.$toast.error("Terjadi kesalahan pada Sistem");
       })
@@ -129,7 +191,7 @@ export default {
         this.pagination.page,
         this.pagination.pageSize
       )
-        .then((result) => {
+        .then(result => {
           if (result.data.success) {
             this.data = result.data.data.results;
             this.pagination.totalData = result.data.data.total;
@@ -138,7 +200,7 @@ export default {
             this.pagination.totalData = 0;
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           this.$toast.error("Terjadi kesalahan pada Sistem");
         })
@@ -153,15 +215,15 @@ export default {
       this.loadingArchived = true;
       apiPostLogsDocuments({
         document_id: this.detail.id,
-        status: "process_submission",
+        status: "process_submission"
       })
-        .then((result) => {
+        .then(result => {
           if (result.data.success) {
             this.$toast.success("Permohonan Selesai di Verifikasi");
             this.loadData();
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.error(err, "error_archived");
           this.$toast.error("Terjadi Kesalahan Pada Server");
         })
@@ -170,15 +232,12 @@ export default {
           this.loadingArchived = false;
         });
     },
-    deleteItem(filePath, fileId) {
-      this.$toast.info("On Progress");
-    },
     setDisplayModal(id) {
       apiGetDetailDocument(id)
-        .then((result) => {
+        .then(result => {
           this.detail = result.data.document;
         })
-        .catch((err) => {
+        .catch(err => {
           this.$toast.error("Terjadi Kesalahan pada Sistem");
         })
         .finally(() => {
@@ -190,9 +249,11 @@ export default {
       apiGetListFinishVerification(
         this.keyword,
         this.pagination.page,
-        this.pagination.pageSize
+        this.pagination.pageSize,
+        this.kecamatan_id,
+        this.type_hak_id
       )
-        .then((result) => {
+        .then(result => {
           if (result.data.success) {
             this.data = result.data.data.results;
             this.pagination.totalData = result.data.data.total;
@@ -201,7 +262,7 @@ export default {
             this.pagination.totalData = 0;
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           this.$toast.error("Terjadi kesalahan pada Sistem");
         })
@@ -213,9 +274,11 @@ export default {
       apiGetListFinishVerification(
         this.keyword,
         this.pagination.page,
-        this.pagination.pageSize
+        this.pagination.pageSize,
+        this.kecamatan_id,
+        this.type_hak_id
       )
-        .then((result) => {
+        .then(result => {
           if (result.data.success) {
             this.data = result.data.data.results;
             this.pagination.totalData = result.data.data.total;
@@ -224,7 +287,7 @@ export default {
             this.pagination.totalData = 0;
           }
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           this.$toast.error("Terjadi kesalahan pada Sistem");
         })
@@ -232,12 +295,21 @@ export default {
           this.loading = false;
         });
     },
+    async setFilterKelurahan(id) {
+      const responseKelurahan = await axios.get(
+        `https://dev.farizdotid.com/api/daerahindonesia/kelurahan?id_kecamatan=${id}`
+      );
+
+      if (responseKelurahan.status === 200) {
+        this.kelurahan = responseKelurahan.data.kelurahan;
+      }
+    }
   },
   computed: {
     documents() {
       return this.data;
-    },
-  },
+    }
+  }
 };
 </script>
 

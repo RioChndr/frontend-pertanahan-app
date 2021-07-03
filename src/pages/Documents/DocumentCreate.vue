@@ -23,7 +23,7 @@
                     @input="displayFormMortgage"
                     :options="services"
                     label="service_name"
-                    :reduce="(service) => service"
+                    :reduce="service => service"
                   ></v-select>
                 </div>
               </div>
@@ -37,13 +37,16 @@
                   <v-select
                     :options="list_type_hak"
                     label="name"
-                    :reduce="(type_hak) => type_hak.id"
+                    :reduce="type_hak => type_hak.id"
                     v-model="form.type_hak_id"
                   ></v-select>
                 </div>
               </div>
 
-              <div class="col-lg-4 col-md-4 col-sm-12" v-if="display_form_mortgage">
+              <div
+                class="col-lg-4 col-md-4 col-sm-12"
+                v-if="display_form_mortgage"
+              >
                 <div class="form-group">
                   <fg-input
                     label="Nomor HAK Tanggungan"
@@ -139,7 +142,7 @@
                       @input="setKelurahan"
                       :options="list_kecamatan"
                       label="nama"
-                      :reduce="(kecamatan) => kecamatan"
+                      :reduce="kecamatan => kecamatan"
                     ></v-select>
                   </div>
                 </div>
@@ -154,7 +157,7 @@
                     <v-select
                       :options="list_kelurahan"
                       label="nama"
-                      :reduce="(kelurahan) => kelurahan"
+                      :reduce="kelurahan => kelurahan"
                       @input="selectedOptionKelurahan"
                     ></v-select>
                   </div>
@@ -300,7 +303,7 @@ import axios from "axios";
 
 export default {
   components: {
-    DocumentInputFile,
+    DocumentInputFile
   },
   data() {
     return {
@@ -327,22 +330,22 @@ export default {
         kelurahan_name: null,
         type_hak_id: null,
         number_hak: null,
-        mortgage_number: null,
+        mortgage_number: null
       },
 
       document: {
         authorized_card_path: {
           is_loading: false,
-          file_name: null,
+          file_name: null
         },
         authorizer_card_path: {
           is_loading: false,
-          file_name: null,
+          file_name: null
         },
         empower_file_path: {
           is_loading: false,
-          file_name: null,
-        },
+          file_name: null
+        }
       },
 
       isEmpowered: false,
@@ -361,11 +364,11 @@ export default {
   methods: {
     displayFormMortgage(value) {
       if (value.is_form_display) {
-        this.display_form_mortgage = true
+        this.display_form_mortgage = true;
       } else {
-        this.display_form_mortgage = false
+        this.display_form_mortgage = false;
       }
-      this.form.service_id = value.id
+      this.form.service_id = value.id;
     },
     uploadedUrl(ref, url) {
       this.form[ref] = url;
@@ -384,10 +387,10 @@ export default {
       this.loading = true;
 
       apiPostDocument(this.form)
-        .then((result) => {
+        .then(result => {
           this.$toast.success("Permohan berhasil diajukan");
         })
-        .catch((err) => {
+        .catch(err => {
           this.$toast.error("Permohonan Gagal Diajukan");
           if (this.form.authorized_card_path) {
             deleteFile({ filePath: this.form.authorized_card_path });
@@ -414,10 +417,10 @@ export default {
         .get(
           `https://dev.farizdotid.com/api/daerahindonesia/kelurahan?id_kecamatan=${value.id}`
         )
-        .then((response) => {
+        .then(response => {
           this.list_kelurahan = response.data.kelurahan;
         })
-        .catch((err) => {
+        .catch(err => {
           console.error(err);
           this.$toast.error("Terjadi Kesalahan pada Sever");
         });
@@ -425,7 +428,7 @@ export default {
     selectedOptionKelurahan(value) {
       this.form.kelurahan_id = value.id;
       this.form.kelurahan_name = value.nama;
-    },
+    }
   },
   created() {
     const dateNow = Date.now();
@@ -438,19 +441,19 @@ export default {
       .get(
         "https://dev.farizdotid.com/api/daerahindonesia/kecamatan?id_kota=3273"
       )
-      .then((response) => {
+      .then(response => {
         this.list_kecamatan = response.data.kecamatan;
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err);
         this.$toast.error("Terjadi Kesalahan pada Sever");
       });
 
     apiGetListTypeHak()
-      .then((result) => {
+      .then(result => {
         this.list_type_hak = result.data.typeHak;
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err);
         this.$toast.error("Terjadi Kesalahan pada Sever");
       });
@@ -458,8 +461,8 @@ export default {
     this.$store.dispatch("apiGetServices");
   },
   computed: {
-    ...mapState(["services"]),
-  },
+    ...mapState(["services"])
+  }
 };
 </script>
 

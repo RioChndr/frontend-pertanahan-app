@@ -17,6 +17,44 @@
               maxlength="5"
             />
           </template>
+          <template #table-filter-status>
+            <div class="row mb-4">
+              <div class="col-2">Filter Kecamatan</div>
+              <div class="col-4">
+                <v-select
+                  :options="kecamatan"
+                  label="nama"
+                  :reduce="kecamatan => kecamatan.id"
+                  v-model="kecamatan_id"
+                  @input="setFilterKelurahan"
+                ></v-select>
+              </div>
+            </div>
+            <div class="row mb-4">
+              <div class="col-2">Filter Kelurahan</div>
+              <div class="col-4">
+                <v-select
+                  :options="kelurahan"
+                  label="nama"
+                  :reduce="kelurahan => kelurahan.id"
+                  v-model="kelurahan_id"
+                  @input="loadMoreData(1)"
+                ></v-select>
+              </div>
+            </div>
+            <div class="row mb-4">
+              <div class="col-2">Type Hak</div>
+              <div class="col-4">
+                <v-select
+                  :options="type_hak"
+                  label="name"
+                  :reduce="type_hak => type_hak.id"
+                  v-model="type_hak_id"
+                  @input="loadMoreData(1)"
+                ></v-select>
+              </div>
+            </div>
+          </template>
           <template #table-header>
             <th>Jenis Hak</th>
             <th>No. Hak</th>
@@ -225,7 +263,8 @@ import {
   apiPostArchiveLogs,
   apiPutDocument,
   apiGetArchiveSectionList,
-  apiGetDetailDocument
+  apiGetDetailDocument,
+  apiGetListTypeHak
 } from "../http/api";
 import Dropdown from "bp-vuejs-dropdown";
 import ModalVue from "../components/Modal.vue";
@@ -233,6 +272,7 @@ import LabelHorizontalVue from "../components/LabelHorizontal.vue";
 import DownloadButtonVue from "../components/DownloadButton.vue";
 import TableComponent from "../components/TableComponent.vue";
 import Pagination from "vue-pagination-2";
+import axios from "axios";
 
 export default {
   components: {
@@ -263,7 +303,14 @@ export default {
         totalData: 0
       },
       keywords: null,
-      document: {}
+      document: {},
+
+      kecamatan: [],
+      kecamatan_id: null,
+      kelurahan: [],
+      kelurahan_id: null,
+      type_hak: [],
+      type_hak_id: null
     };
   },
   methods: {
@@ -298,7 +345,9 @@ export default {
           return apiGetArchiveSectionList(
             this.keywords,
             this.pagination.page,
-            this.pagination.pageSize
+            this.pagination.pageSize,
+            this.kelurahan_id,
+            this.type_hak_id
           );
         })
         .then(result => {
@@ -332,7 +381,9 @@ export default {
           return apiGetArchiveSectionList(
             this.keywords,
             this.pagination.page,
-            this.pagination.pageSize
+            this.pagination.pageSize,
+            this.kelurahan_id,
+            this.type_hak_id
           );
         })
         .then(result => {
@@ -353,7 +404,9 @@ export default {
       apiGetArchiveSectionList(
         this.keywords,
         this.pagination.page,
-        this.pagination.pageSize
+        this.pagination.pageSize,
+        this.kelurahan_id,
+        this.type_hak_id
       )
         .then(result => {
           if (result.data.success) {
@@ -376,7 +429,9 @@ export default {
         const response = await apiGetArchiveSectionList(
           this.keywords,
           this.pagination.page,
-          this.pagination.pageSize
+          this.pagination.pageSize,
+          this.kelurahan_id,
+          this.type_hak_id
         );
 
         if (response.data.success) {
@@ -394,13 +449,24 @@ export default {
       } finally {
         this.pagination.loading = false;
       }
+    },
+    async setFilterKelurahan(id) {
+      const responseKelurahan = await axios.get(
+        `https://dev.farizdotid.com/api/daerahindonesia/kelurahan?id_kecamatan=${id}`
+      );
+
+      if (responseKelurahan.status === 200) {
+        this.kelurahan = responseKelurahan.data.kelurahan;
+      }
     }
   },
   created() {
     apiGetArchiveSectionList(
       this.keywords,
       this.pagination.page,
-      this.pagination.pageSize
+      this.pagination.pageSize,
+      this.kelurahan_id,
+      this.type_hak_id
     )
       .then(result => {
         if (result.data.success) {
@@ -409,6 +475,21 @@ export default {
         } else {
           this.pagination.totalData = 0;
           this.resultList = [];
+        }
+
+        return axios.get(
+          "https://dev.farizdotid.com/api/daerahindonesia/kecamatan?id_kota=3273"
+        );
+      })
+      .then(result => {
+        if (result.status === 200) {
+          this.kecamatan = result.data.kecamatan;
+        }
+        return apiGetListTypeHak();
+      })
+      .then(result => {
+        if (result.status === 200) {
+          this.type_hak = result.data.typeHak;
         }
       })
       .catch(err => {

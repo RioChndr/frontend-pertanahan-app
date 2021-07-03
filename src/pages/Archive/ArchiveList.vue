@@ -59,22 +59,22 @@ import Pagination from "vue-pagination-2";
 export default {
   components: {
     TableComponent,
-    Pagination,
+    Pagination
   },
   data() {
     return {
       table: {
         title: "Daftar Dokumen Cetak SPS",
-        data: [],
+        data: []
       },
 
       pagination: {
         page: 1,
         pageSize: 5,
         loading: false,
-        totalData: 0,
+        totalData: 0
       },
-      keywords: null,
+      keywords: null
     };
   },
   methods: {
@@ -128,7 +128,7 @@ export default {
       } finally {
         this.pagination.loading = false;
       }
-    },
+    }
   },
   async mounted() {
     try {
@@ -150,8 +150,7 @@ export default {
     } catch (error) {
       this.$toast.error("terjadi kesalahan pada sistem");
     }
-  },
+  }
 };
 </script>
-<style>
-</style>
+<style></style>

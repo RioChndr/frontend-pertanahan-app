@@ -39,6 +39,18 @@
               ></v-select>
             </div>
           </div>
+          <div class="row mb-4">
+            <div class="col-2">Type Hak</div>
+            <div class="col-4">
+              <v-select
+                :options="type_hak"
+                label="name"
+                :reduce="type_hak => type_hak.id"
+                v-model="type_hak_id"
+                @input="setFilterResult"
+              ></v-select>
+            </div>
+          </div>
         </template>
         <template #table-header>
           <th>Nomor. HAK</th>
@@ -54,7 +66,7 @@
             <td>{{ item.document_detail.kecamatan_name }}</td>
             <td>{{ item.document_detail.kelurahan_name }}</td>
             <td>{{ item.document_detail.submitted_at | moment("LL") }}</td>
-            <td>{{ item.status }}</td>
+            <td>{{ item.status | getArchiveStatus }}</td>
             <td>
               <button class="btn btn-sm btn-primary" @click="openDetail(item)">
                 <i class="ti-eye"></i>
@@ -76,7 +88,7 @@
   </div>
 </template>
 <script>
-import { apiGetListArchiveLogs } from "../../http/api";
+import { apiGetListArchiveLogs, apiGetListTypeHak } from "../../http/api";
 import TableComponent from "../../components/TableComponent.vue";
 import Pagination from "vue-pagination-2";
 import axios from "axios";
@@ -103,19 +115,24 @@ export default {
       kecamatan: [],
       kecamatan_id: null,
       kelurahan: [],
-      kelurahan_id: null
+      kelurahan_id: null,
+      type_hak: [],
+      type_hak_id: null
     };
   },
   methods: {
     openDetail(value) {
-      this.$router.push({ name: "archive.detail", params: { id: value.id } });
+      this.$router.push({
+        name: "archive-logs.detail",
+        params: { id: value.id }
+      });
     },
     async setFilterKelurahan(id) {
       const responseKelurahan = await axios.get(
         `https://dev.farizdotid.com/api/daerahindonesia/kelurahan?id_kecamatan=${id}`
       );
 
-      if (responseKelurahan.status) {
+      if (responseKelurahan.status === 200) {
         this.kelurahan = responseKelurahan.data.kelurahan;
       }
     },
@@ -212,6 +229,12 @@ export default {
 
       if (responseKecamatan.status === 200) {
         this.kecamatan = responseKecamatan.data.kecamatan;
+      }
+
+      const responseTypeHak = await apiGetListTypeHak();
+
+      if (responseTypeHak.status === 200) {
+        this.type_hak = responseTypeHak.data.typeHak;
       }
 
       if (response.data.success) {

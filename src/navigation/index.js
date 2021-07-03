@@ -10,6 +10,7 @@ if (localStorage.getItem(process.env.VUE_APP_TOKEN_STORAGE) !== null) {
     menus = [
       { path: "/submissions", title: "Data Permohonan" },
       { path: "/archive", title: "Cetak SPS" },
+      { path: "/archive-logs", title: "Arsip Logs" },
       { path: "/history", title: "Riwayat Permohonan" }
     ];
   } else if ([2, 6].includes(userRole.id)) {
@@ -17,7 +18,8 @@ if (localStorage.getItem(process.env.VUE_APP_TOKEN_STORAGE) !== null) {
   } else if (userRole.id === 1) {
     menus = [
       { path: "/dashboard", title: "Dashboard" },
-      { path: "/archive-logs", title: "Arsip Logs" }
+      { path: "/archive-logs", title: "Arsip Logs" },
+      { path: "/history", title: "Riwayat Permohonan" }
     ];
   } else if (userRole.id === 5) {
     menus = [

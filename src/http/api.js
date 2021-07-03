@@ -91,22 +91,32 @@ export function apiGetSubmissionList(keyword, page, page_size) {
 export function apiGetArchiveSectionList(
   keyword = "",
   page = 1,
-  page_size = 10
+  page_size = 10,
+  kelurahan = null,
+  type_hak = null
 ) {
-  let queryKeyword = keyword ? `&no_hak=${keyword}` : "";
+  const kelurahanFilter = kelurahan ? `&kelurahan=${kelurahan}` : "";
+  const typeHakFilter = type_hak ? `&type_hak=${type_hak}` : "";
+  const queryKeyword = keyword ? `&no_hak=${keyword}` : "";
+
   return axios.get(
-    `documents/archive?page=${page}&page_size=${page_size}${queryKeyword}`
+    `documents/archive?page=${page}&page_size=${page_size}${kelurahanFilter}${typeHakFilter}${queryKeyword}`
   );
 }
 
 export function apiGetListFinishVerification(
   keyword = "",
   page = 1,
-  page_size = 10
+  page_size = 10,
+  kelurahan = null,
+  type_hak = null
 ) {
-  let queryKeyword = keyword ? `&keyword=${keyword}` : "";
+  const queryKeyword = keyword ? `&keyword=${keyword}` : "";
+  const kelurahanFilter = kelurahan ? `&kelurahan=${kelurahan}` : "";
+  const typeHakFilter = type_hak ? `&type_hak=${type_hak}` : "";
+
   return axios.get(
-    `documents/verification?page=${page}&page_size=${page_size}${queryKeyword}`
+    `documents/verification?page=${page}&page_size=${page_size}${kelurahanFilter}${typeHakFilter}${queryKeyword}`
   );
 }
 
@@ -114,11 +124,15 @@ export function apiGetSubmissionHistoryList(
   keyword = "",
   status = "all",
   page = 1,
-  page_size = 10
+  page_size = 10,
+  kelurahan = null,
+  type_hak = null
 ) {
-  let queryKeyword = keyword ? `&number_hak=${keyword}` : "";
+  const queryKeyword = keyword ? `&number_hak=${keyword}` : "";
+  const kelurahanFilter = kelurahan ? `&kelurahan=${kelurahan}` : "";
+  const typeHakFilter = type_hak ? `&type_hak=${type_hak}` : "";
   return axios.get(
-    `documents/histories?page=${page}&page_size=${page_size}&status=${status}${queryKeyword}`
+    `documents/histories?page=${page}&page_size=${page_size}&status=${status}${kelurahanFilter}${typeHakFilter}${queryKeyword}`
   );
 }
 
