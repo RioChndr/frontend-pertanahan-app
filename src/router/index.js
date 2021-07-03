@@ -16,7 +16,7 @@ let userInfo =
 let roleId =
   userInfo === null ? null : userInfo && userInfo.role && userInfo.role.id;
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _, next) => {
   if (to.name !== "login" && to.name !== "signup" && !token)
     next({ name: "login" });
   else if ((token && to.name === "login") || (token && to.name === "signup")) {
@@ -25,7 +25,7 @@ router.beforeEach((to, from, next) => {
     } else if (roleId === 3) {
       next({ name: "request" });
     } else if (roleId === 4) {
-      next({ name: "history.list" });
+      next({ name: "submission.list" });
     } else if ([6, 2].includes(roleId)) {
       next({ name: "delivery.list" });
     }
@@ -35,7 +35,7 @@ router.beforeEach((to, from, next) => {
   } else if (to.path === "/" && roleId === 3) {
     next({ name: "request" });
   } else if (to.path === "/" && roleId === 4) {
-    next({ name: "history.list" });
+    next({ name: "submission.list" });
   } else if (to.path === "/" && [6, 2].includes(roleId)) {
     next({ name: "delivery.list" });
   } else {

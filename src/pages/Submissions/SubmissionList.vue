@@ -13,20 +13,6 @@
           maxlength="5"
         />
       </template>
-      <template #table-filter-status>
-        <div class="row mb-4">
-          <div class="col-2">Filter Status</div>
-          <div class="col-4">
-            <v-select
-              :options="status_filter"
-              label="title"
-              :reduce="(status) => status.value"
-              v-model="status"
-              @input="setFilter"
-            ></v-select>
-          </div>
-        </div>
-      </template>
       <template #table-header>
         <th>Jenis Hak</th>
         <th>No. Hak</th>
@@ -37,7 +23,7 @@
         <th>Aksi</th>
       </template>
       <template #table-body>
-        <tr v-for="item in data" :key="item.id">
+        <tr v-for="item in documents" :key="item.id">
           <td>{{ item.type_hak.name }}</td>
           <td>{{ item.number_hak }}</td>
           <td>{{ item.authorized_name }}</td>
@@ -65,23 +51,23 @@
       </template>
     </table-component>
 
-    <history-modal
+    <submission-modal
       :detail="detail"
       :display-modal="displayModal"
       @update-verification-done="updateVerificationDone"
       @close="displayModal = false"
       :loading-archived="loadingArchived"
-    ></history-modal>
+    ></submission-modal>
   </div>
 </template>
 
 <script>
-import HistoryModal from "./components/HistoryModal.vue";
+import SubmissionModal from "./components/SubmissionModal.vue";
 import { FacebookLoader } from "vue-spinners-css";
 import {
   apiGetDetailDocument,
   apiPostLogsDocuments,
-  apiGetSubmissionHistoryList,
+  apiGetListFinishVerification,
 } from "../../http/api";
 import Pagination from "vue-pagination-2";
 import TableComponent from "../../components/TableComponent.vue";
@@ -90,7 +76,7 @@ export default {
   components: {
     FacebookLoader,
     Pagination,
-    HistoryModal,
+    SubmissionModal,
     TableComponent,
   },
   data() {
@@ -109,19 +95,11 @@ export default {
       data: [],
       displayModal: false,
       detail: null,
-      status: "all",
-      status_filter: [
-        { value: "all", title: "Semua Status" },
-        { value: "finish_submission", title: "Permohonan telah Selesai" },
-        { value: "process_submission", title: "Berkas sedang di Proses" },
-        { value: "sps_created", title: "SPS Telah Terbit" },
-      ],
     };
   },
   created() {
-    apiGetSubmissionHistoryList(
+    apiGetListFinishVerification(
       this.keyword,
-      this.status,
       this.pagination.page,
       this.pagination.pageSize
     )
@@ -146,9 +124,8 @@ export default {
   methods: {
     loadData() {
       this.pagination.page = 1;
-      apiGetSubmissionHistoryList(
+      apiGetListFinishVerification(
         this.keyword,
-        this.status,
         this.pagination.page,
         this.pagination.pageSize
       )
@@ -210,9 +187,8 @@ export default {
     },
     callPagination(params) {
       this.pagination.page = params;
-      apiGetSubmissionHistoryList(
+      apiGetListFinishVerification(
         this.keyword,
-        this.status,
         this.pagination.page,
         this.pagination.pageSize
       )
@@ -234,34 +210,8 @@ export default {
         });
     },
     searchItems() {
-      apiGetSubmissionHistoryList(
+      apiGetListFinishVerification(
         this.keyword,
-        this.status,
-        this.pagination.page,
-        this.pagination.pageSize
-      )
-        .then((result) => {
-          if (result.data.success) {
-            this.data = result.data.data.results;
-            this.pagination.totalData = result.data.data.total;
-          } else {
-            this.data = [];
-            this.pagination.totalData = 0;
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          this.$toast.error("Terjadi kesalahan pada Sistem");
-        })
-        .finally(() => {
-          this.loading = false;
-        });
-    },
-    setFilter(value) {
-      this.pagination.page = 1;
-      apiGetSubmissionHistoryList(
-        this.keyword,
-        value,
         this.pagination.page,
         this.pagination.pageSize
       )

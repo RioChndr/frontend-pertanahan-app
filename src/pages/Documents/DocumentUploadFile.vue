@@ -205,7 +205,7 @@ export default {
                 .catch((err) => console.error(err, "Error"))
                 .finally(() => {
                   this.loadingOverlay = false;
-                  window.location.reload();
+                  // window.location.reload();
                 });
             },
           },

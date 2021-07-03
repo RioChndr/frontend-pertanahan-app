@@ -54,7 +54,10 @@ export function getStatusSubmission(status = null) {
       return (message = "Menunggu Berkas");
 
     case "process_submission":
-      return (message = "Permohonan Sedang di Proses");
+      return (message = "Berkas Sedang di Proses");
+
+    case "sps_created":
+      return (message = "SPS Telah Terbit");
 
     case "finish_submission":
       return (message = "Permohonan telah Selesai");

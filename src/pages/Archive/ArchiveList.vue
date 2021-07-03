@@ -52,7 +52,7 @@
   </div>
 </template>
 <script>
-import { apiGetArchiveSectionList, apiGetSubmissionList } from "../../http/api";
+import { apiGetSubmissionList } from "../../http/api";
 import TableComponent from "../../components/TableComponent.vue";
 import Pagination from "vue-pagination-2";
 
@@ -64,7 +64,7 @@ export default {
   data() {
     return {
       table: {
-        title: "Daftar Riwayat Permohonan",
+        title: "Daftar Dokumen Cetak SPS",
         data: [],
       },
 

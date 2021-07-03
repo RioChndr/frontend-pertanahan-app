@@ -3,7 +3,7 @@
     <slot name="label">
       <label v-if="label" class="control-label" v-html="label"></label>
       <label style="color: red" v-if="isRequired">
-        <i><sup>* Mandatory</sup></i>
+        <i><sup>* Wajib Diisi</sup></i>
       </label>
     </slot>
     <slot name="addonLeft">

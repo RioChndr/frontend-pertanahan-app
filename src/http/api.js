@@ -110,6 +110,18 @@ export function apiGetListFinishVerification(
   );
 }
 
+export function apiGetSubmissionHistoryList(
+  keyword = "",
+  status = "all",
+  page = 1,
+  page_size = 10
+) {
+  let queryKeyword = keyword ? `&number_hak=${keyword}` : "";
+  return axios.get(
+    `documents/histories?page=${page}&page_size=${page_size}&status=${status}${queryKeyword}`
+  );
+}
+
 //#endregion
 
 //#region Service

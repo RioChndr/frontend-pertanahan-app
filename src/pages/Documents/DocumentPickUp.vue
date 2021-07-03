@@ -6,7 +6,7 @@
       <div class="col-lg-6 col-sm-6 mb-2">
         <div class="border rounded px-3 py-2">
           <strong class="mb-2">
-            <p>Jadwal {{ deliveryType }}</p>
+            <p>Pilih Jadwal {{ deliveryType }}</p>
           </strong>
           <div class="row">
             <div class="col-lg-12 col-md-12">

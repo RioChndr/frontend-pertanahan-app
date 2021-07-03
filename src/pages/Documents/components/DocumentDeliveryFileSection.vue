@@ -7,14 +7,12 @@
         "
       >
         <strong>
-          Verifikasi Berkas telah selesai, silahkan kirim kan Berkasnya.
+          Verifikasi Berkas telah selesai, Silahkan kirimkan berkasnya ke Kantor
+          BPN Kota Bandung.
         </strong>
         <div
           class="col-12 my-2 d-flex align-items-center justify-content-center"
         >
-          <button class="btn btn-sm btn-primary mx-2" @click="openDialog">
-            Jemput Berkas oleh BPN
-          </button>
           <button
             class="btn btn-sm btn-secondary mx-2"
             @click="
@@ -30,6 +28,9 @@
             "
           >
             Antar Sendiri Berkas
+          </button>
+          <button class="btn btn-sm btn-primary mx-2" @click="openDialog">
+            Jemput Berkas oleh BPN
           </button>
         </div>
       </div>
