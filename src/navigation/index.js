@@ -8,8 +8,9 @@ if (localStorage.getItem(process.env.VUE_APP_TOKEN_STORAGE) !== null) {
 
   if (userRole.id === 4) {
     menus = [
-      { path: "/history", title: "Riwayat Permohonan" },
-      { path: "/archive", title: "Cetak SPS" }
+      { path: "/submissions", title: "Data Permohonan" },
+      { path: "/archive", title: "Cetak SPS" },
+      { path: "/history", title: "Riwayat Permohonan" }
     ];
   } else if ([2, 6].includes(userRole.id)) {
     menus = [{ path: "/delivery", title: "Kirim & Jemput Berkas" }];

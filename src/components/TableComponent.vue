@@ -1,9 +1,18 @@
 <template>
   <div class="px-2 py-4">
     <div class="d-flex align-items-center justify-content-between mb-4">
-      <h4><slot name="table-title">This is Title</slot></h4>
+      <div class="row">
+        <div class="col-12">
+          <h4><slot name="table-title">This is Title</slot></h4>
+        </div>
+      </div>
       <div id="input-search">
         <slot name="table-search"></slot>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <slot name="table-filter-status"></slot>
       </div>
     </div>
     <table class="table border">

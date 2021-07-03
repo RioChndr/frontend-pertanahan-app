@@ -17,7 +17,7 @@
                     Jenis Layanan
                   </label>
                   <label style="color: red">
-                    <i><sup>* Mandatory</sup></i>
+                    <i><sup>* Wajib Diisi</sup></i>
                   </label>
                   <v-select
                     :options="services"
@@ -32,7 +32,7 @@
                 <div class="form-group">
                   <label for="services" class="control-label"> Tipe HAK </label>
                   <label style="color: red">
-                    <i><sup>* Mandatory</sup></i>
+                    <i><sup>* Wajib Diisi</sup></i>
                   </label>
                   <v-select
                     :options="list_type_hak"
@@ -120,7 +120,7 @@
                       Kecamatan
                     </label>
                     <label style="color: red">
-                      <i><sup>* Mandatory</sup></i>
+                      <i><sup>* Wajib Diisi</sup></i>
                     </label>
                     <v-select
                       @input="setKelurahan"
@@ -136,7 +136,7 @@
                       Kelurahan
                     </label>
                     <label style="color: red">
-                      <i><sup>* Mandatory</sup></i>
+                      <i><sup>* Wajib Diisi</sup></i>
                     </label>
                     <v-select
                       :options="list_kelurahan"
@@ -162,7 +162,7 @@
                     File Penerima Kuasa / Pemohon ( KTP )
                   </label>
                   <label style="color: red">
-                    <i><sup>* Mandatory</sup></i>
+                    <i><sup>* Wajib Diisi</sup></i>
                   </label>
                 </template>
               </document-input-file>
@@ -171,7 +171,7 @@
             <div class="col-lg-12">
               <div class="form-group">
                 <fg-input
-                  label="Nomor Telepon"
+                  label="Nomor Telepon / Nomor WA"
                   v-model="form.authorized_phone_number"
                   placeholder="Nomor telepon yang bisa kami hubungi"
                   type="text"
