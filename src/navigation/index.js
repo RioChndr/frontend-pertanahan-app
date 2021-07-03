@@ -24,7 +24,7 @@ if (localStorage.getItem(process.env.VUE_APP_TOKEN_STORAGE) !== null) {
     { path: "/request/list", title: "Permohonan", rules:[3] },
     { path: "/request/create", title: "Buat Permohonan", rules:[3] },
 
-    { path: "/account/setting", title: "Pengaturan Akun", rules: [1,2,3,4,5,6]}
+    { path: "/account", title: "Pengaturan Akun", rules: [1,2,3,4,5,6]}
   ]
   
   menus = configMenus.filter(v => v.rules.includes(userRole.id))
