@@ -18,7 +18,7 @@
                     ? 'badge-success'
                     : 'badge-danger',
                 ]"
-                >{{ detail.status | getStatusValue }}</span
+                ><status-permohonan permohonan :status="detail.status"/></span
               >
             </label>
             <h4 class="m-0 font-weight-bold d-flex align-items-center">

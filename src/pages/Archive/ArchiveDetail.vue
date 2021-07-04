@@ -66,7 +66,7 @@
                   <template #right-column>
                     <h4 class="m-0">
                       <span class="badge badge-lg badge-primary">
-                        {{ detail.status | getStatusValue }}
+                        <status-permohonan permohonan :status="detail.status"/>
                       </span>
                     </h4>
                   </template>
