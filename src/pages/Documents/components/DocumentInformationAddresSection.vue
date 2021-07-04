@@ -36,7 +36,7 @@
               No. Hak Tanggungan</label
             >
             <h4 class="m-0 font-weight-bold d-flex align-items-center">
-              {{ detail.mortgage_number || "-" }}
+              {{ detail.mortgage_number || "-" }} / {{ detail.mortgage_year || "-" }}
             </h4>
           </div>
         </div>
