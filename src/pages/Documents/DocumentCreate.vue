@@ -113,6 +113,9 @@
                   type="email"
                   :is-required="true"
                 ></fg-input>
+                <div class="text-danger" v-if="validationError.email">
+                  {{ validationError.email }}
+                </div>
               </div>
             </div>
 
@@ -300,6 +303,7 @@ import { apiGetListTypeHak, apiPostDocument } from "../../http/api";
 import { deleteFile } from "../../http/dropbox";
 import DocumentInputFile from "./components/DocumentInputFile";
 import axios from "axios";
+import { validationEmail } from "@/helpers/utils";
 
 export default {
   components: {
@@ -333,6 +337,10 @@ export default {
         mortgage_number: null
       },
 
+      validationError:{
+        email: null,
+      },
+
       document: {
         authorized_card_path: {
           is_loading: false,
@@ -361,6 +369,11 @@ export default {
       display_form_mortgage: false
     };
   },
+  watch:{
+    'form.email' (email) {
+      this.validationError.email = !validationEmail(email) ? "Email tidak valid" : null
+    }
+  },
   methods: {
     displayFormMortgage(value) {
       if (value.is_form_display) {
@@ -381,6 +394,11 @@ export default {
 
       if (!this.form.authorized_phone_number) {
         this.$toast.error("Nomor Telepon Wajib Terisi");
+        return;
+      }
+
+      if(!validationEmail(this.form.email)){
+        this.$toast.error("Email tidak valid");
         return;
       }
 
