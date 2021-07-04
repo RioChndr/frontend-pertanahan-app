@@ -50,6 +50,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 99999;
 }
 
 @media screen and (min-width: 300px) and (max-width: 600px) {
