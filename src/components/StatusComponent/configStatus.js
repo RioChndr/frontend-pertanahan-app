@@ -32,6 +32,10 @@ export default {
       color: "success",
       text: "Permohonan telah Selesai"
     },
+    null:{
+      color: "secondary",
+      text: "Belum diajukan"
+    }
   },
   arsipLogs:{
     found: {
