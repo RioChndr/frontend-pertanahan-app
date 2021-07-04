@@ -75,7 +75,7 @@
       </template>
       <template #table-body>
         <tr v-for="item in data" :key="item.id">
-          <td>{{ item.type_hak.name }}</td>
+          <td>{{ item.type_hak ? item.type_hak.name : "-" }}</td>
           <td>{{ item.number_hak }}</td>
           <td>{{ item.authorized_name }}</td>
           <td>{{ item.service.service_name }}</td>
