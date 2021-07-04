@@ -20,14 +20,7 @@ instance.interceptors.request.use(
 );
 
 instance.interceptors.response.use(
-  (response) => {
-    if(response.data){
-      if(!response.data.success){
-        return Promise.reject(response.data.message)
-      }
-    }
-    return response;
-  },
+  (response) => response,
   (error) => {
     if(error.response){
       if (error.response.status === 401) {
