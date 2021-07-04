@@ -11,15 +11,7 @@
           <div class="form-group my-2">
             <label for="services" class="control-label">
               Kode Berkas
-              <span
-                class="badge"
-                :class="[
-                  detail.status !== 'reject_submission'
-                    ? 'badge-success'
-                    : 'badge-danger',
-                ]"
-                ><status-permohonan permohonan :status="detail.status"/></span
-              >
+              <status-permohonan permohonan :status="detail.status"/>
             </label>
             <h4 class="m-0 font-weight-bold d-flex align-items-center">
               {{ detail.unique_id }}
