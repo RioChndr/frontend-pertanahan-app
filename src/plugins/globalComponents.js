@@ -9,7 +9,7 @@ import vSelect from "vue-select";
 import LoadingOverlay from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 import { getStatusArchive, getStatusSubmission } from "../helpers/utils";
-import StatusPermohonan from "@/components/StatusPermohonan/Status";
+import StatusComponent from "@/components/StatusComponent/Status";
 
 // import Filter
 
@@ -21,7 +21,7 @@ const GlobalComponents = {
     Vue.component("p-button", Button);
     Vue.component("v-select", vSelect);
     Vue.component("v-loading", LoadingOverlay);
-    Vue.component("status-permohonan", StatusPermohonan);
+    Vue.component("status-permohonan", StatusComponent);
     Vue.filter("getStatusValue", value => {
       if (value) {
         return getStatusSubmission(value);
