@@ -94,7 +94,10 @@ export default {
           newPasswordConfirm: null,
         }
       } catch(error){
-        this.$toast.error(error);
+        console.log(error.response);
+        if(error.response){
+          this.$toast.error('Password akun anda salah');
+        }
       }
       this.isLoading = false;
     }

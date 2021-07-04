@@ -82,9 +82,9 @@ export default {
   data(){
     return {
       form: {
-        fullname: "Rio",
-        email: "riochandra@gmail.com",
-        role: "Admin comel",
+        fullname: null,
+        email: null,
+        role: null,
         password: null,
       },
       modal:{
@@ -129,8 +129,11 @@ export default {
         let result = await axios.put("/users/change-info", normalizeData);
         this.$toast.success("Berhasil mengubah akun anda");
       } catch(error){
-        console.log(error);
-        this.$toast.error(error)
+        if(error.response.status){
+          this.$toast.error(`Gagal update data. Password anda salah`)
+        } else{
+          this.$toast.error("Terjadi kesalahan pada server. " + error.response.data)
+        }
       }
       this.isLoading = false;
       this.modal.displayModalDetail = false;

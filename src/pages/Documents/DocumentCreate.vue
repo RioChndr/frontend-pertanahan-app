@@ -43,22 +43,6 @@
                 </div>
               </div>
 
-              <div
-                class="col-lg-4 col-md-4 col-sm-12"
-                v-if="display_form_mortgage"
-              >
-                <div class="form-group">
-                  <fg-input
-                    label="Nomor HAK Tanggungan"
-                    v-model="form.mortgage_number"
-                    placeholder="Nomor Hak"
-                    :is-number="true"
-                    :is-required="true"
-                    :max-length="5"
-                  ></fg-input>
-                </div>
-              </div>
-
               <div class="col-lg-4 col-md-4 col-sm-12">
                 <div class="form-group">
                   <fg-input
@@ -70,6 +54,31 @@
                     :max-length="5"
                   ></fg-input>
                 </div>
+              </div>
+
+              <div
+                class="col-lg-4 col-md-4 col-sm-12 row"
+                v-if="display_form_mortgage"
+              >
+              <div class="col-md-12">
+                Nomor dan Tahun HAK Tanggung
+                <span class="text-danger">* Wajib diisi</span>
+                <div class="form-group row ml-1">
+                  <fg-input
+                    v-model="form.mortgage_number"
+                    placeholder="Nomor Hak Tanggung"
+                    :is-number="true"
+                    :max-length="5"
+                  ></fg-input>
+                  <h3 class="m-1">/</h3>
+                  <fg-input
+                    v-model="form.mortgage_year"
+                    placeholder="Tahun Hak Tanggungan"
+                    :is-number="true"
+                    :max-length="4"
+                  ></fg-input>
+                </div>
+              </div>
               </div>
 
               <div
@@ -334,7 +343,8 @@ export default {
         kelurahan_name: null,
         type_hak_id: null,
         number_hak: null,
-        mortgage_number: null
+        mortgage_number: null,
+        mortgage_year: null,
       },
 
       validationError:{
@@ -407,6 +417,7 @@ export default {
       apiPostDocument(this.form)
         .then(result => {
           this.$toast.success("Permohan berhasil diajukan");
+          this.$router.replace({ name: "request" });
         })
         .catch(err => {
           this.$toast.error("Permohonan Gagal Diajukan");
@@ -419,7 +430,6 @@ export default {
           }
         })
         .finally(() => {
-          this.$router.replace({ name: "request" });
           this.loading = false;
         });
     },
