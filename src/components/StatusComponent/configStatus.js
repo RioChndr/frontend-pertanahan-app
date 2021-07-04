@@ -32,7 +32,7 @@ export default {
       color: "success",
       text: "Permohonan telah Selesai"
     },
-    null:{
+    null: {
       color: "secondary",
       text: "Belum diajukan"
     }
