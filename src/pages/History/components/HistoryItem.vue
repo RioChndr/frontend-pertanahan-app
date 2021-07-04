@@ -25,7 +25,7 @@
       </div>
       <div class="flex-fill d-flex justify-content-end pr-4">
         <h4 class="m-0 text-primary">
-          {{ document.status | getStatusValue }}
+          <status-permohonan permohonan :status="document.status"/>
         </h4>
       </div>
     </div>
