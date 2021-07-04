@@ -66,7 +66,9 @@
             <td>{{ item.document_detail.kecamatan_name }}</td>
             <td>{{ item.document_detail.kelurahan_name }}</td>
             <td>{{ item.document_detail.submitted_at | moment("LL") }}</td>
-            <td>{{ item.status | getArchiveStatus }}</td>
+            <td>
+              <status-permohonan arsip-logs :status="item.status"/>
+            </td>
             <td>
               <button class="btn btn-sm btn-primary" @click="openDetail(item)">
                 <i class="ti-eye"></i>

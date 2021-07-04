@@ -21,7 +21,7 @@
               [null, 'finish_submission'].includes(detail.status) === false,
           }"
         >
-          {{ detail.status | getStatusValue }}
+          <status-permohonan permohonan :status="detail.status"/>
         </li>
         <li class="list-group-item">{{ detail.unique_id }}</li>
       </ul>

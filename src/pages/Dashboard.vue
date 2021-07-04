@@ -71,7 +71,9 @@
               <td>{{ item.authorized_name }}</td>
               <td>{{ item.service.service_name }}</td>
               <td>{{ item.submitted_at | moment("LL") }}</td>
-              <td>{{ item.status | getStatusValue }}</td>
+              <td>
+                <status-permohonan permohonan :status="item.status"/>
+              </td>
               <td>
                 <button
                   class="btn btn-sm btn-primary"
