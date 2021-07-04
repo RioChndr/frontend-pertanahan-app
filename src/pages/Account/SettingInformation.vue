@@ -82,9 +82,9 @@ export default {
   data(){
     return {
       form: {
-        fullname: "Rio",
-        email: "riochandra@gmail.com",
-        role: "Admin comel",
+        fullname: null,
+        email: null,
+        role: null,
         password: null,
       },
       modal:{
